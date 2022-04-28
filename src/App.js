@@ -1,7 +1,19 @@
+import {Container} from '@mui/material'
+import Post from './components/Post';
 function App() {
   return (
-    <div className="App">
-    </div>
+    <Container sx={{
+      background: 'skyblue',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+      <Post />
+      <Post />
+      <Post />
+      <Post />
+      <Post />
+    </Container>
   );
 }
 
