@@ -26,7 +26,7 @@ function Post() {
                 alignItems: 'center',
                 gap:'10px'
             }}>
-               <img src="/images/profile.png" alt="" width="40px" /> 
+               <Avatar alt="Name"/>
                <h4>name</h4>
             </Box>
             <MoreVertIcon />
@@ -51,7 +51,7 @@ function Post() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            padding: '5px 10px',
+            padding: '0 10px',
             gap: '2px',
         }}>
             <Typography 
