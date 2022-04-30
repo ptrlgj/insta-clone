@@ -1,19 +1,25 @@
-import React from 'react';
-import {Avatar, Box, TextField, Typography} from '@mui/material';
+import React, { useState } from 'react';
+import {Avatar, Box, TextField, Typography, Paper} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
-import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 
-function Post() {
+function Post({id, author, download_url, profile, comments, likes}) {
+    const [liked, setLiked] = useState(false);
+    const handleClick = (e) => {
+        if(e.detail === 2) {
+            setLiked(true)
+        }
+    }
   return (
-    <Box sx={{
-        width: '466px',
+    <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'lightcoral'
+        marginBottom: '10px'
     }}>
         <Box sx={{
             display: 'flex',
@@ -26,12 +32,12 @@ function Post() {
                 alignItems: 'center',
                 gap:'10px'
             }}>
-               <Avatar alt="Name"/>
-               <h4>name</h4>
+               <Avatar src={profile} alt="Name"/>
+                <Typography  variant='subtitle2'>{author}</Typography>
             </Box>
             <MoreVertIcon />
         </Box>
-        <img src="/images/post0.jpg" alt="" />
+        <img onClick={(e)=>handleClick(e)} src={download_url} alt="" />
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -41,9 +47,19 @@ function Post() {
                 display: 'flex',
                 gap: '5px',
             }}>
-                <FavoriteBorderIcon />
+                {liked ? 
+                    <FavoriteIcon 
+                        sx={{ 
+                            color: 'red'
+                        }} 
+                        onClick={()=>setLiked(!liked)}
+                    /> : 
+                    <FavoriteBorderIcon 
+                        onClick={()=>setLiked(!liked)}
+                    />
+                }
                 <ChatBubbleOutlineOutlinedIcon />
-                <SendOutlinedIcon />
+                <SendRoundedIcon />
             </Box>
             <BookmarkBorderOutlinedIcon />
         </Box>
@@ -60,7 +76,7 @@ function Post() {
                     fontWeight: 'bold'
                 }}
             >
-                666 likes
+                {`${likes} ${likes === 1 ? 'like' : 'likes'}`}
             </Typography>
             <Typography variant='subtitle2' sx={{ fontWeight: '400'}}component="p">
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold', marginRight: '3px'}} component="span">name</Typography>
@@ -76,7 +92,7 @@ function Post() {
                 alignItems: 'center',
                 gap: '10px'
             }}>
-                <Avatar alt='name'/>
+                <Avatar  src='/images/profile.png' alt='name' sx={{ width: '35px', height: '35px'}}/>
                 <TextField placeholder="Add comment..."variant="standard" />
             </Box>
             <Typography variant='caption' sx={{
@@ -85,7 +101,7 @@ function Post() {
                 10 hours ago
             </Typography>
         </Box>
-    </Box>
+    </Paper>
   )
 }
 

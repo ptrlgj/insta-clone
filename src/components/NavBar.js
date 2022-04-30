@@ -4,7 +4,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
 import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
-
+import {Link } from 'react-router-dom';
 function NavBar() {
   return (
     <Paper 
@@ -17,12 +17,12 @@ function NavBar() {
         }} 
         elevation={1}
     >
-        <BottomNavigation>
-          <BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} />
+        <BottomNavigation sx={{display: 'flex', alignItems: 'center'}}>
+          <Link to="/"><BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} /></Link>
           <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />
           <BottomNavigationAction label="TikReels" icon={<MusicVideoRoundedIcon />} />
           <BottomNavigationAction label="Store" icon={<ShoppingBagRoundedIcon />} />
-          <BottomNavigationAction label="Profile" icon={<Avatar />} />
+          <Link to="/user/123"><BottomNavigationAction label="Profile" icon={<Avatar />} /></Link>
         </BottomNavigation>
       </Paper>
   )
