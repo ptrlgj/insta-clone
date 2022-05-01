@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {useParams} from 'react-router-dom'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
@@ -9,9 +9,25 @@ import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
 import { Avatar, Box, Typography, Button, Tabs, Tab} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
+
+const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
+
 function User() {
-    const [userId, setUserId] = useState(useParams().id);
-    const [panel, setPanel] = useState('1')
+    // const [user, setUser] = useState(useParams().user);
+    const userId= useParams().user;
+    const [panel, setPanel] = useState('1');
+    const [loading, setLoading] = useState(true)
+    const [userData, setUserData] = useState()
+    useEffect(()=>{
+        // console.log(userId)
+        const fetchUsetData = async () =>{
+            const response = await fetch(`${url}/${userId}`);
+            const data = await response.json()
+            setUserData(data.fields);
+            setLoading(false)
+        }
+        fetchUsetData()
+    }, [userId])
   return (
     <Box sx={{ 
         display: 'flex',
@@ -28,9 +44,10 @@ function User() {
             <ArrowBackRoundedIcon />
             <Typography variant='h6' sx={{
                 flex: '1'
-            }}>Name</Typography>
+            }}>{userId}</Typography>
             <MoreVertRoundedIcon />
         </Box>
+        {!loading && <>
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
@@ -39,8 +56,8 @@ function User() {
             padding: '15px 20px',
         }}>
             <Avatar 
-                alt="elo" 
-                src='/images/profile.png'
+                alt={userData.name.stringValue}
+                src={userData.image.stringValue}
                 sx={{
                 width: '90px',
                 height: '90px',
@@ -51,7 +68,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>1223</Typography>
+                <Typography variant='h6'>{Object.keys(userData.posts.arrayValue).length}</Typography>
                 <Typography variant='body1'>Posts</Typography>
             </Box>
             <Box sx={{
@@ -60,7 +77,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>123123</Typography>
+                <Typography variant='h6'>{userData.followers.integerValue}</Typography>
                 <Typography variant='body1'>Followers</Typography>
             </Box>
             <Box sx={{
@@ -69,7 +86,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>123</Typography>
+                <Typography variant='h6'>{Object.keys(userData.followed.arrayValue).length}</Typography>
                 <Typography variant='body1'>Followed</Typography>
             </Box>
         </Box>
@@ -79,8 +96,8 @@ function User() {
             justifyContent: 'center',
             flexDirection: 'column'
         }}>
-            <Typography variant='subtitle1' sx={{fontWeight: '600'}}>full name</Typography> 
-            <Typography variant='body1' component='p'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit, repellat.</Typography>
+            <Typography variant='subtitle1' sx={{fontWeight: '600'}}>{userData.name.stringValue}</Typography> 
+            <Typography variant='body1' component='p'>{userData.bio.stringValue}</Typography>
         </Box>
         <Box sx={{
             display: 'flex',
@@ -108,6 +125,7 @@ function User() {
             <TabPanel value="2">Item Two</TabPanel>
             <TabPanel value="3">Item Three</TabPanel>
         </TabContext>
+        </>}
     </Box>
   )
 }

@@ -28,7 +28,7 @@ function App() {
             </>
             }
           />
-          <Route path='/user/:id' element={ <User />} />
+          <Route path='/:user' element={ <User />} />
         </Routes>
         <NavBar />
       </Box>
