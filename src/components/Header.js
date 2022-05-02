@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import { Link } from 'react-router-dom';
 
 function Header() {
     const StyledBox = styled(Box)(({theme}) => ({
@@ -43,7 +44,9 @@ function Header() {
                 display: 'flex',
                 gap: '20px'
             }}>
-                <AddBoxOutlinedIcon />
+                <Link to="/add">
+                    <AddBoxOutlinedIcon />
+                </Link>
                 <FavoriteBorderRoundedIcon />
                 <SendRoundedIcon />
             </Box>

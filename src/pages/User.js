@@ -13,15 +13,20 @@ import PhotoGrid from '../components/PhotoGrid';
 const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
 function User() {
-    // const [user, setUser] = useState(useParams().user);
     const userId= useParams().user;
     const [panel, setPanel] = useState('1');
-    const [loading, setLoading] = useState(true)
-    const [userData, setUserData] = useState()
+    const [loading, setLoading] = useState(true);
+    const [noUser, setNoUser] = useState(false);
+    const [userData, setUserData] = useState(null)
     useEffect(()=>{
         // console.log(userId)
         const fetchUsetData = async () =>{
             const response = await fetch(`${url}/${userId}`);
+            if(response.status === 404) {
+                setLoading(false)
+                setNoUser(true)
+                return
+            }
             const data = await response.json()
             setUserData(data.fields);
             setLoading(false)
@@ -47,7 +52,7 @@ function User() {
             }}>{userId}</Typography>
             <MoreVertRoundedIcon />
         </Box>
-        {!loading && <>
+        {!loading && !noUser && <>
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
@@ -111,7 +116,7 @@ function User() {
         <TabContext value={panel}>
             <TabList sx={{
                 display: 'flex',
-                padding: '5px 10px',
+                padding: '5px 0',
             }}
                 onChange={(e, newPanel)=> setPanel(newPanel)}
             >
@@ -126,6 +131,12 @@ function User() {
             <TabPanel value="3">Item Three</TabPanel>
         </TabContext>
         </>}
+        {noUser && 
+        <Box sx={{height: '100vh', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems:'center', gap: '40px'}}>
+            <Typography variant='h3'>(x . x)</Typography>
+            <Typography variant='h3'>404</Typography>
+            <Typography variant='h4'>No user with this name</Typography>
+        </Box>}
     </Box>
   )
 }
