@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Avatar, Box, TextField, Typography, Paper} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -7,14 +7,26 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
+import { getUser } from '../firebase';
+function Post({postId, userId, url, likes, comments}) {
 
-function Post({id, author, download_url, profile, comments, likes}) {
     const [liked, setLiked] = useState(false);
+    const [user, setUser] = useState(null);
+    // const [userName, setUserName] = useState('');
+
     const handleClick = (e) => {
         if(e.detail === 2) {
             setLiked(true)
         }
     }
+
+    useEffect( () => {
+        const fetchUser = async () => {
+            const user = await getUser(userId);
+            setUser(user[0])
+        }
+        fetchUser()
+    }, [])
   return (
     <Paper elevation={2} square sx={{
         display: 'flex',
@@ -32,12 +44,16 @@ function Post({id, author, download_url, profile, comments, likes}) {
                 alignItems: 'center',
                 gap:'10px'
             }}>
-               <Avatar src={profile} alt="Name"/>
-                <Typography  variant='subtitle2'>{author}</Typography>
+                {user &&
+                    <>
+                    <Avatar src={user.image} alt={user.userName}/>
+                    <Typography  variant='subtitle2'>{user.userName}</Typography>
+                    </>
+                }
             </Box>
             <MoreVertIcon />
         </Box>
-        <img onClick={(e)=>handleClick(e)} src={download_url} alt="" />
+        <img onClick={(e)=>handleClick(e)} src={url} alt="" />
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -82,11 +98,11 @@ function Post({id, author, download_url, profile, comments, likes}) {
                 <Typography variant="subtitle2" sx={{ fontWeight: 'bold', marginRight: '3px'}} component="span">name</Typography>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, quas.
             </Typography>
-            <Typography variant='body2' sx={{
+            {comments.length>0 && <Typography variant='body2' sx={{
                 color: 'rgba(0,0,0,0.7)'
             }}>
-                See {10} comments
-            </Typography>
+                See {comments.length} comments
+            </Typography>}
             <Box sx={{
                 display: 'flex',
                 alignItems: 'center',

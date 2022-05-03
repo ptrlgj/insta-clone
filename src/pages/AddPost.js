@@ -5,27 +5,37 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import styled from '@emotion/styled';
 import { Link, Route, Routes } from 'react-router-dom';
-import { storage } from '../firebase';
+import { storage, addPost } from '../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-
+import { v4 } from 'uuid';
 const Input = styled('input')({
     display: 'none',
+  });
+const Img = styled('img')({
+    maxWidth:'100%',
+    maxHeight:'100%',
   });
 
 function AddPost() {
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
+    const [imageId, setImageId] = useState(v4());
+
     const uploadImage = () => {
         if(!imageFile) return;
-        const imageRef = ref(storage, `images/zbychu`)
+        const imageRef = ref(storage, `images/${imageId}`)
         return uploadBytes(imageRef, imageFile)
     }
+
     const getImageUrl = async () => {
-        const imageListRef = ref(storage, `images/zbychu`);
+        const imageListRef = ref(storage, `images/${imageId}`);
         uploadImage()
           .then(()=>{
           getDownloadURL(imageListRef)
-            .then(url => setImageUrl(url))
+            .then(url => {
+                setImageUrl(url)
+                console.log(url)
+            })
         })
     }
     useEffect(()=>{
@@ -46,13 +56,20 @@ function AddPost() {
             <Link to='/'><CloseRoundedIcon sx={{ fontSize: '35px' }}/></Link>
             <Typography variant="h6" sx={{flex: '1'}}>New post</Typography>
             {imageUrl ? 
-                <CheckRoundedIcon sx={{color:'#1976d2', fontSize: '35px'}}/> 
+                <CheckRoundedIcon 
+                    onClick={() => addPost(imageId, 'pietr00', imageUrl)} 
+                    sx={{color:'#1976d2', fontSize: '35px', cursor: 'pointer'}}
+                /> 
                 : 
                 <CheckRoundedIcon sx={{ color:'gray', fontSize: '35px' }}/> 
             }
         </Box>
         <Box sx={{backgroundColor: 'white', textAlign: 'center'}}>
-            <Typography variant='h5' component='p'>{imageFile ? imageFile.name : 'Select image'}</Typography> 
+            {imageUrl ? 
+                <Img src={imageUrl} alt=''/> 
+                : 
+                <Typography variant='h5' component='p'>Select image</Typography> 
+            }
         </Box>
         <Box sx={{backgroundColor: 'white',
             display: 'flex',

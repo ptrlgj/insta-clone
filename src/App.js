@@ -3,15 +3,13 @@ import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import NavBar from './components/NavBar';
 import Post from './components/Post';
-import data from './data.json';
 import {Routes, Route} from 'react-router-dom';
 import User from './pages/User';
 import AddPost from './pages/AddPost';
-import { deleteUser, getUsers, storage } from './firebase';
+import { deleteUser, getUser, getUsers, storage } from './firebase';
 import { getDownloadURL, list, ref } from 'firebase/storage';
+import Posts from './pages/Posts';
 function App() {
-  const [posts, setPosts] = useState(data.pictures);
-
   return (
     <Container sx={{
       display: 'flex',
@@ -25,12 +23,7 @@ function App() {
         paddingBottom: '46px',
       }}>
         <Routes>
-          <Route path="/" element={
-            <> 
-              <Header />
-              {posts.map(post=><Post key={post.id} {...post}/>)}
-            </>
-            }
+          <Route path="/" element={<Posts /> }
           />
           <Route path='/:user' element={ <User />} />
           <Route path='/add' element={ <AddPost />} />

@@ -10,7 +10,7 @@ import { Avatar, Box, Typography, Button, Tabs, Tab} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
 
-const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
+export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
 function User() {
     const userId= useParams().user;
@@ -19,8 +19,8 @@ function User() {
     const [noUser, setNoUser] = useState(false);
     const [userData, setUserData] = useState(null)
     useEffect(()=>{
-        // console.log(userId)
-        const fetchUsetData = async () =>{
+        //wyciagnac funckcje i z post.js
+        const fetchUserData = async () =>{
             const response = await fetch(`${url}/${userId}`);
             if(response.status === 404) {
                 setLoading(false)
@@ -31,7 +31,7 @@ function User() {
             setUserData(data.fields);
             setLoading(false)
         }
-        fetchUsetData()
+        fetchUserData()
     }, [userId])
   return (
     <Box sx={{ 
@@ -61,7 +61,7 @@ function User() {
             padding: '15px 20px',
         }}>
             <Avatar 
-                alt={userData.name.stringValue}
+                alt={userData.fullName.stringValue}
                 src={userData.image.stringValue}
                 sx={{
                 width: '90px',
@@ -101,7 +101,7 @@ function User() {
             justifyContent: 'center',
             flexDirection: 'column'
         }}>
-            <Typography variant='subtitle1' sx={{fontWeight: '600'}}>{userData.name.stringValue}</Typography> 
+            <Typography variant='subtitle1' sx={{fontWeight: '600'}}>{userData.fullName.stringValue}</Typography> 
             <Typography variant='body1' component='p'>{userData.bio.stringValue}</Typography>
         </Box>
         <Box sx={{
