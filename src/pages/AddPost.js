@@ -2,26 +2,29 @@ import React, { useEffect, useState } from 'react'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import styled from '@emotion/styled';
 import { Link, Route, Routes } from 'react-router-dom';
-import { storage, addPost } from '../firebase';
+import { storage, addPost, getUser, updateDocument } from '../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from 'uuid';
+
 const Input = styled('input')({
     display: 'none',
   });
+
 const Img = styled('img')({
     maxWidth:'100%',
     maxHeight:'100%',
   });
-//  przypomnij sobie czym mialo byc 'poprawic stukture'
-//  stworzyc formularz, z dodawaniem opisu i poprawnym id zdjecia
-//  oraz dodaje go do bazy 
+
+//  stworzyc formularz, z dodawaniem opisu
+
 function AddPost() {
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
+    const [user, setUser] = useState(null);
 
     const uploadImage = () => {
         if(!imageFile) return;
@@ -40,13 +43,30 @@ function AddPost() {
             })
         })
     }
+
+    const fetchUser = async () => {
+        const user = await getUser('piopiopio');
+        // console.log(user)
+        setUser(user[0])
+    }
+
+    const handleClick = async () => {
+        const newPost = await addPost(imageId, user.id, imageUrl);
+        updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
+    }
+    
+    useEffect( () => {
+        fetchUser()
+    }, [] );
+
     useEffect(()=>{
         if(imageFile) {
             getImageUrl()
         }
-    },[imageFile])
+    },[imageFile]);
+
   return (
-    <>
+    <Paper sx={{paddingBottom: '20px'}}>
         <Box sx={{
             backgroundColor: 'white',
             display: 'flex',
@@ -55,18 +75,18 @@ function AddPost() {
             padding:"5px 15px",
             gap: '10px'
         }}>
-            <Link to='/'><CloseRoundedIcon sx={{ fontSize: '35px' }}/></Link>
+            <Link to='/'><CloseRoundedIcon sx={{  }}/></Link>
             <Typography variant="h6" sx={{flex: '1'}}>New post</Typography>
             {imageUrl ? 
                 <CheckRoundedIcon 
-                    onClick={() => addPost(imageId, 'pietr00', imageUrl)} 
-                    sx={{color:'#1976d2', fontSize: '35px', cursor: 'pointer'}}
+                    onClick={handleClick} 
+                    sx={{color:'#1976d2', cursor: 'pointer'}}
                 /> 
                 : 
-                <CheckRoundedIcon sx={{ color:'gray', fontSize: '35px' }}/> 
+                <CheckRoundedIcon sx={{ color:'gray'  }}/> 
             }
         </Box>
-        <Box sx={{backgroundColor: 'white', textAlign: 'center'}}>
+        <Box sx={{backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: "466px"}}>
             {imageUrl ? 
                 <Img src={imageUrl} alt=''/> 
                 : 
@@ -102,7 +122,7 @@ function AddPost() {
             multiline
             /> */}
         </Box>
-    </>
+    </Paper>
   )
 }
 

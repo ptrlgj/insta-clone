@@ -9,30 +9,31 @@ import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
 import { Avatar, Box, Typography, Button, Tabs, Tab} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
+import { getUser } from '../firebase';
 
-export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
+// export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
 function User() {
-    const userId= useParams().user;
+    const userName= useParams().user;
     const [panel, setPanel] = useState('1');
     const [loading, setLoading] = useState(true);
     const [noUser, setNoUser] = useState(false);
-    const [userData, setUserData] = useState(null)
+    const [userData, setUserData] = useState(null);
     useEffect(()=>{
-        //wyciagnac funckcje i z post.js
         const fetchUserData = async () =>{
-            const response = await fetch(`${url}/${userId}`);
-            if(response.status === 404) {
+            const response = await getUser(userName)
+            if(response.length > 0){
+                setUserData(response[0]);
+                // console.log(response[0])
+                setLoading(false)
+            }else{
                 setLoading(false)
                 setNoUser(true)
                 return
             }
-            const data = await response.json()
-            setUserData(data.fields);
-            setLoading(false)
         }
         fetchUserData()
-    }, [userId])
+    }, [userName])
   return (
     <Box sx={{ 
         display: 'flex',
@@ -49,7 +50,7 @@ function User() {
             <ArrowBackRoundedIcon />
             <Typography variant='h6' sx={{
                 flex: '1'
-            }}>{userId}</Typography>
+            }}>{userName}</Typography>
             <MoreVertRoundedIcon />
         </Box>
         {!loading && !noUser && <>
@@ -61,8 +62,8 @@ function User() {
             padding: '15px 20px',
         }}>
             <Avatar 
-                alt={userData.fullName.stringValue}
-                src={userData.image.stringValue}
+                alt={userData.fullName}
+                src={userData.image}
                 sx={{
                 width: '90px',
                 height: '90px',
@@ -73,7 +74,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>{Object.keys(userData.posts.arrayValue).length}</Typography>
+                <Typography variant='h6'>{userData.posts.length}</Typography>
                 <Typography variant='body1'>Posts</Typography>
             </Box>
             <Box sx={{
@@ -82,7 +83,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>{userData.followers.integerValue}</Typography>
+                <Typography variant='h6'>{userData.followers}</Typography>
                 <Typography variant='body1'>Followers</Typography>
             </Box>
             <Box sx={{
@@ -91,7 +92,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>{Object.keys(userData.followed.arrayValue).length}</Typography>
+                <Typography variant='h6'>{userData.followed.length}</Typography>
                 <Typography variant='body1'>Followed</Typography>
             </Box>
         </Box>
@@ -101,8 +102,8 @@ function User() {
             justifyContent: 'center',
             flexDirection: 'column'
         }}>
-            <Typography variant='subtitle1' sx={{fontWeight: '600'}}>{userData.fullName.stringValue}</Typography> 
-            <Typography variant='body1' component='p'>{userData.bio.stringValue}</Typography>
+            <Typography variant='subtitle1' sx={{fontWeight: '600'}}>{userData.fullName}</Typography> 
+            <Typography variant='body1' component='p'>{userData.bio}</Typography>
         </Box>
         <Box sx={{
             display: 'flex',

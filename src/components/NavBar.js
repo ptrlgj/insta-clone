@@ -22,7 +22,7 @@ function NavBar() {
           <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />
           <BottomNavigationAction label="TikReels" icon={<MusicVideoRoundedIcon />} />
           <BottomNavigationAction label="Store" icon={<ShoppingBagRoundedIcon />} />
-          <Link to="/pietr00"><BottomNavigationAction label="Profile" icon={<Avatar />} /></Link>
+          <Link to="/piopiopio"><BottomNavigationAction label="Profile" icon={<Avatar />} /></Link>
         </Box>
       </Paper>
   )
