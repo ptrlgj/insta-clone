@@ -16,6 +16,7 @@ const Input = styled('input')({
 const Img = styled('img')({
     maxWidth:'100%',
     maxHeight:'100%',
+ 
   });
 
 //  stworzyc formularz, z dodawaniem opisu
@@ -25,7 +26,7 @@ function AddPost() {
     const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
     const [user, setUser] = useState(null);
-
+    const [desc, setDesc] = useState('')
     const uploadImage = () => {
         if(!imageFile) return;
         const imageRef = ref(storage, `images/${imageId}`)
@@ -51,7 +52,7 @@ function AddPost() {
     }
 
     const handleClick = async () => {
-        const newPost = await addPost(imageId, user.id, imageUrl);
+        const newPost = await addPost(imageId, user.id, imageUrl, desc);
         updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
     }
     
@@ -66,7 +67,7 @@ function AddPost() {
     },[imageFile]);
 
   return (
-    <Paper sx={{paddingBottom: '20px'}}>
+    <Paper sx={{paddingBottom: '20px', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
         <Box sx={{
             backgroundColor: 'white',
             display: 'flex',
@@ -86,7 +87,16 @@ function AddPost() {
                 <CheckRoundedIcon sx={{ color:'gray'  }}/> 
             }
         </Box>
-        <Box sx={{backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: "466px"}}>
+        <Box 
+            sx={{
+                backgroundColor: 'white', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                flex: '1',
+                objectFit: 'cover'
+            }}
+        >
             {imageUrl ? 
                 <Img src={imageUrl} alt=''/> 
                 : 
@@ -111,16 +121,22 @@ function AddPost() {
                 </Button>
             </label>
         </Box>
-        <Box sx={{backgroundColor: 'white',
+        <Box sx={{
+            backgroundColor: 'white',
             display: 'flex',
             justifyContent: 'center',
-            alignItems: 'center',}}>
-            {/* <TextField
-            id="outlined-textarea"
-            label="Multiline Placeholder"
-            placeholder="Placeholder"
-            multiline
-            /> */}
+            alignItems: 'center',
+            flex: '1'
+            }}
+        >
+            <TextField
+                id="outlined-textarea"
+                label="Description"
+                placeholder=""
+                multiline
+                value={desc}
+                onChange={ (e) => setDesc( e.target.value ) }
+            />
         </Box>
     </Paper>
   )
