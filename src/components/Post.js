@@ -8,8 +8,8 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import { getUser } from '../firebase';
-function Post({postId, userId, url, likes, comments}) {
-
+function Post({postId, userName, url, likes, comments, desc}) {
+//zamienic userId i name w fetchu
     const [liked, setLiked] = useState(false);
     const [user, setUser] = useState(null);
     // const [userName, setUserName] = useState('');
@@ -22,7 +22,8 @@ function Post({postId, userId, url, likes, comments}) {
 
     useEffect( () => {
         const fetchUser = async () => {
-            const user = await getUser(userId);
+            const user = await getUser(userName);
+            console.log(user)
             setUser(user[0])
         }
         fetchUser()
@@ -94,10 +95,17 @@ function Post({postId, userId, url, likes, comments}) {
             >
                 {`${likes} ${likes === 1 ? 'like' : 'likes'}`}
             </Typography>
-            <Typography variant='subtitle2' sx={{ fontWeight: '400'}}component="p">
-                <Typography variant="subtitle2" sx={{ fontWeight: 'bold', marginRight: '3px'}} component="span">name</Typography>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, quas.
-            </Typography>
+            {user && 
+                <Typography variant='subtitle2' sx={{ fontWeight: '400'}}component="p">
+                    <Typography 
+                        variant="subtitle2" 
+                        sx={{ fontWeight: 'bold', marginRight: '3px'}} 
+                        component="span"
+                    >
+                        {user.userName}
+                    </Typography>
+                {desc}
+            </Typography>}
             {comments.length>0 && <Typography variant='body2' sx={{
                 color: 'rgba(0,0,0,0.7)'
             }}>

@@ -15,7 +15,9 @@ const Img = styled('img')({
     maxWidth:'100%',
     maxHeight:'100%',
   });
-
+//  przypomnij sobie czym mialo byc 'poprawic stukture'
+//  stworzyc formularz, z dodawaniem opisu i poprawnym id zdjecia
+//  oraz dodaje go do bazy 
 function AddPost() {
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
