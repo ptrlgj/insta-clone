@@ -22,6 +22,7 @@ const Img = styled('img')({
 //  stworzyc formularz, z dodawaniem opisu
 
 function AddPost() {
+
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
@@ -53,6 +54,7 @@ function AddPost() {
 
     const handleClick = async () => {
         const newPost = await addPost(imageId, user.id, imageUrl, desc);
+        console.log(user.id)
         updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
     }
     

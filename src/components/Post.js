@@ -7,10 +7,9 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
-import { getSingleDoc, getUser } from '../firebase';
-function Post({postId, userId, url, likes, comments, desc}) {
-//zamienic userId i name w fetchu
-    const [liked, setLiked] = useState(false);
+import { getSingleDoc, updateDocument } from '../firebase';
+function Post({id, userId, url, likedBy, comments, desc}) {
+    const [liked, setLiked] = useState(null);
     const [user, setUser] = useState(null);
 
     const handleClick = (e) => {
@@ -19,11 +18,36 @@ function Post({postId, userId, url, likes, comments, desc}) {
         }
     }
 
+    const handleLike = () => {
+        console.log('halo')
+        if( likedBy.includes('MTfXXUFnty5Y6l3AaWJY') ) {
+            updateDocument('posts', id, {
+                likedBy: [...likedBy.filter(userLike => userLike !== 'MTfXXUFnty5Y6l3AaWJY')]
+            })
+            updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
+                likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== id)]
+            })
+            setLiked(false)
+        }  else {
+            updateDocument('posts', id, {
+                likedBy: [...likedBy, 'MTfXXUFnty5Y6l3AaWJY']
+            })
+            updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
+                likedPosts: [...user.likedPosts, id]
+            })
+            setLiked(true)
+        }
+    }
+
+    useEffect( () => {
+        // console.log('now')
+    }, [liked])
+
     useEffect( () => {
         const fetchUser = async () => {
-            const user = await getSingleDoc('users', userId);
-            // console.log(user.exists())
-            setUser(user.data())
+            const userFetch = await getSingleDoc('users', userId);
+            setUser(userFetch.data())
+            setLiked( userFetch.data().likedPosts.includes(id) )
         }
         fetchUser()
     }, [])
@@ -31,7 +55,6 @@ function Post({postId, userId, url, likes, comments, desc}) {
     <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
-        // marginBottom: '10px'
     }}>
         {user && <>
         <Box sx={{
@@ -60,15 +83,16 @@ function Post({postId, userId, url, likes, comments, desc}) {
                 display: 'flex',
                 gap: '5px',
             }}>
-                {liked ? 
+                 {/* (user && user.likedPosts.includes(id) ) */}
+                { liked ? 
                     <FavoriteIcon 
                         sx={{ 
                             color: 'red'
                         }} 
-                        onClick={()=>setLiked(!liked)}
+                        onClick={ () => handleLike() }
                     /> : 
                     <FavoriteBorderIcon 
-                        onClick={()=>setLiked(!liked)}
+                        onClick={ () => handleLike() }
                     />
                 }
                 <ChatBubbleOutlineOutlinedIcon />
@@ -89,7 +113,7 @@ function Post({postId, userId, url, likes, comments, desc}) {
                     fontWeight: 'bold'
                 }}
             >
-                {`${likes} ${likes === 1 ? 'like' : 'likes'}`}
+                {`${likedBy.length} ${likedBy.length === 1 ? 'like' : 'likes'}`}
             </Typography>
             <Typography variant='subtitle2' sx={{ fontWeight: '400'}}component="p">
                 <Typography 

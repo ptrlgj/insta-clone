@@ -10,7 +10,7 @@ function Posts() {
     useEffect( ()=> {
         const getPosts = async () => {
             const posts = await getSortedData(postsColRef, 'createdAt', 'desc');
-            console.log(posts)
+            // console.log(posts)
             setPosts(posts)
         }
         getPosts()

@@ -14,17 +14,18 @@ import { getUser } from '../firebase';
 // export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
 function User() {
+
     const userName= useParams().user;
     const [panel, setPanel] = useState('1');
     const [loading, setLoading] = useState(true);
     const [noUser, setNoUser] = useState(false);
     const [userData, setUserData] = useState(null);
+
     useEffect(()=>{
         const fetchUserData = async () =>{
             const response = await getUser(userName)
             if(response.length > 0){
                 setUserData(response[0]);
-                // console.log(response[0])
                 setLoading(false)
             }else{
                 setLoading(false)
@@ -38,7 +39,9 @@ function User() {
     <Box sx={{ 
         display: 'flex',
         flexDirection: 'column',
-        background: 'white'
+        background: 'white',
+        paddingBottom: '20px'
+
         }}>
         <Box sx={{
             display: 'flex',
@@ -126,7 +129,7 @@ function User() {
                 <Tab sx={{flex: '1'}}label={<AccountBoxRoundedIcon />} value='3'/>
             </TabList>
             <TabPanel value="1" sx={{padding: '0', display: 'flex', justifyContent:'center'}}>
-                <PhotoGrid />
+                {userData && <PhotoGrid user={userData}/>}
             </TabPanel>
             <TabPanel value="2">Item Two</TabPanel>
             <TabPanel value="3">Item Three</TabPanel>
