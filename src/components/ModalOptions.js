@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Modal, Typography } from '@mui/material' 
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
+import { deleteSingleDoc, updateDocument } from '../firebase';
 
 const modalStyle = {
     width: '100%',
@@ -36,8 +37,11 @@ function ModalOptions() {
     const handleClose = () => {
       dispatch(closeModal())
     }
-    const handleDelete = (e) => {
-      console.log(postId)
+    const handleDelete = async (e) => {
+      const deleted = await deleteSingleDoc('posts', postId);
+      //global state user 
+      // const updated = await updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {})
+      dispatch(closeModal())
     }
   return (
     <Modal
