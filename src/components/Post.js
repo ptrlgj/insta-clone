@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Avatar, Box, TextField, Typography, Paper} from '@mui/material';
+import {Avatar, Box, TextField, Typography, Paper, Modal} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -8,11 +8,14 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import { getSingleDoc, updateDocument } from '../firebase';
+import { openModal } from '../store/modalSlice'
+import { useDispatch } from 'react-redux';
 function Post({id, userId, url, likedBy, comments, desc}) {
     const [liked, setLiked] = useState(null);
     const [user, setUser] = useState(null);
+    const dispatch = useDispatch()
 
-    const handleClick = (e) => {
+    const handleDoubleClick = (e) => {
         if(e.detail === 2) {
             setLiked(true)
         }
@@ -39,6 +42,9 @@ function Post({id, userId, url, likedBy, comments, desc}) {
         }
     }
 
+    const handleOpenModal = () => {
+        dispatch(openModal(id))
+    }
     useEffect( () => {
         // console.log('now')
     }, [liked])
@@ -51,6 +57,7 @@ function Post({id, userId, url, likedBy, comments, desc}) {
         }
         fetchUser()
     }, [])
+
   return (
     <Paper elevation={2} square sx={{
         display: 'flex',
@@ -71,9 +78,14 @@ function Post({id, userId, url, likedBy, comments, desc}) {
                 <Avatar src={user.image} alt={user.userName}/>
                 <Typography  variant='subtitle2'>{user.userName}</Typography>
             </Box>
-            <MoreVertIcon />
+            <MoreVertIcon 
+                sx={{
+                    cursor: 'pointer'
+                }}
+                onClick={ handleOpenModal }
+            />
         </Box>
-        <img onClick={(e)=>handleClick(e)} src={url} alt="" />
+        <img onClick={(e)=>handleDoubleClick(e)} src={url} alt="" />
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',

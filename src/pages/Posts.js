@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import Header from '../components/Header';
+import ModalOptions from '../components/ModalOptions';
 import Post from '../components/Post';
 import data from '../data.json';
 import { postsColRef, getData, getSortedData } from '../firebase'
@@ -17,6 +18,7 @@ function Posts() {
     }, [] )
   return (
     <Box sx={{paddingBottom: '20px'}}> 
+        <ModalOptions />
         <Header />
         {posts && posts.map(post=><Post key={post.id} {...post}/>)}
     </Box>
