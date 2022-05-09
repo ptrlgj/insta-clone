@@ -33,14 +33,14 @@ const textStyle = {
 function ModalOptions() {
     const dispatch = useDispatch()
     const { isOpen, postId } = useSelector( state => state.modal)
-
+    const user = useSelector( state => state.user)
     const handleClose = () => {
       dispatch(closeModal())
     }
     const handleDelete = async (e) => {
       const deleted = await deleteSingleDoc('posts', postId);
       //global state user 
-      // const updated = await updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {})
+      const updated = await updateDocument('users', user.id, { posts: [ ...user.posts.filter( post => post != postId)]})
       dispatch(closeModal())
     }
   return (
