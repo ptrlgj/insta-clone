@@ -9,7 +9,15 @@ import AddPost from './pages/AddPost';
 import { deleteUser, getUser, getUsers, storage } from './firebase';
 import { getDownloadURL, list, ref } from 'firebase/storage';
 import Posts from './pages/Posts';
+import { useDispatch, useSelector } from 'react-redux';
+import { getActiveUser } from './store/userSlice';
 function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector(state => state.user);
+  //later login formm
+  useEffect( () => {
+    dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
+  }, [] )
   return (
     <Container sx={{
       display: 'flex',

@@ -15,8 +15,8 @@ function PhotoGrid({user}) {
   const fetchPosts = () => {
     return user.posts.map( async (post) => {
       const response = await getSingleDoc('posts', post );
-      const data = response.data()
-      return data
+      // const data = response.data()
+      return response
     })
   }
   

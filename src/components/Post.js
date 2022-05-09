@@ -11,6 +11,7 @@ import { getSingleDoc, updateDocument } from '../firebase';
 import { openModal } from '../store/modalSlice'
 import { useDispatch } from 'react-redux';
 function Post({id, userId, url, likedBy, comments, desc}) {
+
     const [liked, setLiked] = useState(null);
     const [user, setUser] = useState(null);
     const dispatch = useDispatch()
@@ -52,8 +53,8 @@ function Post({id, userId, url, likedBy, comments, desc}) {
     useEffect( () => {
         const fetchUser = async () => {
             const userFetch = await getSingleDoc('users', userId);
-            setUser(userFetch.data())
-            setLiked( userFetch.data().likedPosts.includes(id) )
+            setUser(userFetch)
+            setLiked( userFetch.likedPosts.includes(id) )
         }
         fetchUser()
     }, [])

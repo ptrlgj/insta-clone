@@ -4,10 +4,11 @@ import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import styled from '@emotion/styled';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { storage, addPost, getUser, updateDocument } from '../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from 'uuid';
+import { useSelector } from 'react-redux';
 
 const Input = styled('input')({
     display: 'none',
@@ -19,15 +20,18 @@ const Img = styled('img')({
  
   });
 
-//  stworzyc formularz, z dodawaniem opisu
 
 function AddPost() {
 
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
-    const [user, setUser] = useState(null);
+    // const [user, setUser] = useState(null);
     const [desc, setDesc] = useState('')
+
+    const user = useSelector(state => state.user)
+    const navigate = useNavigate()
+
     const uploadImage = () => {
         if(!imageFile) return;
         const imageRef = ref(storage, `images/${imageId}`)
@@ -46,21 +50,22 @@ function AddPost() {
         })
     }
 
-    const fetchUser = async () => {
-        const user = await getUser('piopiopio');
-        // console.log(user)
-        setUser(user[0])
-    }
+    // const fetchUser = async () => {
+    //     const user = await getUser('piopiopio');
+    //     // console.log(user)
+    //     setUser(user[0])
+    // }
 
     const handleClick = async () => {
         const newPost = await addPost(imageId, user.id, imageUrl, desc);
-        console.log(user.id)
-        updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
+        // console.log(user.id)
+        await updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
+        navigate('/')
     }
     
-    useEffect( () => {
-        fetchUser()
-    }, [] );
+    // useEffect( () => {
+    //     fetchUser()
+    // }, [] );
 
     useEffect(()=>{
         if(imageFile) {
