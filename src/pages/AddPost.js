@@ -8,7 +8,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { storage, addPost, getUser, updateDocument } from '../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from 'uuid';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getActiveUser } from '../store/userSlice';
 
 const Input = styled('input')({
     display: 'none',
@@ -28,9 +29,9 @@ function AddPost() {
     const [imageId, setImageId] = useState(v4());
     // const [user, setUser] = useState(null);
     const [desc, setDesc] = useState('')
-
     const user = useSelector(state => state.user)
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const uploadImage = () => {
         if(!imageFile) return;
@@ -60,6 +61,7 @@ function AddPost() {
         const newPost = await addPost(imageId, user.id, imageUrl, desc);
         // console.log(user.id)
         await updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
+        dispatch(getActiveUser(user.id))
         navigate('/')
     }
     

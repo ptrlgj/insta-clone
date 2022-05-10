@@ -7,64 +7,84 @@ import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutline
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
-import { getSingleDoc, updateDocument } from '../firebase';
+import { getSingleDoc, updateDocument, db } from '../firebase';
 import { openModal } from '../store/modalSlice'
-import { useDispatch } from 'react-redux';
-function Post({id, userId, url, likedBy, comments, desc}) {
+import { useDispatch, useSelector } from 'react-redux';
+import { onSnapshot, doc } from 'firebase/firestore';
+import { getActiveUser } from '../store/userSlice';
+function Post({data}) {
 
     const [liked, setLiked] = useState(null);
-    const [user, setUser] = useState(null);
+    const [author, setAuthor] = useState(null);
+    const user = useSelector( state => state.user);
+    const [post, setPost] = useState(data)
     const dispatch = useDispatch()
-
+    
     const handleDoubleClick = (e) => {
         if(e.detail === 2) {
-            setLiked(true)
+            if( !post.likedBy.includes('MTfXXUFnty5Y6l3AaWJY') ){
+                updateDocument('posts', post.id, {
+                    likedBy: [...post.likedBy, 'MTfXXUFnty5Y6l3AaWJY']
+                })
+                updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
+                    likedPosts: [...user.likedPosts, post.id]
+                })
+                dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
+                setLiked(true)
+            }
         }
     }
 
     const handleLike = () => {
-        console.log('halo')
-        if( likedBy.includes('MTfXXUFnty5Y6l3AaWJY') ) {
-            updateDocument('posts', id, {
-                likedBy: [...likedBy.filter(userLike => userLike !== 'MTfXXUFnty5Y6l3AaWJY')]
+        if( post.likedBy.includes('MTfXXUFnty5Y6l3AaWJY') ) {
+            updateDocument('posts', post.id, {
+                likedBy: [...post.likedBy.filter(userLike => userLike !== 'MTfXXUFnty5Y6l3AaWJY')]
             })
             updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
-                likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== id)]
+                likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== post.id)]
             })
+            dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
             setLiked(false)
-        }  else {
-            updateDocument('posts', id, {
-                likedBy: [...likedBy, 'MTfXXUFnty5Y6l3AaWJY']
+        } else {
+            updateDocument('posts', post.id, {
+                likedBy: [...post.likedBy, 'MTfXXUFnty5Y6l3AaWJY']
             })
             updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
-                likedPosts: [...user.likedPosts, id]
+                likedPosts: [...user.likedPosts, post.id]
             })
+            dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
             setLiked(true)
         }
     }
 
     const handleOpenModal = () => {
-        dispatch(openModal(id))
+        dispatch(openModal(post.id))
     }
-    useEffect( () => {
-        // console.log('now')
-    }, [liked])
 
     useEffect( () => {
-        const fetchUser = async () => {
-            const userFetch = await getSingleDoc('users', userId);
-            setUser(userFetch)
-            setLiked( userFetch.likedPosts.includes(id) )
+        const fetchAuthor = async () => {
+            const userFetch = await getSingleDoc('users', post.userId);
+            setAuthor(userFetch)
         }
-        fetchUser()
+        fetchAuthor()
+        
+        const postSnapshot = onSnapshot( doc(db, 'posts', post.id), snapshot => {
+            if(!snapshot.data()) return
+            setPost(currState => ({...currState, likedBy: snapshot.data().likedBy}) )
+        }) 
+        
+        return () => postSnapshot()
     }, [])
-
+    
+    useEffect( () => {
+        setLiked( user.likedPosts.includes(post.id) )
+    } ,[ user ])
   return (
     <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
     }}>
-        {user && <>
+        {author && <>
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -76,8 +96,8 @@ function Post({id, userId, url, likedBy, comments, desc}) {
                 alignItems: 'center',
                 gap:'10px'
             }}>
-                <Avatar src={user.image} alt={user.userName}/>
-                <Typography  variant='subtitle2'>{user.userName}</Typography>
+                <Avatar src={author.image} alt={author.userName}/>
+                <Typography  variant='subtitle2'>{author.userName}</Typography>
             </Box>
             <MoreVertIcon 
                 sx={{
@@ -86,7 +106,7 @@ function Post({id, userId, url, likedBy, comments, desc}) {
                 onClick={ handleOpenModal }
             />
         </Box>
-        <img onClick={(e)=>handleDoubleClick(e)} src={url} alt="" />
+        <img onClick={(e)=>handleDoubleClick(e)} src={post.url} alt="" />
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -126,7 +146,7 @@ function Post({id, userId, url, likedBy, comments, desc}) {
                     fontWeight: 'bold'
                 }}
             >
-                {`${likedBy.length} ${likedBy.length === 1 ? 'like' : 'likes'}`}
+                {`${post.likedBy.length} ${post.likedBy.length === 1 ? 'like' : 'likes'}`}
             </Typography>
             <Typography variant='subtitle2' sx={{ fontWeight: '400'}}component="p">
                 <Typography 
@@ -134,21 +154,21 @@ function Post({id, userId, url, likedBy, comments, desc}) {
                     sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                     component="span"
                 >
-                    {user.userName}
+                    {author.userName}
                 </Typography>
-                {desc}
+                {post.desc}
             </Typography>
-            {comments.length>0 && <Typography variant='body2' sx={{
+            {post.comments.length>0 && <Typography variant='body2' sx={{
                 color: 'rgba(0,0,0,0.7)'
             }}>
-                See {comments.length} comments
+                See {post.comments.length} comments
             </Typography>}
             <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px'
             }}>
-                <Avatar  src='/images/profile.png' alt='name' sx={{ width: '35px', height: '35px'}}/>
+                <Avatar  src={user.image} alt={user.userName} sx={{ width: '35px', height: '35px'}}/>
                 <TextField placeholder="Add comment..." variant="standard" />
             </Box>
             <Typography variant='caption' sx={{

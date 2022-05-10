@@ -6,14 +6,24 @@ import Post from './components/Post';
 import {Routes, Route} from 'react-router-dom';
 import User from './pages/User';
 import AddPost from './pages/AddPost';
-import { deleteUser, getUser, getUsers, storage } from './firebase';
+import { deleteUser, getUser, getUsers, storage, subscribeTo, db } from './firebase';
 import { getDownloadURL, list, ref } from 'firebase/storage';
 import Posts from './pages/Posts';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActiveUser } from './store/userSlice';
+import { setNewPosts } from './store/postsSlice';
+import { collection, onSnapshot } from 'firebase/firestore';
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
+  // subscribeTo('posts');
+
+  // const subscription = onSnapshot( collection(db, 'posts'), ( snapshot ) => {
+  //   console.log(snapshot)
+  //   const data = snapshot.docs.map(doc => doc.data())
+  //   dispatch(setNewPosts(true))
+  // })
+
   //later login formm
   useEffect( () => {
     dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
