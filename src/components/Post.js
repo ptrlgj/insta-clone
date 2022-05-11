@@ -18,7 +18,7 @@ function Post({data}) {
     const [author, setAuthor] = useState(null);
     const user = useSelector( state => state.user);
     const [post, setPost] = useState(data)
-    const [passedTime, setPassedTime] = useState('')
+    const [passedTime, setPassedTime] = useState('3')
     const dispatch = useDispatch()
     
     const timePassed = () => {
@@ -30,14 +30,13 @@ function Post({data}) {
         const days = (Math.floor(getPassed / (1000*60*60*24)))
         const hours = (Math.floor(getPassed / (1000*60*60)))
         const minutes = (Math.floor(getPassed / (1000*60)))
-        const seconds = (Math.floor(getPassed / (1000*60)))
         if(years) return (`${years === 1 ? `${years} year ago` : `${years} years ago`}`)
         else if(months) return (`${months === 1 ? `${months} month ago` : `${months} months ago`}`)
         else if(weeks) return (`${ weeks === 1 ? `${weeks} week ago` : `${weeks} weeks ago`}`)
         else if(days) return (`${ days === 1 ? `${days} day ago` : `${days} days ago`}`)
         else if(hours) return (`${ hours === 1 ? `${hours} hour ago` : `${hours} hours ago`}`)
         else if(minutes) return (`${ minutes === 1 ? `${minutes} minute ago` : `${minutes} minutes ago`}`)
-        else if(seconds) return (`${ seconds === 1 ? `${seconds} second ago` : `${seconds} seconds ago`}`)
+        else return 'a few seconds ago'
     }
 
     const handleDoubleClick = (e) => {
@@ -100,6 +99,7 @@ function Post({data}) {
     useEffect( () => {
         setLiked( user.likedPosts.includes(post.id) )
     } ,[ user ])
+    if(!post) return (<></>)
   return (
     <Paper elevation={2} square sx={{
         display: 'flex',

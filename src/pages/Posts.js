@@ -6,20 +6,29 @@ import Header from '../components/Header';
 import ModalOptions from '../components/ModalOptions';
 import Post from '../components/Post';
 import data from '../data.json';
-import { postsColRef, getData, getSortedData } from '../firebase'
+import { postsColRef, getData, getSortedData, db } from '../firebase'
 import { setPosts, setNewPosts } from '../store/postsSlice';
+import { collection, onSnapshot } from 'firebase/firestore';
 function Posts() {
     // const [posts, setPosts] = useState(null);
     const { posts, newPosts } = useSelector( state => state.posts )
     const dispatch = useDispatch();
 
     useEffect( ()=> {
-        const getPosts = async () => {
-            const posts = await getSortedData(postsColRef, 'createdAt', 'desc');
-            // console.log(posts)
-            dispatch(setPosts(posts))
-        }
-        getPosts()
+        // const getPosts = async () => {
+        //     const posts = await getSortedData(postsColRef, 'createdAt', 'desc');
+        //     // console.log(posts)
+        //     dispatch(setPosts(posts))
+        // }
+        // getPosts()
+
+        const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
+          console.log(snapshot.docs)
+          if(!snapshot.docs) return
+          dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
+        }) 
+      
+      return () => postsSnapshot()
     }, [] )
 
     const handleShowNew = () => {
