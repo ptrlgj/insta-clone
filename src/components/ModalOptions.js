@@ -41,7 +41,10 @@ function ModalOptions() {
     const handleDelete = async (e) => {
       const deleted = await deleteSingleDoc('posts', postId);
       //global state user 
-      const updated = await updateDocument('users', user.id, { posts: [ ...user.posts.filter( post => post != postId)]})
+      const updated = await updateDocument('users', user.id, {
+         posts: [ ...user.posts.filter( post => post != postId)], 
+        //  likedPosts: [ ...user.likedPosts.filter( post => post != postId)]
+        })
       dispatch(getActiveUser(user.id))
       dispatch(closeModal())
     }
