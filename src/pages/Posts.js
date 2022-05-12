@@ -23,7 +23,7 @@ function Posts() {
         // getPosts()
 
         const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
-          console.log(snapshot.docs)
+          // console.log(snapshot.docs)
           if(!snapshot.docs) return
           dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
         }) 

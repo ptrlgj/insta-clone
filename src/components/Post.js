@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Avatar, Box, TextField, Typography, Paper, Modal} from '@mui/material';
+import {Avatar, Box, TextField, Typography, Paper, Modal, Button} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -12,32 +12,17 @@ import { openModal } from '../store/modalSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { getActiveUser } from '../store/userSlice';
+import { timePassed } from '../utils'
+import { Link } from 'react-router-dom';
 function Post({data}) {
 
     const [liked, setLiked] = useState(null);
     const [author, setAuthor] = useState(null);
     const user = useSelector( state => state.user);
     const [post, setPost] = useState(data)
-    const [passedTime, setPassedTime] = useState('3')
+    const [passedTime, setPassedTime] = useState('')
+    const [inputComment, setInputComment] = useState('')
     const dispatch = useDispatch()
-    
-    const timePassed = () => {
-        const currDate = Date.now()
-        const getPassed = currDate - data.createdAt  
-        const years = (Math.floor(getPassed / (1000*60*60*24*31*365)))
-        const months = (Math.floor(getPassed / (1000*60*60*24*31)))
-        const weeks = (Math.floor(getPassed / (1000*60*60*24*7)))
-        const days = (Math.floor(getPassed / (1000*60*60*24)))
-        const hours = (Math.floor(getPassed / (1000*60*60)))
-        const minutes = (Math.floor(getPassed / (1000*60)))
-        if(years) return (`${years === 1 ? `${years} year ago` : `${years} years ago`}`)
-        else if(months) return (`${months === 1 ? `${months} month ago` : `${months} months ago`}`)
-        else if(weeks) return (`${ weeks === 1 ? `${weeks} week ago` : `${weeks} weeks ago`}`)
-        else if(days) return (`${ days === 1 ? `${days} day ago` : `${days} days ago`}`)
-        else if(hours) return (`${ hours === 1 ? `${hours} hour ago` : `${hours} hours ago`}`)
-        else if(minutes) return (`${ minutes === 1 ? `${minutes} minute ago` : `${minutes} minutes ago`}`)
-        else return 'a few seconds ago'
-    }
 
     const handleDoubleClick = (e) => {
         if(e.detail === 2) {
@@ -80,22 +65,34 @@ function Post({data}) {
         dispatch(openModal(post.id))
     }
 
+    const handleSubmitComment = async (e) => {
+        e.preventDefault()
+        await updateDocument('posts', post.id, {
+            comments: [... post.comments, {
+                comment: inputComment,
+                createdAt: Date.now(),
+                author: user.id
+            }]
+        })
+        setInputComment('')
+    }
+
     useEffect( () => {
         const fetchAuthor = async () => {
             const userFetch = await getSingleDoc('users', post.userId);
             setAuthor(userFetch)
         }
         fetchAuthor() 
-        setPassedTime(timePassed())
+        setPassedTime(timePassed(data))
 
         const postSnapshot = onSnapshot( doc(db, 'posts', post.id), snapshot => {
             if(!snapshot.data()) return
-            setPost(currState => ({...currState, likedBy: snapshot.data().likedBy}) )
+            setPost(currState => ({...currState, likedBy: snapshot.data().likedBy, comments: snapshot.data().comments}) )
         }) 
-        
+
         return () => postSnapshot()
     }, [])
-    
+
     useEffect( () => {
         setLiked( user.likedPosts.includes(post.id) )
     } ,[ user ])
@@ -179,10 +176,12 @@ function Post({data}) {
                 </Typography>
                 {post.desc}
             </Typography>
-            {post.comments.length>0 && <Typography variant='body2' sx={{
+            {post.comments.length > 0 && <Typography variant='body2' sx={{
                 color: 'rgba(0,0,0,0.7)'
             }}>
-                See {post.comments.length} comments
+                <Link to={`/comments/${post.id}`}>
+                    See {post.comments.length} comments
+                </Link>
             </Typography>}
             <Box sx={{
                 display: 'flex',
@@ -190,7 +189,28 @@ function Post({data}) {
                 gap: '10px'
             }}>
                 <Avatar  src={user.image} alt={user.userName} sx={{ width: '35px', height: '35px'}}/>
-                <TextField placeholder="Add comment..." variant="standard" />
+                <TextField 
+                    id='commentField'
+                    placeholder="Add comment..." 
+                    variant="standard"
+                    autoComplete='off' 
+                    value={inputComment}
+                    onChange={(e) => setInputComment(e.target.value)}
+                />
+                {inputComment ? <Button 
+                    htmlFor='commentField' 
+                    variant="text" 
+                    onClick={(e) => handleSubmitComment(e)}>
+                        Publish
+                    </Button> : 
+                    <Button 
+                    htmlFor='commentField' 
+                    variant="text" 
+                    disabled
+                    > 
+                        Publish
+                    </Button>
+                }
             </Box>
             <Typography variant='caption' sx={{
                 color: 'rgba(0,0,0,0.7)'

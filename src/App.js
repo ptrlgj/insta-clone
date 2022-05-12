@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActiveUser } from './store/userSlice';
 import { setNewPosts } from './store/postsSlice';
 import { collection, onSnapshot } from 'firebase/firestore';
+import Comments from './pages/Comments';
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
@@ -43,8 +44,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Posts /> }
           />
-          <Route path='/:user' element={ <User />} />
-          <Route path='/add' element={ <AddPost />} />
+          <Route path='/:user' element={ <User /> } />
+          <Route path='/add' element={ <AddPost /> } />
+          <Route path='/comments/:id' element={ <Comments /> } />
         </Routes>
         <NavBar />
       </Box>

@@ -6,7 +6,7 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import GridOnRoundedIcon from '@mui/icons-material/GridOnRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
 import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
-import { Avatar, Box, Typography, Button, Tabs, Tab} from '@mui/material';
+import { Avatar, Box, Typography, Button, Tabs, Tab, Paper} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
 import { getUser } from '../firebase';
@@ -36,11 +36,13 @@ function User() {
         fetchUserData()
     }, [userName])
   return (
-    <Box sx={{ 
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'white',
-        paddingBottom: '20px'
+    <Paper 
+        elevation={2}
+        sx={{ 
+            display: 'flex',
+            flexDirection: 'column',
+            background: 'white',
+            paddingBottom: '20px'
 
         }}>
         <Box sx={{
@@ -141,7 +143,7 @@ function User() {
             <Typography variant='h3'>404</Typography>
             <Typography variant='h4'>No user with this name</Typography>
         </Box>}
-    </Box>
+    </Paper>
   )
 }
 
