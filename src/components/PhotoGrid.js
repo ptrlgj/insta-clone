@@ -1,5 +1,6 @@
 import { Grid, ImageList, ImageListItem, styled } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import { getSingleDoc } from '../firebase';
 
 const Img = styled('img')({
@@ -28,7 +29,7 @@ function PhotoGrid({user}) {
       const promises = await fetchPosts();
       for (const item of promises) {
         const resolved = await item;
-        resolvedPosts.push(resolved)
+        resolvedPosts.push({...resolved, id: resolved.id})
       }
       // this way i keep them in order
       setPosts(resolvedPosts.reverse())
@@ -45,7 +46,7 @@ function PhotoGrid({user}) {
           srcSet={item.url}
           alt=''
           loading="lazy"
-        />
+          />
       </ImageListItem>)
     }
     )}

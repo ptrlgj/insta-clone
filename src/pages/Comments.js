@@ -1,9 +1,9 @@
-import { Avatar, Box, Paper, Typography } from '@mui/material'
+import { Avatar, Box, Button, IconButton, Paper, TextField, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { useParams } from 'react-router-dom';
-import { db, getSingleDoc } from '../firebase';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { db, getSingleDoc, updateDocument } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
@@ -13,14 +13,27 @@ function Comments() {
     const [post, setPost] = useState(null)
     const [user, setUser] = useState(null)
     const [passedTime, setPassedTime] = useState('');
-
+    const [inputComment, setInputComment] = useState('')
+    const navigate = useNavigate()
     // console.log(postId)
 
+    const handleSubmitComment = async (e) => {
+        e.preventDefault()
+        await updateDocument('posts', post.id, {
+            comments: [... post.comments, {
+                comment: inputComment,
+                createdAt: Date.now(),
+                author: user.id
+            }]
+        })
+        setInputComment('')
+    }
+    
     useEffect( () => {
         const commentSnapshot = onSnapshot( doc( db, 'posts', postId ), snapshot => {
             if(!snapshot.data()) return
-            // console.log(snapshot.data())
-            setPost(snapshot.data())
+            console.log(snapshot.data())
+            setPost({...snapshot.data(), id: postId})
         }) 
 
         return () => commentSnapshot()
@@ -43,21 +56,28 @@ function Comments() {
             display: 'flex',
             flexDirection: 'column',
             background: 'white',
-            paddingBottom: '20px'
-
+            paddingBottom: '20px',
+            
         }}>
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            padding: '5px 20px',
             alignItems: 'center',
+            padding: '5px 10px',
             gap:'20px',
+            'button' : {
+                color : 'black'
+            }
         }}>
-            <ArrowBackRoundedIcon />
+            <IconButton onClick={ () => navigate(-1) }>
+                <ArrowBackRoundedIcon />
+            </IconButton>
             <Typography variant='h6' sx={{
                 flex: '1'
             }}>Comments</Typography>
-            <SendRoundedIcon />
+            <IconButton>
+                <SendRoundedIcon />
+            </IconButton>
         </Box>    
         {post && user && <>
         <Box 
@@ -74,7 +94,9 @@ function Comments() {
                     sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                     component="span"
                 >
-                    {user.userName}
+                    <Link to={`/${user.userName}`}>
+                        {user.userName}
+                    </Link>
                 </Typography>
                 {post.desc}
                 <Typography 
@@ -99,9 +121,39 @@ function Comments() {
             }}
         >
             {post.comments.map( comment => (
-                <Comment key={`${comment.author}${comment.timestamp}`} data={comment} />
+                <Comment key={`${comment.author}${comment.createdAt}`} data={comment} />
             ))}
         </Box>
+        <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '5px 20px',
+                gap:'15px',
+            }}>
+                <Avatar  src={user.image} alt={user.userName} sx={{ width: '35px', height: '35px'}}/>
+                <TextField 
+                    id='commentField'
+                    placeholder="Add comment..." 
+                    variant="standard"
+                    autoComplete='off' 
+                    value={inputComment}
+                    onChange={(e) => setInputComment(e.target.value)}
+                />
+                {inputComment ? <Button 
+                    htmlFor='commentField' 
+                    variant="text" 
+                    onClick={(e) => handleSubmitComment(e)}>
+                        Publish
+                    </Button> : 
+                    <Button 
+                    htmlFor='commentField' 
+                    variant="text" 
+                    disabled
+                    > 
+                        Publish
+                    </Button>
+                }
+            </Box>
         </>}
     </Paper>
   )

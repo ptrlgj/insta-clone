@@ -1,5 +1,5 @@
 import React from 'react'
-import { Typography, Box, Paper, Avatar, Tabs, Tab } from '@mui/material'
+import { Typography, Box, Paper, Avatar, Tabs, Tab, IconButton } from '@mui/material'
 import { styled } from '@mui/material/styles';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
@@ -42,13 +42,21 @@ function Header() {
             </Typography>
             <Box sx={{
                 display: 'flex',
-                gap: '20px'
+                'button' : {
+                    color : 'black'
+                }
             }}>
                 <Link to="/add">
-                    <AddBoxOutlinedIcon />
+                    <IconButton>
+                        <AddBoxOutlinedIcon />
+                    </IconButton>
                 </Link>
-                <FavoriteBorderRoundedIcon />
-                <SendRoundedIcon />
+                <IconButton>
+                    <FavoriteBorderRoundedIcon />
+                </IconButton>
+                <IconButton>
+                    <SendRoundedIcon />
+                </IconButton>
             </Box>
         </Box>
         {/* <StyledBox>

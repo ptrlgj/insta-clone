@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
 import { deleteSingleDoc, updateDocument } from '../firebase';
 import { getActiveUser } from '../store/userSlice';
+import { Link, useNavigate } from 'react-router-dom';
 
 const modalStyle = {
     width: '100%',
@@ -32,9 +33,10 @@ const textStyle = {
   padding: '10px 0'
 }
 function ModalOptions() {
-    const dispatch = useDispatch()
-    const { isOpen, postId } = useSelector( state => state.modal)
-    const user = useSelector( state => state.user)
+  const dispatch = useDispatch()
+  const { isOpen, postId, authorId } = useSelector( state => state.modal)
+  const user = useSelector( state => state.user)
+  const navigate = useNavigate();
     const handleClose = () => {
       dispatch(closeModal())
     }
@@ -48,6 +50,11 @@ function ModalOptions() {
       dispatch(getActiveUser(user.id))
       dispatch(closeModal())
     }
+    
+    const handleGoToPost = () => {
+      navigate(`/post/${postId}`);
+      dispatch(closeModal())
+    }
   return (
     <Modal
         open={ isOpen }
@@ -56,6 +63,7 @@ function ModalOptions() {
         aria-describedby="modal-modal-description"
     >
     <Box sx={ modalStyle }>
+      {authorId === user.id ? <>
         <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDelete }>
             Delete
         </Typography>
@@ -64,13 +72,21 @@ function ModalOptions() {
             Edit
         </Typography>
         <hr color='lightgray' width='100%' />
-        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
-            Go to post
+      </> : 
+      <>
+        <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+            Report
         </Typography>
         <hr color='lightgray' width='100%' />
-        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
-            Copy link
-        </Typography>
+      </>
+      }
+      <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleGoToPost }>
+        Go to post
+      </Typography>
+      <hr color='lightgray' width='100%' />
+      <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
+          Copy link
+      </Typography>
     </Box>
     </Modal>
   )

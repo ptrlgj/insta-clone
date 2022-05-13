@@ -15,3 +15,4 @@ export const timePassed = (data) => {
     else if(minutes) return (`${ minutes === 1 ? `${minutes} minute ago` : `${minutes} minutes ago`}`)
     else return 'a few seconds ago'
 }
+

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
-import { Box, Button, TextField, Typography, Paper } from '@mui/material';
+import { Box, Button, TextField, Typography, Paper, IconButton } from '@mui/material';
 import styled from '@emotion/styled';
 import { Link, useNavigate } from 'react-router-dom';
 import { storage, addPost, getUser, updateDocument } from '../firebase';
@@ -82,18 +82,26 @@ function AddPost() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding:"5px 15px",
-            gap: '10px'
+            padding:"5px 5px",
+            'button' : {
+                color : 'black'
+            }
         }}>
-            <Link to='/'><CloseRoundedIcon sx={{  }}/></Link>
+            <IconButton>
+                    <CloseRoundedIcon onClick={ () => navigate('/')}/>
+            </IconButton>
             <Typography variant="h6" sx={{flex: '1'}}>New post</Typography>
             {imageUrl ? 
-                <CheckRoundedIcon 
-                    onClick={handleClick} 
-                    sx={{color:'#1976d2', cursor: 'pointer'}}
-                /> 
+                <IconButton>
+                    <CheckRoundedIcon 
+                        onClick={handleClick} 
+                        sx={{color:'#1976d2', cursor: 'pointer'}}
+                    /> 
+                </IconButton>
                 : 
-                <CheckRoundedIcon sx={{ color:'gray'  }}/> 
+                <IconButton disabled>
+                    <CheckRoundedIcon sx={{ color:'gray'  }}/>
+                </IconButton> 
             }
         </Box>
         <Box 

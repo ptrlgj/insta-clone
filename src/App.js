@@ -14,6 +14,7 @@ import { getActiveUser } from './store/userSlice';
 import { setNewPosts } from './store/postsSlice';
 import { collection, onSnapshot } from 'firebase/firestore';
 import Comments from './pages/Comments';
+import PostPage from './pages/PostPage';
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
@@ -47,6 +48,7 @@ function App() {
           <Route path='/:user' element={ <User /> } />
           <Route path='/add' element={ <AddPost /> } />
           <Route path='/comments/:id' element={ <Comments /> } />
+          <Route path='/post/:id' element={ <PostPage /> } />
         </Routes>
         <NavBar />
       </Box>

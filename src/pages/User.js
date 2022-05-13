@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import {useParams} from 'react-router-dom'
+import {useNavigate, useParams} from 'react-router-dom'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import GridOnRoundedIcon from '@mui/icons-material/GridOnRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
 import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
-import { Avatar, Box, Typography, Button, Tabs, Tab, Paper} from '@mui/material';
+import { Avatar, Box, Typography, Button, Tabs, Tab, Paper, IconButton} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
 import { getUser } from '../firebase';
@@ -20,7 +20,7 @@ function User() {
     const [loading, setLoading] = useState(true);
     const [noUser, setNoUser] = useState(false);
     const [userData, setUserData] = useState(null);
-
+    const navigate = useNavigate()
     useEffect(()=>{
         const fetchUserData = async () =>{
             const response = await getUser(userName)
@@ -42,21 +42,27 @@ function User() {
             display: 'flex',
             flexDirection: 'column',
             background: 'white',
-            paddingBottom: '20px'
-
+            paddingBottom: '20px',
         }}>
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            padding: '5px 20px',
+            padding: '5px 10px',
             alignItems: 'center',
             gap:'20px',
+            'button' : {
+                color : 'black'
+            }
         }}>
-            <ArrowBackRoundedIcon />
+            <IconButton>
+                <ArrowBackRoundedIcon onClick={ () => navigate(-1) }/>
+            </IconButton>
             <Typography variant='h6' sx={{
                 flex: '1'
             }}>{userName}</Typography>
-            <MoreVertRoundedIcon />
+            <IconButton>
+                <MoreVertRoundedIcon />
+            </IconButton>
         </Box>
         {!loading && !noUser && <>
         <Box sx={{

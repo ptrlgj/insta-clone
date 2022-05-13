@@ -1,12 +1,12 @@
 import { Avatar, Box, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
 import { getSingleDoc } from '../firebase'
 import { timePassed } from '../utils';
 
 function Comment({data}) {
     const [user, setUser] = useState(null);
     const [passedTime, setPassedTime] = useState('');
-
 
     useEffect( () => {
         const fetchUser = async () => {
@@ -48,7 +48,9 @@ function Comment({data}) {
                         sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                         component="span"
                     >
-                    {user.userName}
+                        <Link to={`/${user.userName}`}>
+                            {user.userName}
+                        </Link>
                     </Typography>
                     {data.comment}
                 </Typography>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Avatar, Box, TextField, Typography, Paper, Modal, Button} from '@mui/material';
+import {Avatar, Box, TextField, Typography, Paper, Modal, Button, IconButton} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -13,16 +13,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { getActiveUser } from '../store/userSlice';
 import { timePassed } from '../utils'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 function Post({data}) {
 
     const [liked, setLiked] = useState(null);
     const [author, setAuthor] = useState(null);
     const user = useSelector( state => state.user);
-    const [post, setPost] = useState(data)
-    const [passedTime, setPassedTime] = useState('')
-    const [inputComment, setInputComment] = useState('')
-    const dispatch = useDispatch()
+    const [post, setPost] = useState(data);
+    const [passedTime, setPassedTime] = useState('');
+    const [inputComment, setInputComment] = useState('');
+    const [readMore, setReadMore] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleDoubleClick = (e) => {
         if(e.detail === 2) {
@@ -62,7 +64,7 @@ function Post({data}) {
     }
 
     const handleOpenModal = () => {
-        dispatch(openModal(post.id))
+        dispatch(openModal(post))
     }
 
     const handleSubmitComment = async (e) => {
@@ -101,55 +103,71 @@ function Post({data}) {
     <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
+        'button' : {
+            color: 'black'
+        }
     }}>
         {author && <>
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '10px 10px'
+            padding: '10px 10px',
         }}>
             <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap:'10px'
+                gap:'10px',
             }}>
                 <Avatar src={author.image} alt={author.userName}/>
-                <Typography  variant='subtitle2'>{author.userName}</Typography>
+                <Typography  variant='subtitle2'>
+                    <Link to={`/${author.userName}`}>
+                        {author.userName}
+                    </Link>
+                </Typography>
             </Box>
-            <MoreVertIcon 
-                sx={{
-                    cursor: 'pointer'
-                }}
-                onClick={ handleOpenModal }
-            />
+            <IconButton>
+                <MoreVertIcon 
+                    sx={{
+                        cursor: 'pointer'
+                    }}
+                    onClick={ handleOpenModal }
+                    />
+            </IconButton>
         </Box>
         <img onClick={(e)=>handleDoubleClick(e)} src={post.url} alt="" />
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            padding: '5px 10px',
         }}>
             <Box sx={{
                 display: 'flex',
-                gap: '5px',
+                // gap: '5px',
             }}>
                  {/* (user && user.likedPosts.includes(id) ) */}
-                { liked ? 
-                    <FavoriteIcon 
-                        sx={{ 
-                            color: 'red'
-                        }} 
-                        onClick={ () => handleLike() }
-                    /> : 
-                    <FavoriteBorderIcon 
-                        onClick={ () => handleLike() }
-                    />
-                }
-                <ChatBubbleOutlineOutlinedIcon />
-                <SendRoundedIcon />
+                <IconButton>
+                    { liked ? 
+                        <FavoriteIcon 
+                            sx={{ 
+                                color: 'red'
+                            }} 
+                            onClick={ () => handleLike() }
+                        /> : 
+                        <FavoriteBorderIcon 
+                            onClick={ () => handleLike() }
+                        />
+                    }
+                </IconButton>
+                <IconButton>
+                    <ChatBubbleOutlineOutlinedIcon onClick={ () => navigate(`/comments/${post.id}`)}/>
+                </IconButton>
+                <IconButton>
+                    <SendRoundedIcon />
+                </IconButton>
             </Box>
-            <BookmarkBorderOutlinedIcon />
+            <IconButton>
+                <BookmarkBorderOutlinedIcon />
+            </IconButton>
         </Box>
         <Box sx={{
             display: 'flex',
@@ -166,15 +184,26 @@ function Post({data}) {
             >
                 {`${post.likedBy.length} ${post.likedBy.length === 1 ? 'like' : 'likes'}`}
             </Typography>
-            <Typography variant='subtitle2' sx={{ fontWeight: '400'}}component="p">
+            <Typography 
+                variant='subtitle2' 
+                sx={{ fontWeight: '400'}}
+                component="p"
+                onClick={ () => {
+                    if(readMore || post.desc.length < 100 ) navigate(`/comments/${post.id}`)
+                    else setReadMore(true)
+                    }}
+                >
                 <Typography 
                     variant="subtitle2" 
                     sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                     component="span"
                 >
-                    {author.userName}
+                    <Link to={`/${author.userName}`}>
+                        {author.userName}
+                    </Link>
                 </Typography>
-                {post.desc}
+                    {readMore ? post.desc : 
+                        post.desc.length >= 100 ? `${post.desc.slice(0,100)}...more` : post.desc }
             </Typography>
             {post.comments.length > 0 && <Typography variant='body2' sx={{
                 color: 'rgba(0,0,0,0.7)'
