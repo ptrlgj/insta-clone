@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Avatar, Box, TextField, Typography, Paper, Modal, Button, IconButton} from '@mui/material';
+import {Avatar, Box, TextField, Typography, Paper, Modal, Button, IconButton, styled} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -8,12 +8,19 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
 import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import { getSingleDoc, updateDocument, db } from '../firebase';
-import { openModal } from '../store/modalSlice'
+import { openModal, setOption } from '../store/modalSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { getActiveUser } from '../store/userSlice';
 import { timePassed } from '../utils'
 import { Link, useNavigate } from 'react-router-dom';
+
+const Img = styled('img')({
+    position: 'relative',
+    width: '100%',
+    objectFit: 'contain'
+})
+
 function Post({data}) {
 
     const [liked, setLiked] = useState(null);
@@ -65,6 +72,7 @@ function Post({data}) {
 
     const handleOpenModal = () => {
         dispatch(openModal(post))
+        dispatch(setOption('postModal'))
     }
 
     const handleSubmitComment = async (e) => {
@@ -103,9 +111,7 @@ function Post({data}) {
     <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
-        'button' : {
-            color: 'black'
-        }
+        
     }}>
         {author && <>
         <Box sx={{
@@ -113,6 +119,9 @@ function Post({data}) {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '10px 10px',
+            'button' : {
+                color: 'black'
+            }
         }}>
             <Box sx={{
                 display: 'flex',
@@ -126,40 +135,61 @@ function Post({data}) {
                     </Link>
                 </Typography>
             </Box>
-            <IconButton>
-                <MoreVertIcon 
-                    sx={{
-                        cursor: 'pointer'
-                    }}
-                    onClick={ handleOpenModal }
-                    />
+            <IconButton onClick={ handleOpenModal }>
+                <MoreVertIcon />
             </IconButton>
+        </Box >
+        <Box
+            // sx={{
+            //     position: 'relative',
+            //     '&:hover > div': {
+            //         animationDuration: '1000ms',
+            //         animationName: 'like-heart-animation',
+            //         animationTimingFunction: 'ease-in-out',
+            //     }
+            // }}
+        >
+            {/* <Box 
+                sx={{
+                    width: '184px',
+                    height: '162px',
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                    margin: 'auto',
+                    background: 'url("https://imgur.com/rksyGE8.png") no-repeat center/contain',
+                    opacity: 0,
+                    transform: 'scale(0)',
+                }}
+            /> */}
+            <Img onClick={(e)=>handleDoubleClick(e)} src={post.url} alt="" />
         </Box>
-        <img onClick={(e)=>handleDoubleClick(e)} src={post.url} alt="" />
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
+            'button' : {
+                color: 'black'
+            }
         }}>
             <Box sx={{
                 display: 'flex',
                 // gap: '5px',
             }}>
                  {/* (user && user.likedPosts.includes(id) ) */}
-                <IconButton>
+                <IconButton onClick={ () => handleLike() }>
                     { liked ? 
                         <FavoriteIcon 
                             sx={{ 
                                 color: 'red'
                             }} 
-                            onClick={ () => handleLike() }
                         /> : 
-                        <FavoriteBorderIcon 
-                            onClick={ () => handleLike() }
-                        />
+                        <FavoriteBorderIcon />
                     }
                 </IconButton>
-                <IconButton>
-                    <ChatBubbleOutlineOutlinedIcon onClick={ () => navigate(`/comments/${post.id}`)}/>
+                <IconButton onClick={ () => navigate(`/comments/${post.id}`)}>
+                    <ChatBubbleOutlineOutlinedIcon />
                 </IconButton>
                 <IconButton>
                     <SendRoundedIcon />
@@ -230,14 +260,14 @@ function Post({data}) {
                     htmlFor='commentField' 
                     variant="text" 
                     onClick={(e) => handleSubmitComment(e)}>
-                        Publish
+                        Post
                     </Button> : 
                     <Button 
                     htmlFor='commentField' 
                     variant="text" 
                     disabled
                     > 
-                        Publish
+                        Post
                     </Button>
                 }
             </Box>

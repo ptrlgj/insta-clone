@@ -54,8 +54,8 @@ function User() {
                 color : 'black'
             }
         }}>
-            <IconButton>
-                <ArrowBackRoundedIcon onClick={ () => navigate(-1) }/>
+            <IconButton onClick={ () => navigate(-1) }>
+                <ArrowBackRoundedIcon />
             </IconButton>
             <Typography variant='h6' sx={{
                 flex: '1'

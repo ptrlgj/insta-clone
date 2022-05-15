@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Modal, Typography } from '@mui/material' 
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
-import { deleteSingleDoc, updateDocument } from '../firebase';
+import { deleteSingleDoc, getSingleDoc, updateDocument } from '../firebase';
 import { getActiveUser } from '../store/userSlice';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -34,18 +34,21 @@ const textStyle = {
 }
 function ModalOptions() {
   const dispatch = useDispatch()
-  const { isOpen, postId, authorId } = useSelector( state => state.modal)
+  const { isOpen, postId, userId, commentId } = useSelector( state => state.modal)
   const user = useSelector( state => state.user)
+  const { postModal, commentModal, userModal } = useSelector( state => state.modal.options)
   const navigate = useNavigate();
+
     const handleClose = () => {
       dispatch(closeModal())
     }
-    const handleDelete = async (e) => {
+
+    // posts
+
+    const handleDeletePost = async () => {
       const deleted = await deleteSingleDoc('posts', postId);
-      //global state user 
       const updated = await updateDocument('users', user.id, {
          posts: [ ...user.posts.filter( post => post != postId)], 
-        //  likedPosts: [ ...user.likedPosts.filter( post => post != postId)]
         })
       dispatch(getActiveUser(user.id))
       dispatch(closeModal())
@@ -55,6 +58,17 @@ function ModalOptions() {
       navigate(`/post/${postId}`);
       dispatch(closeModal())
     }
+    
+    //comments
+
+    const handleDeleteComment = async () => {
+      const post = await getSingleDoc('posts', postId);
+      const updated = await updateDocument('posts', postId, {
+        comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` != commentId))]
+      })
+      dispatch(closeModal())
+    }
+
   return (
     <Modal
         open={ isOpen }
@@ -63,8 +77,9 @@ function ModalOptions() {
         aria-describedby="modal-modal-description"
     >
     <Box sx={ modalStyle }>
-      {authorId === user.id ? <>
-        <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDelete }>
+      {postModal && <>
+      {userId === user.id ? <>
+        <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeletePost }>
             Delete
         </Typography>
         <hr color='lightgray' width='100%' />
@@ -87,6 +102,20 @@ function ModalOptions() {
       <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
           Copy link
       </Typography>
+      </>}
+      {commentModal && <>
+        {userId === user.id ? <>
+          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeleteComment}>
+              Delete
+          </Typography>
+        </> : 
+        <>
+          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+              Report
+          </Typography>
+        </>
+        }
+      </>}
     </Box>
     </Modal>
   )

@@ -1,12 +1,17 @@
-import { Avatar, Box, Typography } from '@mui/material'
+import { Avatar, Box, IconButton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { getSingleDoc } from '../firebase'
 import { timePassed } from '../utils';
+import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
+import { useDispatch } from 'react-redux';
+import { openModal, setOption } from '../store/modalSlice';
 
-function Comment({data}) {
+function Comment({data, postId, commentId}) {
     const [user, setUser] = useState(null);
     const [passedTime, setPassedTime] = useState('');
+    const [optionsButton, setOptionsButton] = useState(false)
+    const dispatch = useDispatch()
 
     useEffect( () => {
         const fetchUser = async () => {
@@ -17,6 +22,12 @@ function Comment({data}) {
         setPassedTime(timePassed(data))
 
     }, [])
+
+    const handleOpenModal = () => {
+        // console.log(data)
+        dispatch(openModal({id: postId, userId: data.author, commentId: commentId}))
+        dispatch(setOption('commentModal'))
+    }
     return (
     <Box
         sx={{
@@ -25,6 +36,8 @@ function Comment({data}) {
             width: '100%',
             gap: '10px',
         }}
+        onMouseEnter={ () => setOptionsButton(true)}
+        onMouseLeave={ () => setOptionsButton(false)}
     >
         {user && <>
             <Avatar src={user.image} alt={user.fullName}/>
@@ -62,6 +75,11 @@ function Comment({data}) {
                 >
                     {passedTime}
                 </Typography>
+                {optionsButton && 
+                    <IconButton onClick={ handleOpenModal }>
+                        <MoreHorizRoundedIcon fontSize='small' sx={{alignSelf: 'flex-start'}}/>
+                    </IconButton> 
+                }
             </Box>
 
         </>}

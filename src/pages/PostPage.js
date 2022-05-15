@@ -49,8 +49,8 @@ function PostPage() {
                 alignItems: 'center',
                 gap:'20px',
             }}> 
-                <IconButton>
-                    <ArrowBackRoundedIcon onClick={ () => navigate(-1) }/>
+                <IconButton onClick={ () => navigate(-1) }>
+                    <ArrowBackRoundedIcon />
                 </IconButton>
                 <Typography variant='h4' component="h1" sx={{
                 fontFamily: 'Satisfy',

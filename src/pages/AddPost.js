@@ -87,15 +87,14 @@ function AddPost() {
                 color : 'black'
             }
         }}>
-            <IconButton>
-                    <CloseRoundedIcon onClick={ () => navigate('/')}/>
+            <IconButton onClick={ () => navigate('/')}>
+                    <CloseRoundedIcon />
             </IconButton>
             <Typography variant="h6" sx={{flex: '1'}}>New post</Typography>
             {imageUrl ? 
-                <IconButton>
+                <IconButton onClick={handleClick}>
                     <CheckRoundedIcon 
-                        onClick={handleClick} 
-                        sx={{color:'#1976d2', cursor: 'pointer'}}
+                        sx={{color:'#1976d2'}}
                     /> 
                 </IconButton>
                 : 

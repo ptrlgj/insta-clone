@@ -32,7 +32,7 @@ function Comments() {
     useEffect( () => {
         const commentSnapshot = onSnapshot( doc( db, 'posts', postId ), snapshot => {
             if(!snapshot.data()) return
-            console.log(snapshot.data())
+            // console.log(snapshot.data())
             setPost({...snapshot.data(), id: postId})
         }) 
 
@@ -121,7 +121,7 @@ function Comments() {
             }}
         >
             {post.comments.map( comment => (
-                <Comment key={`${comment.author}${comment.createdAt}`} data={comment} />
+                <Comment key={`${comment.author}${comment.createdAt}`} commentId={`${comment.author}${comment.createdAt}`} data={comment} postId={postId}/>
             ))}
         </Box>
         <Box sx={{
@@ -143,14 +143,14 @@ function Comments() {
                     htmlFor='commentField' 
                     variant="text" 
                     onClick={(e) => handleSubmitComment(e)}>
-                        Publish
+                        Post
                     </Button> : 
                     <Button 
                     htmlFor='commentField' 
                     variant="text" 
                     disabled
                     > 
-                        Publish
+                        Post
                     </Button>
                 }
             </Box>

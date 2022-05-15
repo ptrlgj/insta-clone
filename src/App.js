@@ -15,6 +15,7 @@ import { setNewPosts } from './store/postsSlice';
 import { collection, onSnapshot } from 'firebase/firestore';
 import Comments from './pages/Comments';
 import PostPage from './pages/PostPage';
+import ModalOptions from './components/ModalOptions';
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
@@ -42,6 +43,7 @@ function App() {
         width: '466px',
         paddingBottom: '46px',
       }}>
+        <ModalOptions />
         <Routes>
           <Route path="/" element={<Posts /> }
           />

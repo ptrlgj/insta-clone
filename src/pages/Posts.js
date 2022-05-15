@@ -36,7 +36,7 @@ function Posts() {
     }
   return (
     <Box sx={{paddingBottom: '20px'}}> 
-        <ModalOptions />
+        {/* <ModalOptions /> */}
         <Header />
         {newPosts && 
         <Fab 
