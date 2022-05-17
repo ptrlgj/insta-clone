@@ -2,9 +2,11 @@ import React from 'react'
 import { Box, Modal, Typography } from '@mui/material' 
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
-import { deleteSingleDoc, getSingleDoc, updateDocument } from '../firebase';
-import { getActiveUser } from '../store/userSlice';
+import { auth, deleteSingleDoc, getSingleDoc, updateDocument } from '../firebase';
+import { getActiveUser, logoutUser } from '../store/userSlice';
 import { Link, useNavigate } from 'react-router-dom';
+import LoginForm from './LoginForm';
+import { signOut } from 'firebase/auth';
 
 const modalStyle = {
     width: '100%',
@@ -22,7 +24,8 @@ const modalStyle = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    
   };
 const textStyle = { 
   width:'100%', 
@@ -36,7 +39,7 @@ function ModalOptions() {
   const dispatch = useDispatch()
   const { isOpen, postId, userId, commentId } = useSelector( state => state.modal)
   const user = useSelector( state => state.user)
-  const { postModal, commentModal, userModal } = useSelector( state => state.modal.options)
+  const { postModal, commentModal, userModal, loginModal } = useSelector( state => state.modal.options)
   const navigate = useNavigate();
 
     const handleClose = () => {
@@ -69,14 +72,23 @@ function ModalOptions() {
       dispatch(closeModal())
     }
 
+    // user
+
+    const handleLogOut = async () => {
+      await signOut(auth)
+      dispatch(closeModal())
+      dispatch(logoutUser())
+      navigate('/')
+    }
   return (
     <Modal
         open={ isOpen }
-        onClose={handleClose}
+        onClose={ handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
     >
     <Box sx={ modalStyle }>
+
       {postModal && <>
       {userId === user.id ? <>
         <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeletePost }>
@@ -103,6 +115,7 @@ function ModalOptions() {
           Copy link
       </Typography>
       </>}
+
       {commentModal && <>
         {userId === user.id ? <>
           <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeleteComment}>
@@ -115,6 +128,43 @@ function ModalOptions() {
           </Typography>
         </>
         }
+      </>}
+
+      {userModal && <>
+        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
+          Copy link
+        </Typography>
+        <hr color='lightgray' width='100%' />
+        {userId === user.id ? <>
+          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+              Settings
+          </Typography>
+          <hr color='lightgray' width='100%' />
+          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }
+            onClick={ handleLogOut }
+          >
+              Logout
+          </Typography>
+        </> : 
+        <>
+          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+              Report
+          </Typography>
+        </>
+        }
+      </>}
+
+      {loginModal && <>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={{
+            width:'100%', 
+            textAlign: 'center', 
+            fontWeight: '450', 
+            flex: '1', 
+            padding: '10px 0'
+          }}>
+              Log in
+          </Typography>
+          <LoginForm />
       </>}
     </Box>
     </Modal>

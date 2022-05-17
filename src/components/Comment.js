@@ -8,15 +8,15 @@ import { useDispatch } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 
 function Comment({data, postId, commentId}) {
-    const [user, setUser] = useState(null);
+    const [author, setAuthor] = useState(null);
     const [passedTime, setPassedTime] = useState('');
-    const [optionsButton, setOptionsButton] = useState(false)
+    const [optionsButton, setOptionsButton] = useState(false);
     const dispatch = useDispatch()
 
     useEffect( () => {
         const fetchUser = async () => {
             const userData = await getSingleDoc('users', data.author)
-            setUser(userData)
+            setAuthor(userData)
         }
         fetchUser()
         setPassedTime(timePassed(data))
@@ -39,8 +39,8 @@ function Comment({data, postId, commentId}) {
         onMouseEnter={ () => setOptionsButton(true)}
         onMouseLeave={ () => setOptionsButton(false)}
     >
-        {user && <>
-            <Avatar src={user.image} alt={user.fullName}/>
+        {author && <>
+            <Avatar src={author.image} alt={author.fullName}/>
             <Box
                 sx={{
                     flex: '1',
@@ -61,8 +61,8 @@ function Comment({data, postId, commentId}) {
                         sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                         component="span"
                     >
-                        <Link to={`/${user.userName}`}>
-                            {user.userName}
+                        <Link to={`/${author.userName}`}>
+                            {author.userName}
                         </Link>
                     </Typography>
                     {data.comment}

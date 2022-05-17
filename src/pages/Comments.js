@@ -7,13 +7,15 @@ import { db, getSingleDoc, updateDocument } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
+import { useSelector } from 'react-redux';
 
 function Comments() {
     const postId = useParams().id
     const [post, setPost] = useState(null)
-    const [user, setUser] = useState(null)
+    const [author, setAuthor] = useState(null)
     const [passedTime, setPassedTime] = useState('');
-    const [inputComment, setInputComment] = useState('')
+    const [inputComment, setInputComment] = useState('');
+    const user = useSelector( state => state.user )
     const navigate = useNavigate()
     // console.log(postId)
 
@@ -43,7 +45,7 @@ function Comments() {
         if(!post) return
         const fetchUser = async () => {
             const data = await getSingleDoc('users', post.userId)
-            setUser(data)
+            setAuthor(data)
         }
         fetchUser()
         setPassedTime(timePassed(post))
@@ -79,7 +81,7 @@ function Comments() {
                 <SendRoundedIcon />
             </IconButton>
         </Box>    
-        {post && user && <>
+        {post && author && <>
         <Box 
             sx={{
                 display: 'flex',
@@ -87,15 +89,15 @@ function Comments() {
                 padding: '5px 20px',
                 gap:'10px',
             }}>
-            <Avatar src={user.image} alt={user.fullName}/>
+            <Avatar src={author.image} alt={author.fullName}/>
             <Typography variant='subtitle2' sx={{ fontWeight: '400'}}>
                 <Typography 
                     variant="subtitle2" 
                     sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                     component="span"
                 >
-                    <Link to={`/${user.userName}`}>
-                        {user.userName}
+                    <Link to={`/${author.userName}`}>
+                        {author.userName}
                     </Link>
                 </Typography>
                 {post.desc}

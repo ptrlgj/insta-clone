@@ -4,10 +4,13 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
 import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
-import {Link } from 'react-router-dom';
-import { useSelector } from 'react-redux'
+import {Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'
+import { openModal, setOption } from '../store/modalSlice';
 function NavBar() {
-  const {userName, image} = useSelector(state => state.user)
+  const {userName, image} = useSelector(state => state.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
   return (
     <Paper 
         sx={{ 
@@ -24,7 +27,17 @@ function NavBar() {
           <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />
           <BottomNavigationAction label="TikReels" icon={<MusicVideoRoundedIcon />} />
           <BottomNavigationAction label="Store" icon={<ShoppingBagRoundedIcon />} />
-          <Link to={`/${userName}`}><BottomNavigationAction label="Profile" icon={<Avatar src={image}/>} /></Link>
+          {/* <Link to={`/${userName}`}> */}
+            <BottomNavigationAction label="Profile" icon={<Avatar src={image} />} 
+             onClick={ () => {
+              if(userName) navigate(`/${userName}`)
+              else {
+                dispatch(openModal())
+                dispatch(setOption('loginModal'))
+              }
+            }}
+            />
+          {/* </Link> */}
         </Box>
       </Paper>
   )

@@ -35,37 +35,37 @@ function Post({data}) {
 
     const handleDoubleClick = (e) => {
         if(e.detail === 2) {
-            if( !post.likedBy.includes('MTfXXUFnty5Y6l3AaWJY') ){
+            if( !post.likedBy.includes(user.id) ){
                 updateDocument('posts', post.id, {
-                    likedBy: [...post.likedBy, 'MTfXXUFnty5Y6l3AaWJY']
+                    likedBy: [...post.likedBy, user.id]
                 })
-                updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
+                updateDocument('users', user.id, {
                     likedPosts: [...user.likedPosts, post.id]
                 })
-                dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
+                dispatch(getActiveUser(user.id))
                 setLiked(true)
             }
         }
     }
 
     const handleLike = () => {
-        if( post.likedBy.includes('MTfXXUFnty5Y6l3AaWJY') ) {
+        if( post.likedBy.includes(user.id) ) {
             updateDocument('posts', post.id, {
-                likedBy: [...post.likedBy.filter(userLike => userLike !== 'MTfXXUFnty5Y6l3AaWJY')]
+                likedBy: [...post.likedBy.filter(userLike => userLike !== user.id)]
             })
-            updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
+            updateDocument('users', user.id, {
                 likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== post.id)]
             })
-            dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
+            dispatch(getActiveUser(user.id))
             setLiked(false)
         } else {
             updateDocument('posts', post.id, {
-                likedBy: [...post.likedBy, 'MTfXXUFnty5Y6l3AaWJY']
+                likedBy: [...post.likedBy, user.id]
             })
-            updateDocument('users', 'MTfXXUFnty5Y6l3AaWJY', {
+            updateDocument('users', user.id, {
                 likedPosts: [...user.likedPosts, post.id]
             })
-            dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
+            dispatch(getActiveUser(user.id))
             setLiked(true)
         }
     }

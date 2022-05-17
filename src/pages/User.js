@@ -9,7 +9,10 @@ import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
 import { Avatar, Box, Typography, Button, Tabs, Tab, Paper, IconButton} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
-import { getUser } from '../firebase';
+import { getUserBy, usersColRef } from '../firebase';
+import { useDispatch } from 'react-redux';
+import { openModal, setOption } from '../store/modalSlice';
+import { query, where } from 'firebase/firestore';
 
 // export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
@@ -20,10 +23,12 @@ function User() {
     const [loading, setLoading] = useState(true);
     const [noUser, setNoUser] = useState(false);
     const [userData, setUserData] = useState(null);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     useEffect(()=>{
         const fetchUserData = async () =>{
-            const response = await getUser(userName)
+            const q = query(usersColRef, where("userName", "==", userName))
+            const response = await getUserBy(q)
             if(response.length > 0){
                 setUserData(response[0]);
                 setLoading(false)
@@ -35,6 +40,11 @@ function User() {
         }
         fetchUserData()
     }, [userName])
+
+    const handleOpenModal = () => {
+        dispatch(setOption('userModal'));
+        dispatch(openModal({id: '', userId: userData.id, commmentId: ''}));
+    }
   return (
     <Paper 
         elevation={2}
@@ -60,7 +70,7 @@ function User() {
             <Typography variant='h6' sx={{
                 flex: '1'
             }}>{userName}</Typography>
-            <IconButton>
+            <IconButton onClick={ handleOpenModal }>
                 <MoreVertRoundedIcon />
             </IconButton>
         </Box>

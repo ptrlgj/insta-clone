@@ -1,36 +1,41 @@
 import {Box, Container} from '@mui/material'
 import { useEffect, useState } from 'react';
-import Header from './components/Header';
 import NavBar from './components/NavBar';
-import Post from './components/Post';
 import {Routes, Route} from 'react-router-dom';
 import User from './pages/User';
 import AddPost from './pages/AddPost';
-import { deleteUser, getUser, getUsers, storage, subscribeTo, db } from './firebase';
-import { getDownloadURL, list, ref } from 'firebase/storage';
+import { auth, usersColRef, getUserBy } from './firebase';
 import Posts from './pages/Posts';
 import { useDispatch, useSelector } from 'react-redux';
-import { getActiveUser } from './store/userSlice';
-import { setNewPosts } from './store/postsSlice';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { setUser } from './store/userSlice';
+import { query, where } from 'firebase/firestore';
 import Comments from './pages/Comments';
 import PostPage from './pages/PostPage';
 import ModalOptions from './components/ModalOptions';
+import { onAuthStateChanged } from 'firebase/auth';
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
-  // subscribeTo('posts');
+  const [uid, setUid] = useState(null)
 
-  // const subscription = onSnapshot( collection(db, 'posts'), ( snapshot ) => {
-  //   console.log(snapshot)
-  //   const data = snapshot.docs.map(doc => doc.data())
-  //   dispatch(setNewPosts(true))
-  // })
-
-  //later login formm
   useEffect( () => {
-    dispatch(getActiveUser('MTfXXUFnty5Y6l3AaWJY'))
-  }, [] )
+    const fetchLoggedUser = async () => {
+      console.log(uid)
+      const q = query(usersColRef, where("uid", "==", uid));
+      const response = await getUserBy(q)
+      dispatch(setUser(response[0]))
+    }
+    if(uid){
+      fetchLoggedUser()
+    }
+  }, [uid] )
+
+  onAuthStateChanged(auth, async (currentUser) => {
+    if(currentUser){
+      setUid(currentUser.uid)
+    }
+  })
+
   return (
     <Container sx={{
       display: 'flex',
@@ -45,8 +50,7 @@ function App() {
       }}>
         <ModalOptions />
         <Routes>
-          <Route path="/" element={<Posts /> }
-          />
+          <Route path="/" element={<Posts /> } />
           <Route path='/:user' element={ <User /> } />
           <Route path='/add' element={ <AddPost /> } />
           <Route path='/comments/:id' element={ <Comments /> } />

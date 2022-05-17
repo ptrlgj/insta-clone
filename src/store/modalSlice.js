@@ -9,6 +9,7 @@ const initialState = {
         postModal: false,
         commentModal: false,
         userModal: false,
+        loginModal: false,
     }
 }
 
@@ -18,11 +19,9 @@ const modalSlice = createSlice({
     reducers: {
         openModal: (state, action) => {
             state.isOpen = true;
-            state.postId = action.payload.id;
-            state.userId = action.payload.userId;
-            if(action.payload.commentId){
-                state.commentId = action.payload.commentId
-            }
+            if(action.payload?.userId) state.userId = action.payload.userId;
+            if(action.payload?.id) state.postId = action.payload.id;
+            if(action.payload?.commentId) state.commentId = action.payload.commentId
         },
         closeModal: (state) => {
             state.isOpen = false;

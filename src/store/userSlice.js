@@ -9,21 +9,34 @@ export const getActiveUser = createAsyncThunk(
         return user;
     }
 )
+const initialState = {
+    bio: '',
+    followed: [],
+    followers: 0,
+    followersList: [],
+    fullName: '',
+    image: '',
+    likedPosts: [],
+    posts: [],
+    userName: '',
+    id: '',
+    uid: '',
+}
 const userSlice = createSlice({
     name: 'user',
-    initialState: {
-        bio: '',
-        followed: [],
-        followers: 0,
-        followersList: [],
-        fullName: '',
-        image: '',
-        likedPosts: [],
-        posts: [],
-        userName: '',
-        id: ''
+    initialState,
+    reducers: {
+        setUser: (state, action) => {
+            Object.keys(action.payload).forEach( key => {
+                state[key] = action.payload[key]
+            })
+        },
+        logoutUser: (state, action) => {
+            Object.keys(state).forEach( key => {
+                state[key] = initialState[key]
+            })
+        }
     },
-    reducers: {},
     extraReducers: {
         [getActiveUser.pending]: (state, action) => {
             // console.log('pending')
@@ -39,5 +52,5 @@ const userSlice = createSlice({
         }
     }
 })
-
+export const {setUser, logoutUser} = userSlice.actions
 export default userSlice.reducer
