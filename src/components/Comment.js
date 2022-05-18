@@ -46,6 +46,7 @@ function Comment({data, postId, commentId}) {
                     flex: '1',
                     display: 'flex',
                     flexWrap: 'wrap',
+                    position: 'relative',
                 }}
             >
                 <Typography 
@@ -76,8 +77,8 @@ function Comment({data, postId, commentId}) {
                     {passedTime}
                 </Typography>
                 {optionsButton && 
-                    <IconButton onClick={ handleOpenModal }>
-                        <MoreHorizRoundedIcon fontSize='small' sx={{alignSelf: 'flex-start'}}/>
+                    <IconButton onClick={ handleOpenModal } sx={{position: 'absolute', bottom: 0, right: 0}}>
+                        <MoreHorizRoundedIcon fontSize='small' />
                     </IconButton> 
                 }
             </Box>

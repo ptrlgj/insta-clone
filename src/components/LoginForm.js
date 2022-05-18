@@ -6,14 +6,16 @@ import { getUserBy, logInUser, usersColRef } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { query, where } from 'firebase/firestore';
 import { setUser } from '../store/userSlice';
-import { closeModal } from '../store/modalSlice';
+import { closeModal, setOption } from '../store/modalSlice';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
-
+    const navigate = useNavigate()
+    
     const handleLogin = async () => {
         const userToken = await logInUser(email, password);
         if(userToken){
@@ -24,6 +26,11 @@ function LoginForm() {
             dispatch(setUser(response[0]))
             dispatch(closeModal())
         }
+    }
+
+    const handleSignup = () => {
+        dispatch(closeModal())
+        navigate('/signup')
     }
   return (
     <Box 
@@ -70,6 +77,7 @@ function LoginForm() {
             label="Password"
           />
         </FormControl>
+        <Button variant='text' size='small' onClick={ handleSignup }>Create an account</Button>
         {email && password ? 
             <Button variant='outlined' onClick={handleLogin}>Login</Button> :
             <Button variant='outlined' disabled>Login</Button>

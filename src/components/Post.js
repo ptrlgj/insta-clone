@@ -35,7 +35,10 @@ function Post({data}) {
 
     const handleDoubleClick = (e) => {
         if(e.detail === 2) {
-            if( !post.likedBy.includes(user.id) ){
+            if(!user.loggedIn){
+                dispatch(openModal());
+                dispatch(setOption('loginModal'))
+            } else if( !post.likedBy.includes(user.id) ){
                 updateDocument('posts', post.id, {
                     likedBy: [...post.likedBy, user.id]
                 })
@@ -49,7 +52,10 @@ function Post({data}) {
     }
 
     const handleLike = () => {
-        if( post.likedBy.includes(user.id) ) {
+        if(!user.loggedIn){
+            dispatch(openModal());
+            dispatch(setOption('loginModal'))
+        } else if( post.likedBy.includes(user.id) ) {
             updateDocument('posts', post.id, {
                 likedBy: [...post.likedBy.filter(userLike => userLike !== user.id)]
             })
@@ -77,14 +83,19 @@ function Post({data}) {
 
     const handleSubmitComment = async (e) => {
         e.preventDefault()
-        await updateDocument('posts', post.id, {
-            comments: [... post.comments, {
-                comment: inputComment,
-                createdAt: Date.now(),
-                author: user.id
-            }]
-        })
-        setInputComment('')
+        if(user.loggedIn){
+            await updateDocument('posts', post.id, {
+                comments: [... post.comments, {
+                    comment: inputComment,
+                    createdAt: Date.now(),
+                    author: user.id
+                }]
+            })
+            setInputComment('')
+        } else {
+            dispatch(openModal())
+            dispatch(setOption('loginModal'))
+        }
     }
 
     useEffect( () => {

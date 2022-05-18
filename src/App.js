@@ -13,6 +13,9 @@ import Comments from './pages/Comments';
 import PostPage from './pages/PostPage';
 import ModalOptions from './components/ModalOptions';
 import { onAuthStateChanged } from 'firebase/auth';
+import CreateUser from './pages/CreateUser';
+
+
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
@@ -23,7 +26,7 @@ function App() {
       console.log(uid)
       const q = query(usersColRef, where("uid", "==", uid));
       const response = await getUserBy(q)
-      dispatch(setUser(response[0]))
+      if(response[0]) dispatch(setUser(response[0]))
     }
     if(uid){
       fetchLoggedUser()
@@ -55,6 +58,7 @@ function App() {
           <Route path='/add' element={ <AddPost /> } />
           <Route path='/comments/:id' element={ <Comments /> } />
           <Route path='/post/:id' element={ <PostPage /> } />
+          <Route path='/signup' element={ <CreateUser />} />
         </Routes>
         <NavBar />
       </Box>

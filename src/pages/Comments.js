@@ -7,7 +7,8 @@ import { db, getSingleDoc, updateDocument } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal, setOption } from '../store/modalSlice';
 
 function Comments() {
     const postId = useParams().id
@@ -17,18 +18,24 @@ function Comments() {
     const [inputComment, setInputComment] = useState('');
     const user = useSelector( state => state.user )
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     // console.log(postId)
 
     const handleSubmitComment = async (e) => {
         e.preventDefault()
-        await updateDocument('posts', post.id, {
-            comments: [... post.comments, {
-                comment: inputComment,
-                createdAt: Date.now(),
-                author: user.id
-            }]
-        })
-        setInputComment('')
+        if(user.loggedIn){
+            await updateDocument('posts', post.id, {
+                comments: [... post.comments, {
+                    comment: inputComment,
+                    createdAt: Date.now(),
+                    author: user.id
+                }]
+            })
+            setInputComment('')
+        } else {
+            dispatch(openModal())
+            dispatch(setOption('loginModal'))
+        }
     }
     
     useEffect( () => {

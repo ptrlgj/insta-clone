@@ -10,6 +10,7 @@ export const getActiveUser = createAsyncThunk(
     }
 )
 const initialState = {
+    loggedIn: false,
     bio: '',
     followed: [],
     followers: 0,
@@ -30,6 +31,7 @@ const userSlice = createSlice({
             Object.keys(action.payload).forEach( key => {
                 state[key] = action.payload[key]
             })
+            state.loggedIn = true;
         },
         logoutUser: (state, action) => {
             Object.keys(state).forEach( key => {

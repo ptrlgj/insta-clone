@@ -10,6 +10,7 @@ const initialState = {
         commentModal: false,
         userModal: false,
         loginModal: false,
+        signupModal: false,
     }
 }
 
@@ -31,7 +32,7 @@ const modalSlice = createSlice({
             state.options = initialState.options;
         },
         setOption: (state, action) => {
-            state.options = { ...state.options, [action.payload]: true}
+            state.options = { ...initialState.options, [action.payload]: true}
         }
     }
 })

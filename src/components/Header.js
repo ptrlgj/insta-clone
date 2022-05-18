@@ -4,26 +4,38 @@ import { styled } from '@mui/material/styles';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { openModal, setOption } from '../store/modalSlice';
 
+const StyledBox = styled(Box)(({theme}) => ({
+    
+    '.MuiTabScrollButton-root': {
+        'alignSelf': 'center',
+        'width': '20px',
+        'height': '20px',
+        'backgroundColor': 'white',
+        'borderRadius': '50%',
+      },
+    '.MuiTabs-root': {
+      'backgroundColor': 'none',
+    },
+    '.MuiTab-root': {
+        'minWidth': '55px',
+        'minHeight': '50px',
+    },
+}))
 function Header() {
-    const StyledBox = styled(Box)(({theme}) => ({
-        
-        '.MuiTabScrollButton-root': {
-            'alignSelf': 'center',
-            'width': '20px',
-            'height': '20px',
-            'backgroundColor': 'white',
-            'borderRadius': '50%',
-          },
-        '.MuiTabs-root': {
-          'backgroundColor': 'none',
-        },
-        '.MuiTab-root': {
-            'minWidth': '55px',
-            'minHeight': '50px',
-        },
-    }))
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const user = useSelector( state => state.user )
+    const handleAddPost = () => {
+        if(user.loggedIn) navigate('/add')
+        else {
+            dispatch(openModal())
+            dispatch(setOption('loginModal'))
+        }
+    }
   return (
     <Paper square sx={{
         display: 'flex',
@@ -46,11 +58,9 @@ function Header() {
                     color : 'black'
                 }
             }}>
-                <Link to="/add">
-                    <IconButton>
-                        <AddBoxOutlinedIcon />
-                    </IconButton>
-                </Link>
+                <IconButton onClick={ handleAddPost }>
+                    <AddBoxOutlinedIcon />
+                </IconButton>
                 <IconButton>
                     <FavoriteBorderRoundedIcon />
                 </IconButton>
