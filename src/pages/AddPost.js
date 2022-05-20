@@ -5,7 +5,7 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Box, Button, TextField, Typography, Paper, IconButton } from '@mui/material';
 import styled from '@emotion/styled';
 import { Link, useNavigate } from 'react-router-dom';
-import { storage, addPost, getUser, updateDocument } from '../firebase';
+import { storage, addPost, getUser, updateDocument, getImageUrl } from '../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { v4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,35 +27,10 @@ function AddPost() {
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
-    // const [user, setUser] = useState(null);
     const [desc, setDesc] = useState('')
     const user = useSelector(state => state.user)
     const navigate = useNavigate()
     const dispatch = useDispatch()
-
-    const uploadImage = () => {
-        if(!imageFile) return;
-        const imageRef = ref(storage, `images/${imageId}`)
-        return uploadBytes(imageRef, imageFile)
-    }
-
-    const getImageUrl = async () => {
-        const imageListRef = ref(storage, `images/${imageId}`);
-        uploadImage()
-          .then(()=>{
-          getDownloadURL(imageListRef)
-            .then(url => {
-                setImageUrl(url)
-                console.log(url)
-            })
-        })
-    }
-
-    // const fetchUser = async () => {
-    //     const user = await getUser('piopiopio');
-    //     // console.log(user)
-    //     setUser(user[0])
-    // }
 
     const handleClick = async () => {
         const newPost = await addPost(imageId, user.id, imageUrl, desc);
@@ -64,14 +39,11 @@ function AddPost() {
         dispatch(getActiveUser(user.id))
         navigate('/')
     }
-    
-    // useEffect( () => {
-    //     fetchUser()
-    // }, [] );
 
     useEffect(()=>{
         if(imageFile) {
-            getImageUrl()
+            getImageUrl( imageFile, imageId )
+                .then(res => setImageUrl(res))
         }
     },[imageFile]);
 

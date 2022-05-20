@@ -4,11 +4,13 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { auth, createUserProfile, signUpUser } from '../firebase';
+import { auth, createUserProfile, fetchLoggedUser, getImageUrl, signUpUser } from '../firebase';
 import { v4 } from 'uuid';
 import { storage } from '../firebase';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/userSlice';
 
 const Input = styled('input')({
     display: 'none'
@@ -16,6 +18,7 @@ const Input = styled('input')({
 
 function CreateUser() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [uid, setUid] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,26 +30,6 @@ function CreateUser() {
     const [imageFile, setImageFile] = useState('');
     const [imageId, setImageId] = useState(v4());
     const [imageUrl, setImageUrl] = useState('');
-
-    //wydzielic funkcje do utils
-
-    const uploadImage = () => {
-        if(!imageFile) return;
-        const imageRef = ref(storage, `images/${imageId}`)
-        return uploadBytes(imageRef, imageFile)
-    }
-
-    const getImageUrl = async () => {
-        const imageListRef = ref(storage, `images/${imageId}`);
-        uploadImage()
-          .then(()=>{
-          getDownloadURL(imageListRef)
-            .then(url => {
-                setImageUrl(url)
-                console.log(url)
-            })
-        })
-    }
 
     const handleCreateUser = async () => {
         if(email && password === confPass){
@@ -60,11 +43,13 @@ function CreateUser() {
             const newUser = await createUserProfile( userName, fullName, bio, imageUrl, uid)
             await signInWithEmailAndPassword(auth, email, password)
             navigate(`/${userName}`)
+            fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
         }
     }
     useEffect( () => {
         if(imageFile) {
-            getImageUrl()
+            getImageUrl( imageFile, imageId )
+                .then(res => setImageUrl(res))
         }
     }, [imageFile] )
 
@@ -91,7 +76,7 @@ function CreateUser() {
                 gap:'20px',
             }}
         > 
-            <IconButton onClick={ () => navigate(-1) }>
+            <IconButton onClick={ () => navigate('/') }>
                 <ArrowBackRoundedIcon />
             </IconButton>
             <Typography variant='h6' component="h1">
@@ -135,8 +120,8 @@ function CreateUser() {
                 </FormControl>
                 <TextField
                     id="outlined-textarea"
-                    label="Multiline Placeholder"
-                    placeholder="Placeholder"
+                    label="Bio"
+                    placeholder="Bio"
                     multiline
                     value={bio}
                     onChange={ (e) => setBio(e.target.value)}

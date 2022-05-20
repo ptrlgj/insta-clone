@@ -14,14 +14,15 @@ import PostPage from './pages/PostPage';
 import ModalOptions from './components/ModalOptions';
 import { onAuthStateChanged } from 'firebase/auth';
 import CreateUser from './pages/CreateUser';
+import Settings from './pages/Settings';
 
 
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
   const [uid, setUid] = useState(null)
-
   useEffect( () => {
+    //zaimportowac i uzyc tej funkcji, nie pobiera uzytkownika po zarejestrowaniu
     const fetchLoggedUser = async () => {
       console.log(uid)
       const q = query(usersColRef, where("uid", "==", uid));
@@ -59,6 +60,7 @@ function App() {
           <Route path='/comments/:id' element={ <Comments /> } />
           <Route path='/post/:id' element={ <PostPage /> } />
           <Route path='/signup' element={ <CreateUser />} />
+          <Route path='/settings' element={ <Settings />} />
         </Routes>
         <NavBar />
       </Box>

@@ -50,7 +50,7 @@ function Posts() {
           <NavigationIcon sx={{ mr: 1 }} />
           show new
         </Fab>}
-        {posts && posts.map(post=><Post key={post.id} data={post}/>)}
+        {posts && posts.map( post => <Post key={post.id} data={post}/> )}
     </Box>
   )
 }

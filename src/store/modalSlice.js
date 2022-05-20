@@ -11,6 +11,7 @@ const initialState = {
         userModal: false,
         loginModal: false,
         signupModal: false,
+        deleteUserModal: false,
     }
 }
 

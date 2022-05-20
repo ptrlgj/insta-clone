@@ -117,8 +117,10 @@ function Post({data}) {
     useEffect( () => {
         setLiked( user.likedPosts.includes(post.id) )
     } ,[ user ])
-    if(!post) return (<></>)
+
   return (
+    <>
+    {author?.userName &&
     <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -290,6 +292,8 @@ function Post({data}) {
         </Box>
         </>}
     </Paper>
+    }
+    </>
   )
 }
 

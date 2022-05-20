@@ -1,12 +1,12 @@
 import React from 'react'
-import { Box, Modal, Typography } from '@mui/material' 
+import { Box, Button, Modal, Typography } from '@mui/material' 
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
 import { auth, deleteSingleDoc, getSingleDoc, updateDocument } from '../firebase';
 import { getActiveUser, logoutUser } from '../store/userSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
-import { signOut } from 'firebase/auth';
+import { deleteUser, signOut } from 'firebase/auth';
 
 const modalStyle = {
     width: '100%',
@@ -39,7 +39,7 @@ function ModalOptions() {
   const dispatch = useDispatch()
   const { isOpen, postId, userId, commentId } = useSelector( state => state.modal)
   const user = useSelector( state => state.user)
-  const { postModal, commentModal, userModal, loginModal } = useSelector( state => state.modal.options)
+  const { postModal, commentModal, userModal, loginModal, deleteUserModal } = useSelector( state => state.modal.options)
   const navigate = useNavigate();
 
     const handleClose = () => {
@@ -80,6 +80,26 @@ function ModalOptions() {
       dispatch(logoutUser())
       navigate('/')
     }
+
+    //settings 
+
+    const handleSettings = () =>  {
+      navigate('/settings')
+      dispatch(closeModal())
+    } 
+
+    //delete user
+
+    const handleDeleteUser = async () => {
+      try {
+        await deleteUser(auth.currentUser)
+        await deleteSingleDoc('users', user.id)
+      } catch (error) {
+        console.log(error.message)
+      }
+      dispatch(closeModal())
+      navigate('/')
+    }
   return (
     <Modal
         open={ isOpen }
@@ -87,86 +107,106 @@ function ModalOptions() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
     >
-    <Box sx={ modalStyle }>
+      <Box sx={ modalStyle }>
 
-      {postModal && <>
-      {userId === user.id ? <>
-        <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeletePost }>
-            Delete
-        </Typography>
-        <hr color='lightgray' width='100%' />
-        <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
-            Edit
-        </Typography>
-        <hr color='lightgray' width='100%' />
-      </> : 
-      <>
-        <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
-            Report
-        </Typography>
-        <hr color='lightgray' width='100%' />
-      </>
-      }
-      <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleGoToPost }>
-        Go to post
-      </Typography>
-      <hr color='lightgray' width='100%' />
-      <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
-          Copy link
-      </Typography>
-      </>}
-
-      {commentModal && <>
+        {postModal && <>
         {userId === user.id ? <>
-          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeleteComment}>
+          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeletePost }>
               Delete
           </Typography>
-        </> : 
-        <>
+          <hr color='lightgray' width='100%' />
           <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
-              Report
-          </Typography>
-        </>
-        }
-      </>}
-
-      {userModal && <>
-        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
-          Copy link
-        </Typography>
-        <hr color='lightgray' width='100%' />
-        {userId === user.id ? <>
-          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
-              Settings
+              Edit
           </Typography>
           <hr color='lightgray' width='100%' />
-          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }
-            onClick={ handleLogOut }
-          >
-              Logout
-          </Typography>
         </> : 
         <>
           <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
               Report
           </Typography>
+          <hr color='lightgray' width='100%' />
         </>
         }
-      </>}
+        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleGoToPost }>
+          Go to post
+        </Typography>
+        <hr color='lightgray' width='100%' />
+        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
+            Copy link
+        </Typography>
+        </>}
 
-      {loginModal && <>
-          <Typography variant='subtitle1' id="modal-modal-description" sx={{
-            width:'100%', 
-            textAlign: 'center', 
-            fontWeight: '450', 
-            flex: '1', 
-            padding: '10px 0'
-          }}>
-              Log in
+        {commentModal && <>
+          {userId === user.id ? <>
+            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeleteComment}>
+                Delete
+            </Typography>
+          </> : 
+          <>
+            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+                Report
+            </Typography>
+          </>
+          }
+        </>}
+
+        {userModal && <>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
+            Copy link
           </Typography>
-          <LoginForm />
-      </>}
-    </Box>
+          <hr color='lightgray' width='100%' />
+          {userId === user.id ? <>
+            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleSettings }>
+                Settings
+            </Typography>
+            <hr color='lightgray' width='100%' />
+            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }
+              onClick={ handleLogOut }
+            >
+                Logout
+            </Typography>
+          </> : 
+          <>
+            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+                Report
+            </Typography>
+          </>
+          }
+        </>}
+
+        {loginModal && <>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={{
+              width:'100%', 
+              textAlign: 'center', 
+              fontWeight: '450', 
+              flex: '1', 
+              padding: '10px 0'
+            }}>
+                Log in
+            </Typography>
+            <LoginForm />
+        </>}
+      {deleteUserModal && 
+        <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+          <Typography 
+            variant='subtitle1' 
+
+            sx={{width:'100%', 
+                textAlign: 'center', 
+                fontWeight: '450', 
+                flex: '1', 
+                padding: '10px 0'
+              }}
+          >
+            Are you sure you want to delete this account with all its activity?
+          </Typography>
+          <Box sx={{display: 'flex', gap: '20px', paddingBottom: '10px'}}>
+            <Button variant="outlined" onClick={ handleDeleteUser }>Yes</Button>
+            <Button variant="contained" onClick={ () => dispatch(closeModal())}>No</Button>
+          </Box>
+        </Box>
+      }
+      </Box>
     </Modal>
   )
 }
