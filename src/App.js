@@ -24,7 +24,7 @@ function App() {
   useEffect( () => {
     //zaimportowac i uzyc tej funkcji, nie pobiera uzytkownika po zarejestrowaniu
     const fetchLoggedUser = async () => {
-      console.log(uid)
+      // console.log(uid)
       const q = query(usersColRef, where("uid", "==", uid));
       const response = await getUserBy(q)
       if(response[0]) dispatch(setUser(response[0]))

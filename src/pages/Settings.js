@@ -1,4 +1,4 @@
-import { Box, FormControlLabel, IconButton, Modal, Paper, Switch, Typography } from '@mui/material'
+import { Box, FormControlLabel, IconButton, Paper, Switch, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
@@ -24,15 +24,11 @@ function Settings() {
             background: 'white',
             paddingBottom: '20px',
             height: '100vh',
-            // 'button' : {
-            //     color : 'black'
-            // }
         }}
     >
         <Box 
             sx={{
                 display: 'flex',
-                // justifyContent: 'space-between',
                 padding: '5px 10px',
                 alignItems: 'center',
                 gap:'20px',

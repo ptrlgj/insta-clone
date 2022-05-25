@@ -1,29 +1,18 @@
-import { Box, Fab } from '@mui/material';
+import { Box, Fab, Paper, Typography } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
-import ModalOptions from '../components/ModalOptions';
 import Post from '../components/Post';
-import data from '../data.json';
-import { postsColRef, getData, getSortedData, db } from '../firebase'
+import { db } from '../firebase'
 import { setPosts, setNewPosts } from '../store/postsSlice';
 import { collection, onSnapshot } from 'firebase/firestore';
 function Posts() {
-    // const [posts, setPosts] = useState(null);
     const { posts, newPosts } = useSelector( state => state.posts )
     const dispatch = useDispatch();
 
     useEffect( ()=> {
-        // const getPosts = async () => {
-        //     const posts = await getSortedData(postsColRef, 'createdAt', 'desc');
-        //     // console.log(posts)
-        //     dispatch(setPosts(posts))
-        // }
-        // getPosts()
-
         const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
-          // console.log(snapshot.docs)
           if(!snapshot.docs) return
           dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
         }) 
@@ -50,7 +39,21 @@ function Posts() {
           <NavigationIcon sx={{ mr: 1 }} />
           show new
         </Fab>}
-        {posts && posts.map( post => <Post key={post.id} data={post}/> )}
+        {posts.length > 0 ? 
+          posts.map( post => <Post key={post.id} data={post}/> ) 
+          :
+          <Paper
+            sx={{
+              width: '100%',
+              height: '100vh',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant='h5'>No posts to show</Typography>
+          </Paper>
+          }
     </Box>
   )
 }

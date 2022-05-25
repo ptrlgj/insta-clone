@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Avatar, Box, TextField, Typography, Paper, Modal, Button, IconButton, styled} from '@mui/material';
+import {Avatar, Box, TextField, Typography, Paper, Button, IconButton, styled} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -188,9 +188,8 @@ function Post({data}) {
         }}>
             <Box sx={{
                 display: 'flex',
-                // gap: '5px',
             }}>
-                 {/* (user && user.likedPosts.includes(id) ) */}
+                {/* (user && user.likedPosts.includes(id) ) */}
                 <IconButton onClick={ () => handleLike() }>
                     { liked ? 
                         <FavoriteIcon 

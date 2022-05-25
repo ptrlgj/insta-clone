@@ -6,7 +6,7 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import GridOnRoundedIcon from '@mui/icons-material/GridOnRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
 import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
-import { Avatar, Box, Typography, Button, Tabs, Tab, Paper, IconButton} from '@mui/material';
+import { Avatar, Box, Typography, Button, Tab, Paper, IconButton} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
 import { getUserBy, usersColRef } from '../firebase';
@@ -79,7 +79,6 @@ function User() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-around',
-            // gap:'20px',
             padding: '15px 20px',
         }}>
             <Avatar 
@@ -149,8 +148,8 @@ function User() {
             <TabPanel value="1" sx={{padding: '0', display: 'flex', justifyContent:'center'}}>
                 {userData && <PhotoGrid user={userData}/>}
             </TabPanel>
-            <TabPanel value="2">Item Two</TabPanel>
-            <TabPanel value="3">Item Three</TabPanel>
+            <TabPanel value="2"></TabPanel>
+            <TabPanel value="3"></TabPanel>
         </TabContext>
         </>}
         {noUser && 

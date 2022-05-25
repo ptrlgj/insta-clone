@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material';
+import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import React, { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -6,7 +6,7 @@ import { getUserBy, logInUser, usersColRef } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { query, where } from 'firebase/firestore';
 import { setUser } from '../store/userSlice';
-import { closeModal, setOption } from '../store/modalSlice';
+import { closeModal } from '../store/modalSlice';
 import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {

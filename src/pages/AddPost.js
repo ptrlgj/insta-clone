@@ -4,9 +4,8 @@ import EastRoundedIcon from '@mui/icons-material/EastRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Box, Button, TextField, Typography, Paper, IconButton } from '@mui/material';
 import styled from '@emotion/styled';
-import { Link, useNavigate } from 'react-router-dom';
-import { storage, addPost, getUser, updateDocument, getImageUrl } from '../firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { useNavigate } from 'react-router-dom';
+import { addPost, updateDocument, getImageUrl } from '../firebase';
 import { v4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActiveUser } from '../store/userSlice';

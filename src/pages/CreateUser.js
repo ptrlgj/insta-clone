@@ -6,8 +6,6 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { auth, createUserProfile, fetchLoggedUser, getImageUrl, signUpUser } from '../firebase';
 import { v4 } from 'uuid';
-import { storage } from '../firebase';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/userSlice';
@@ -42,7 +40,7 @@ function CreateUser() {
         if(imageUrl && userName){
             const newUser = await createUserProfile( userName, fullName, bio, imageUrl, uid)
             await signInWithEmailAndPassword(auth, email, password)
-            navigate(`/${userName}`)
+            navigate(`/`)
             fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
         }
     }

@@ -2,9 +2,9 @@ import React from 'react'
 import { Box, Button, Modal, Typography } from '@mui/material' 
 import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
-import { auth, deleteSingleDoc, getSingleDoc, updateDocument } from '../firebase';
+import { auth, deleteSingleDoc, deleteUserPosts, getSingleDoc, updateDocument } from '../firebase';
 import { getActiveUser, logoutUser } from '../store/userSlice';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import { deleteUser, signOut } from 'firebase/auth';
 
@@ -94,11 +94,19 @@ function ModalOptions() {
       try {
         await deleteUser(auth.currentUser)
         await deleteSingleDoc('users', user.id)
+        await deleteUserPosts(user.id)
       } catch (error) {
         console.log(error.message)
       }
       dispatch(closeModal())
+      dispatch(logoutUser())
       navigate('/')
+    }
+
+    //copy
+    
+    const handleCopyToClipboard = () => {
+      
     }
   return (
     <Modal
@@ -131,7 +139,7 @@ function ModalOptions() {
           Go to post
         </Typography>
         <hr color='lightgray' width='100%' />
-        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
+        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick= { handleCopyToClipboard }>
             Copy link
         </Typography>
         </>}
