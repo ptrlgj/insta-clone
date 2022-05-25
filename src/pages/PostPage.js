@@ -5,18 +5,24 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Post from '../components/Post'
 import { getSingleDoc } from '../firebase'
+import { useDispatch, useSelector } from 'react-redux';
+import { setPostPage } from '../store/postsSlice';
 
 function PostPage() {
     const postId = useParams().id
     const [post, setPost] = useState(null)
     const [user, setUser] = useState(null)
+    const { postPage } = useSelector( state => state.posts )
+    const dispatch = useDispatch()
     const navigate = useNavigate()
     useEffect( () => {
+        dispatch(setPostPage(true))
         const fetchData = async () => {
             const fetchPost = await getSingleDoc('posts', postId);
             setPost(fetchPost)
         } 
         fetchData()
+        return () => dispatch(setPostPage(false))
     }, [])
 
     useEffect( () => {

@@ -40,6 +40,7 @@ function ModalOptions() {
   const { isOpen, postId, userId, commentId } = useSelector( state => state.modal)
   const user = useSelector( state => state.user)
   const { postModal, commentModal, userModal, loginModal, deleteUserModal } = useSelector( state => state.modal.options)
+  const { postPage } = useSelector( state => state.posts) 
   const navigate = useNavigate();
 
     const handleClose = () => {
@@ -106,7 +107,12 @@ function ModalOptions() {
     //copy
     
     const handleCopyToClipboard = () => {
-      
+      let link = window.location.href
+      if(postModal){
+        link = postPage ? link : `${link}post/${postId}`
+      }
+      navigator.clipboard.writeText(link)
+      // console.log(link)
     }
   return (
     <Modal
@@ -126,18 +132,19 @@ function ModalOptions() {
           <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
               Edit
           </Typography>
-          <hr color='lightgray' width='100%' />
         </> : 
         <>
           <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
               Report
           </Typography>
-          <hr color='lightgray' width='100%' />
         </>
         }
+        {!postPage && <>
+        <hr color='lightgray' width='100%' />
         <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleGoToPost }>
           Go to post
         </Typography>
+        </>}
         <hr color='lightgray' width='100%' />
         <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick= { handleCopyToClipboard }>
             Copy link
@@ -159,7 +166,7 @@ function ModalOptions() {
         </>}
 
         {userModal && <>
-          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleCopyToClipboard }>
             Copy link
           </Typography>
           <hr color='lightgray' width='100%' />
