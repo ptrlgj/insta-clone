@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/userSlice';
+import { showAlert } from '../store/alertSlice';
 
 const Input = styled('input')({
     display: 'none'
@@ -41,6 +42,7 @@ function CreateUser() {
             const newUser = await createUserProfile( userName, fullName, bio, imageUrl, uid)
             await signInWithEmailAndPassword(auth, email, password)
             navigate(`/`)
+            dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))
             fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
         }
     }

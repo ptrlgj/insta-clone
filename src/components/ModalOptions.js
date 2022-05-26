@@ -7,6 +7,7 @@ import { getActiveUser, logoutUser } from '../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import { deleteUser, signOut } from 'firebase/auth';
+import { showAlert } from '../store/alertSlice';
 
 const modalStyle = {
     width: '100%',
@@ -56,6 +57,7 @@ function ModalOptions() {
         })
       dispatch(getActiveUser(user.id))
       dispatch(closeModal())
+      dispatch(showAlert({type: 'success', message: 'Post has been succesfully deleted'}))
     }
     
     const handleGoToPost = () => {
@@ -71,6 +73,7 @@ function ModalOptions() {
         comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` != commentId))]
       })
       dispatch(closeModal())
+      dispatch(showAlert({type: 'success', message: 'Comment has been succesfully deleted'}))
     }
 
     // user
@@ -79,6 +82,7 @@ function ModalOptions() {
       await signOut(auth)
       dispatch(closeModal())
       dispatch(logoutUser())
+      dispatch(showAlert({type: 'info', message: 'User has logged out'}))
       navigate('/')
     }
 
@@ -96,8 +100,10 @@ function ModalOptions() {
         await deleteUser(auth.currentUser)
         await deleteSingleDoc('users', user.id)
         await deleteUserPosts(user.id)
+        dispatch(showAlert({type: 'success', message: 'User has been succesfully deleted'}))
       } catch (error) {
         console.log(error.message)
+        dispatch(showAlert({type: 'error', message: error.message}))
       }
       dispatch(closeModal())
       dispatch(logoutUser())
@@ -112,12 +118,13 @@ function ModalOptions() {
         link = postPage ? link : `${link}post/${postId}`
       }
       navigator.clipboard.writeText(link)
-      // console.log(link)
+      dispatch(showAlert({type: 'info', message: 'Link has been added to clipboard'}))
+      dispatch(closeModal())
     }
   return (
     <Modal
         open={ isOpen }
-        onClose={ handleClose}
+        onClose={ handleClose }
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
     >

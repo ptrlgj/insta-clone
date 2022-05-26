@@ -14,6 +14,7 @@ import { onSnapshot, doc } from 'firebase/firestore';
 import { getActiveUser } from '../store/userSlice';
 import { timePassed } from '../utils'
 import { Link, useNavigate } from 'react-router-dom';
+import { showAlert } from '../store/alertSlice';
 
 const Img = styled('img')({
     position: 'relative',
@@ -92,6 +93,7 @@ function Post({data}) {
                 }]
             })
             setInputComment('')
+            dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
         } else {
             dispatch(openModal())
             dispatch(setOption('loginModal'))
@@ -152,31 +154,7 @@ function Post({data}) {
                 <MoreVertIcon />
             </IconButton>
         </Box >
-        <Box
-            // sx={{
-            //     position: 'relative',
-            //     '&:hover > div': {
-            //         animationDuration: '1000ms',
-            //         animationName: 'like-heart-animation',
-            //         animationTimingFunction: 'ease-in-out',
-            //     }
-            // }}
-        >
-            {/* <Box 
-                sx={{
-                    width: '184px',
-                    height: '162px',
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0,
-                    margin: 'auto',
-                    background: 'url("https://imgur.com/rksyGE8.png") no-repeat center/contain',
-                    opacity: 0,
-                    transform: 'scale(0)',
-                }}
-            /> */}
+        <Box>
             <Img onClick={(e)=>handleDoubleClick(e)} src={post.url} alt="" />
         </Box>
         <Box sx={{
@@ -230,7 +208,8 @@ function Post({data}) {
                 variant='subtitle2' 
                 sx={{ fontWeight: '400'}}
                 component="p"
-                onClick={ () => {
+                onClick={ (e) => {
+                    if(!(e.target === e.currentTarget)) return 
                     if(readMore || post.desc.length < 100 ) navigate(`/comments/${post.id}`)
                     else setReadMore(true)
                     }}
@@ -239,10 +218,9 @@ function Post({data}) {
                     variant="subtitle2" 
                     sx={{ fontWeight: 'bold', marginRight: '3px'}} 
                     component="span"
+                    onClick={ () => navigate(`/${author.userName}`) }
                 >
-                    <Link to={`/${author.userName}`}>
                         {author.userName}
-                    </Link>
                 </Typography>
                     {readMore ? post.desc : 
                         post.desc.length >= 100 ? `${post.desc.slice(0,100)}...more` : post.desc }

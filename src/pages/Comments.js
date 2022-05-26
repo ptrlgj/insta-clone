@@ -9,6 +9,7 @@ import Comment from '../components/Comment';
 import { timePassed } from '../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
+import { showAlert } from '../store/alertSlice';
 
 function Comments() {
     const postId = useParams().id
@@ -31,6 +32,7 @@ function Comments() {
                     author: user.id
                 }]
             })
+            dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
             setInputComment('')
         } else {
             dispatch(openModal())

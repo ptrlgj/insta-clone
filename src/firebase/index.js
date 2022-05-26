@@ -144,18 +144,19 @@ export const subscribeTo = async ( colName ) => {
 
  //loggin in 
 
-export const logInUser = async (email, pass) => {
-    try {
-        const user = await signInWithEmailAndPassword(
-            auth,
-            email,
-            pass
-        )
-        return user
-    } catch (error) {
-        console.log('error',error.message)
-    }
-}
+// export const logInUser = async (email, pass) => {
+//     try {
+//         const user = await signInWithEmailAndPassword(
+//             auth,
+//             email,
+//             pass
+//         )
+
+//         return user
+//     } catch (error) {
+//         console.log('error',error.message)
+//     }
+// }
 
 export const signUpUser = async ( email, pass ) => {
     try {

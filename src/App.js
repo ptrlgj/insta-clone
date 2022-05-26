@@ -15,12 +15,13 @@ import ModalOptions from './components/ModalOptions';
 import { onAuthStateChanged } from 'firebase/auth';
 import CreateUser from './pages/CreateUser';
 import Settings from './pages/Settings';
+import AlertComponent from './components/AlertComponent';
 
 
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
-  const [uid, setUid] = useState(null)
+  const [uid, setUid] = useState(null);
   useEffect( () => {
     //zaimportowac i uzyc tej funkcji, nie pobiera uzytkownika po zarejestrowaniu
     const fetchLoggedUser = async () => {
@@ -53,6 +54,7 @@ function App() {
         paddingBottom: '46px',
       }}>
         <ModalOptions />
+        <AlertComponent />
         <Routes>
           <Route path="/" element={<Posts /> } />
           <Route path='/:user' element={ <User /> } />

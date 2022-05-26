@@ -9,6 +9,7 @@ import { addPost, updateDocument, getImageUrl } from '../firebase';
 import { v4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActiveUser } from '../store/userSlice';
+import { showAlert } from '../store/alertSlice';
 
 const Input = styled('input')({
     display: 'none',
@@ -33,9 +34,9 @@ function AddPost() {
 
     const handleClick = async () => {
         const newPost = await addPost(imageId, user.id, imageUrl, desc);
-        // console.log(user.id)
         await updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
         dispatch(getActiveUser(user.id))
+        dispatch(showAlert({type: 'success', message: 'New post has been succesfully added'}))
         navigate('/')
     }
 

@@ -5,6 +5,7 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useDispatch } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
+import { showAlert } from '../store/alertSlice';
 
 function Settings() {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Settings() {
     const handleOpenModal = () => {
         dispatch(openModal())
         dispatch(setOption('deleteUserModal'))
+        dispatch(showAlert({type: 'warning', message: 'This user and its posts will be permamently deleted'}))
     }
   return (
     <Paper 

@@ -2,12 +2,14 @@ import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, Outli
 import React, { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { getUserBy, logInUser, usersColRef } from '../firebase';
+import { auth, getUserBy, logInUser, usersColRef } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { query, where } from 'firebase/firestore';
 import { setUser } from '../store/userSlice';
 import { closeModal } from '../store/modalSlice';
 import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { showAlert } from '../store/alertSlice';
 
 function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +17,20 @@ function LoginForm() {
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate()
+
+    const logInUser = async (email, pass) => {
+      try {
+        const user = await signInWithEmailAndPassword(
+            auth,
+            email,
+            pass
+        )
+        dispatch(showAlert({type: 'success', message: 'User logged in successfully'}))
+        return user
+      } catch (error) {
+        dispatch(showAlert({type: 'error', message: error.message}))
+      }
+    }
     
     const handleLogin = async () => {
         const userToken = await logInUser(email, password);
