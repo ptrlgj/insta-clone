@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getSingleDoc } from "../firebase";
-
+//test
 export const getActiveUser = createAsyncThunk(
     'user/getActiveUser',
     async (dispatch, getState) => {
+        console.log(dispatch)
         const user = await getSingleDoc('users', dispatch);
-        // console.log(dispatch, getState)
         return user;
     }
 )
