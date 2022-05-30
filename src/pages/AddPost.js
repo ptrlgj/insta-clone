@@ -50,13 +50,12 @@ function AddPost() {
   return (
     <Paper sx={{paddingBottom: '20px', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
         <Box sx={{
-            backgroundColor: 'white',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             padding:"5px 5px",
             'button' : {
-                color : 'black'
+                color : 'text.primary'
             }
         }}>
             <IconButton onClick={ () => navigate('/')}>
@@ -77,7 +76,7 @@ function AddPost() {
         </Box>
         <Box 
             sx={{
-                backgroundColor: 'white', 
+                // backgroundColor: 'white', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
@@ -91,7 +90,8 @@ function AddPost() {
                 <Typography variant='h5' component='p'>Select image</Typography> 
             }
         </Box>
-        <Box sx={{backgroundColor: 'white',
+        <Box sx={{
+            // backgroundColor: 'white',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',}}>
@@ -110,7 +110,7 @@ function AddPost() {
             </label>
         </Box>
         <Box sx={{
-            backgroundColor: 'white',
+            // backgroundColor: 'white',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

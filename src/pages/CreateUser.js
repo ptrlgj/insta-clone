@@ -62,9 +62,9 @@ function CreateUser() {
             background: 'white',
             paddingBottom: '20px',
             height: '100vh',
-            // 'button' : {
-            //     color : 'black'
-            // }
+            'button' : {
+                color : 'text.primary'
+            }
         }}
     >
         <Box 

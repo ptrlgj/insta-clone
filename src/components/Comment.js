@@ -70,9 +70,9 @@ function Comment({data, postId, commentId}) {
                 </Typography>
                 <Typography 
                     variant='caption' 
-                    // sx={{
-                    //     color: 'rgba(0,0,0,0.7)'
-                    // }}
+                    sx={{
+                        color: 'text.secondary'
+                    }}
                 >
                     {passedTime}
                 </Typography>

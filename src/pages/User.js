@@ -77,7 +77,7 @@ function User() {
             display: 'flex',
             flexDirection: 'column',
             paddingBottom: '20px',
-            minHeight: '100vh'
+            minHeight: '95vh'
         }}>
         <Box sx={{
             display: 'flex',
@@ -85,9 +85,9 @@ function User() {
             padding: '5px 10px',
             alignItems: 'center',
             gap:'20px',
-            // 'button' : {
-            //     color : 'black'
-            // }
+            'button' : {
+                color : 'text.primary'
+            }
         }}>
             <IconButton onClick={ () => navigate(-1) }>
                 <ArrowBackRoundedIcon />

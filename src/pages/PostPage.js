@@ -44,7 +44,7 @@ function PostPage() {
             background: 'white',
             paddingBottom: '20px',
             'button' : {
-                color : 'black'
+                color : 'text.primary'
             }
         }}>
             <Box sx={{

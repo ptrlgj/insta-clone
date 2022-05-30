@@ -33,7 +33,8 @@ const textStyle = {
   cursor:'pointer', 
   fontWeight: '450', 
   flex: '1', 
-  padding: '10px 0'
+  padding: '10px 0',
+  color: 'text.primary'
 }
 function ModalOptions() {
   const dispatch = useDispatch()
@@ -131,16 +132,16 @@ function ModalOptions() {
 
         {postModal && <>
         {userId === user.id ? <>
-          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeletePost }>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red" onClick={ handleDeletePost }>
               Delete
           </Typography>
           <hr color='lightgray' width='100%' />
-          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red">
               Edit
           </Typography>
         </> : 
         <>
-          <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red">
               Report
           </Typography>
         </>
@@ -159,12 +160,12 @@ function ModalOptions() {
 
         {commentModal && <>
           {userId === user.id ? <>
-            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleDeleteComment}>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }  color="red" onClick={ handleDeleteComment}>
                 Delete
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }  color="red">
                 Report
             </Typography>
           </>
@@ -177,18 +178,18 @@ function ModalOptions() {
           </Typography>
           <hr color='lightgray' width='100%' />
           {userId === user.id ? <>
-            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle } onClick={ handleSettings }>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red" onClick={ handleSettings }>
                 Settings
             </Typography>
             <hr color='lightgray' width='100%' />
-            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red"
               onClick={ handleLogOut }
             >
                 Logout
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" color="red" sx={ textStyle }>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red">
                 Report
             </Typography>
           </>

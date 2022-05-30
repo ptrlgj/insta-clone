@@ -54,9 +54,9 @@ function Header() {
             </Typography>
             <Box sx={{
                 display: 'flex',
-                // 'button' : {
-                //     color : 'black'
-                // }
+                'button' : {
+                    color : 'text.primary'
+                }
             }}>
                 <IconButton onClick={ handleAddPost }>
                     <AddBoxOutlinedIcon />

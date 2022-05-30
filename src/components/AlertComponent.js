@@ -7,7 +7,7 @@ const alertStyle = {
     position: 'fixed', 
     zIndex: 99, 
     top: '10px',
-    width: '466px',
+    width: {xs: '100vw', sm: '466px'},
     pointerEvents: 'none',
     opacity: '0.9'
 }
