@@ -39,7 +39,7 @@ function CreateUser() {
 
     const handleCreateProfile = async () => {
         if(imageUrl && userName){
-            const newUser = await createUserProfile( userName, fullName, bio, imageUrl, uid)
+            await createUserProfile( userName, fullName, bio, imageUrl, uid)
             await signInWithEmailAndPassword(auth, email, password)
             navigate(`/`)
             dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))

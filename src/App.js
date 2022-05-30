@@ -6,7 +6,7 @@ import User from './pages/User';
 import AddPost from './pages/AddPost';
 import { auth, usersColRef, getUserBy } from './firebase';
 import Posts from './pages/Posts';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setUser } from './store/userSlice';
 import { query, where } from 'firebase/firestore';
 import Comments from './pages/Comments';
@@ -20,7 +20,6 @@ import AlertComponent from './components/AlertComponent';
 
 function App() {
   const dispatch = useDispatch();
-  const { user } = useSelector(state => state.user);
   const [uid, setUid] = useState(null);
   useEffect( () => {
     //zaimportowac i uzyc tej funkcji, nie pobiera uzytkownika po zarejestrowaniu

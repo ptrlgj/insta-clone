@@ -10,7 +10,6 @@ import { deleteUser, signOut } from 'firebase/auth';
 import { showAlert } from '../store/alertSlice';
 
 const modalStyle = {
-    width: '100%',
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -51,9 +50,9 @@ function ModalOptions() {
     // posts
 
     const handleDeletePost = async () => {
-      const deleted = await deleteSingleDoc('posts', postId);
-      const updated = await updateDocument('users', user.id, {
-         posts: [ ...user.posts.filter( post => post != postId)], 
+      await deleteSingleDoc('posts', postId);
+      await updateDocument('users', user.id, {
+         posts: [ ...user.posts.filter( post => post !== postId)], 
         })
       dispatch(getActiveUser(user.id))
       dispatch(closeModal())
@@ -69,8 +68,8 @@ function ModalOptions() {
 
     const handleDeleteComment = async () => {
       const post = await getSingleDoc('posts', postId);
-      const updated = await updateDocument('posts', postId, {
-        comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` != commentId))]
+      await updateDocument('posts', postId, {
+        comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` !== commentId))]
       })
       dispatch(closeModal())
       dispatch(showAlert({type: 'success', message: 'Comment has been succesfully deleted'}))

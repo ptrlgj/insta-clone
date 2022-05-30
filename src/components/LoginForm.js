@@ -2,7 +2,7 @@ import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, Outli
 import React, { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { auth, getUserBy, logInUser, usersColRef } from '../firebase';
+import { auth, getUserBy, usersColRef } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { query, where } from 'firebase/firestore';
 import { setUser } from '../store/userSlice';
@@ -35,10 +35,8 @@ function LoginForm() {
     const handleLogin = async () => {
         const userToken = await logInUser(email, password);
         if(userToken){
-            // console.log(userToken)
             const q = query(usersColRef, where('uid','==',userToken.user.uid))
             const response = await getUserBy(q)
-            // console.log(response[0])
             dispatch(setUser(response[0]))
             dispatch(closeModal())
         }

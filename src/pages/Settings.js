@@ -1,9 +1,9 @@
 import { Box, FormControlLabel, IconButton, Paper, Switch, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 import { showAlert } from '../store/alertSlice';
 
@@ -11,12 +11,20 @@ function Settings() {
     const navigate = useNavigate();
     const [darkTheme, setDarkTheme] = useState(false);
     const dispatch = useDispatch();
+    const user = useSelector( state => state.user )
 
     const handleOpenModal = () => {
         dispatch(openModal())
         dispatch(setOption('deleteUserModal'))
         dispatch(showAlert({type: 'warning', message: 'This user and its posts will be permamently deleted'}))
     }
+
+    useEffect( () => {
+        if(!user.loggedIn){
+            dispatch(openModal())
+            dispatch(setOption('loginModal'))
+        }
+    }, [])
   return (
     <Paper 
         elevation={2}
@@ -28,6 +36,7 @@ function Settings() {
             height: '100vh',
         }}
     >
+        {user.loggedIn && <>
         <Box 
             sx={{
                 display: 'flex',
@@ -67,6 +76,7 @@ function Settings() {
             >
             </FormControlLabel>
         </Box>
+        </>}
     </Paper>
   )
 }

@@ -10,9 +10,11 @@ import { Avatar, Box, Typography, Button, Tab, Paper, IconButton} from '@mui/mat
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
 import { getUserBy, usersColRef } from '../firebase';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
-import { query, where } from 'firebase/firestore';
+import { setUser } from '../store/userSlice';
+import { onSnapshot, query, where } from 'firebase/firestore';
+import { toggleFollowUser } from '../utils';
 
 // export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
@@ -23,27 +25,50 @@ function User() {
     const [loading, setLoading] = useState(true);
     const [noUser, setNoUser] = useState(false);
     const [userData, setUserData] = useState(null);
+    const user = useSelector( state => state.user );
+    const [followed, setFollowed] = useState(null)
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    useEffect(()=>{
-        const fetchUserData = async () =>{
-            const q = query(usersColRef, where("userName", "==", userName))
-            const response = await getUserBy(q)
-            if(response.length > 0){
-                setUserData(response[0]);
-                setLoading(false)
-            }else{
-                setLoading(false)
-                setNoUser(true)
-                return
-            }
+    
+    const fetchUserData = async () =>{
+        setLoading(true)
+        setUserData(null)
+        const q = query(usersColRef, where("userName", "==", userName))
+        const response = await getUserBy(q)
+        if(response.length > 0){
+            setUserData(response[0]);
+            setLoading(false)
+        }else{
+            setLoading(false)
+            setNoUser(true)
+            return
         }
+    }
+    useEffect(()=>{
         fetchUserData()
     }, [userName])
+
+    useEffect( () => {
+        if(userData?.id){
+            setFollowed(userData.followersList.includes(user.id))
+        }
+    }, [userData])
 
     const handleOpenModal = () => {
         dispatch(setOption('userModal'));
         dispatch(openModal({id: '', userId: userData.id, commmentId: ''}));
+    }
+
+    const handleOpenSettings = () => {
+        navigate('/settings')
+    }
+
+    const handleFollow = async () => {
+        await toggleFollowUser( user, userData )
+        await fetchUserData()
+        // const q = query(usersColRef, where("uid", "==", user.uid))
+        // const loggedInUser = await getUserBy(q)
+        // dispatch(setUser(loggedInUser))
     }
   return (
     <Paper 
@@ -103,7 +128,7 @@ function User() {
                 alignItems: 'center',
                 flex: '1'
             }}>
-                <Typography variant='h6'>{userData.followers}</Typography>
+                <Typography variant='h6'>{userData.followersList.length}</Typography>
                 <Typography variant='body1'>Followers</Typography>
             </Box>
             <Box sx={{
@@ -130,8 +155,20 @@ function User() {
             padding: '5px 20px',
             gap: '10px'
         }}>
-            <Button variant="contained" sx={{flex: '1'}}>Follow</Button>
-            <Button variant="outlined" sx={{flex: '1'}}>Message</Button>
+            {userData.id === user.id ? 
+                <>
+                    <Button variant="outlined" sx={{flex: '1'}} onClick={ handleOpenSettings }>Settings</Button>
+                </>
+                :
+                <>
+                    {followed ?
+                    <Button variant="outlined" sx={{flex: '1'}} onClick={ handleFollow }>Followed</Button>
+                    :
+                    <Button variant="contained" sx={{flex: '1'}} onClick={ handleFollow }>Follow</Button>
+                    }
+                    <Button variant="outlined" sx={{flex: '1'}}>Message</Button>
+                </> 
+            }
             <Button variant="outlined" sx={{minWidth: '36.5px', padding: '0'}}><ExpandMoreRoundedIcon /></Button>
         </Box>
         <TabContext value={panel}>

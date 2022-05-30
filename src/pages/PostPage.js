@@ -12,7 +12,6 @@ function PostPage() {
     const postId = useParams().id
     const [post, setPost] = useState(null)
     const [user, setUser] = useState(null)
-    const { postPage } = useSelector( state => state.posts )
     const dispatch = useDispatch()
     const navigate = useNavigate()
     useEffect( () => {

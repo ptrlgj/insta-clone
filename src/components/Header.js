@@ -1,30 +1,30 @@
 import React from 'react'
-import { Typography, Box, Paper, Avatar, Tabs, Tab, IconButton } from '@mui/material'
-import { styled } from '@mui/material/styles';
+import { Typography, Box, Paper, IconButton } from '@mui/material'
+// import { styled } from '@mui/material/styles';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 
-const StyledBox = styled(Box)(({theme}) => ({
+// const StyledBox = styled(Box)(({theme}) => ({
     
-    '.MuiTabScrollButton-root': {
-        'alignSelf': 'center',
-        'width': '20px',
-        'height': '20px',
-        'backgroundColor': 'white',
-        'borderRadius': '50%',
-      },
-    '.MuiTabs-root': {
-      'backgroundColor': 'none',
-    },
-    '.MuiTab-root': {
-        'minWidth': '55px',
-        'minHeight': '50px',
-    },
-}))
+//     '.MuiTabScrollButton-root': {
+//         'alignSelf': 'center',
+//         'width': '20px',
+//         'height': '20px',
+//         'backgroundColor': 'white',
+//         'borderRadius': '50%',
+//       },
+//     '.MuiTabs-root': {
+//       'backgroundColor': 'none',
+//     },
+//     '.MuiTab-root': {
+//         'minWidth': '55px',
+//         'minHeight': '50px',
+//     },
+// }))
 function Header() {
     const navigate = useNavigate()
     const dispatch = useDispatch()

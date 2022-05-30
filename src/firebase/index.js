@@ -1,7 +1,7 @@
 import {initializeApp} from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where, getDoc, orderBy, updateDoc, onSnapshot } from 'firebase/firestore'
 import { getDownloadURL, getStorage, ref, uploadBytes} from 'firebase/storage'
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY, 
@@ -58,6 +58,7 @@ export const getSingleDoc = async (collection, id) => {
 //query get document by 
 
 export const getUserBy = async (q) => {
+
     // const q = query(usersColRef, where("userName", "==", userName))
     const response = await getDocs(q)
     return response.docs.map(doc=>( { ...doc.data(), id: doc.id } ))
@@ -135,7 +136,7 @@ export const deleteUserPosts = async (userId) => {
 
 export const subscribeTo = async ( colName ) => {
     const colRef = collection(db, colName)
-    const subscription = onSnapshot( colRef, ( snapshot ) => {
+    onSnapshot( colRef, ( snapshot ) => {
         // console.log(snapshot)
         const data = snapshot.docs.map(doc => doc.data())
         console.log(data)

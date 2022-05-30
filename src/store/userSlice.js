@@ -3,9 +3,9 @@ import { getSingleDoc } from "../firebase";
 
 export const getActiveUser = createAsyncThunk(
     'user/getActiveUser',
-    async (dispatch, getState) => {
-        const user = await getSingleDoc('users', dispatch);
-        // console.log(dispatch, getState)
+    async (userId) => {
+        const user = await getSingleDoc('users', userId);
+        // console.log(userId, getState)
         return user;
     }
 )

@@ -1,6 +1,5 @@
-import { Grid, ImageList, ImageListItem, styled } from '@mui/material'
+import { ImageList, ImageListItem, styled } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
 import { getSingleDoc } from '../firebase';
 
 const Img = styled('img')({

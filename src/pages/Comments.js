@@ -26,7 +26,7 @@ function Comments() {
         e.preventDefault()
         if(user.loggedIn){
             await updateDocument('posts', post.id, {
-                comments: [... post.comments, {
+                comments: [...post.comments, {
                     comment: inputComment,
                     createdAt: Date.now(),
                     author: user.id
