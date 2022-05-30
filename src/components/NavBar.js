@@ -18,7 +18,7 @@ function NavBar() {
             bottom: 0, 
             left: '50%',
             transform: 'translateX(-50%)', 
-            width: '466px' 
+            width: { xs: '100vw', sm: '466px'},
         }} 
         elevation={1}
     >

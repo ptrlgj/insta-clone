@@ -49,7 +49,7 @@ function App() {
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
-        width: '100vw',
+        width: { xs: '100vw', sm: '466px'},
         paddingBottom: '46px',
       }}>
         <ModalOptions />

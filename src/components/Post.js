@@ -126,7 +126,6 @@ function Post({data}) {
     <Paper elevation={2} square sx={{
         display: 'flex',
         flexDirection: 'column',
-        
     }}>
         {author && <>
         <Box sx={{
