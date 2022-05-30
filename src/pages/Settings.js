@@ -6,32 +6,46 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 import { showAlert } from '../store/alertSlice';
+import { updateDocument } from '../firebase';
+import { changeValue } from '../store/userSlice';
 
 function Settings() {
     const navigate = useNavigate();
-    const [darkTheme, setDarkTheme] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector( state => state.user )
 
     const handleOpenModal = () => {
-        dispatch(openModal())
-        dispatch(setOption('deleteUserModal'))
-        dispatch(showAlert({type: 'warning', message: 'This user and its posts will be permamently deleted'}))
+        dispatch(openModal());
+        dispatch(setOption('deleteUserModal'));
+        dispatch(showAlert({type: 'warning', message: 'This user and its posts will be permamently deleted'}));
     }
 
     useEffect( () => {
         if(!user.loggedIn){
-            dispatch(openModal())
-            dispatch(setOption('loginModal'))
+            dispatch(openModal());
+            dispatch(setOption('loginModal'));
         }
     }, [])
+
+    const handleChangeTheme = async () => {
+        await updateDocument('users', user.id, {
+            settings: {
+                darkTheme: !user.settings.darkTheme,
+            }
+        })
+        dispatch(changeValue({
+            settings: {
+                darkTheme: !user.settings.darkTheme,
+            }
+        }))
+    }
   return (
     <Paper 
         elevation={2}
         sx={{ 
             display: 'flex',
             flexDirection: 'column',
-            background: 'white',
+            // background: 'white',
             paddingBottom: '20px',
             height: '100vh',
         }}
@@ -62,7 +76,7 @@ function Settings() {
         >
             <FormControlLabel
             control={
-                <Switch checked={darkTheme} onChange={ () => setDarkTheme(!darkTheme) } name="Dark theme" />
+                <Switch checked={user.settings.darkTheme} onChange={ handleChangeTheme } name="Dark theme" />
             }
             label="Dark theme"
             />

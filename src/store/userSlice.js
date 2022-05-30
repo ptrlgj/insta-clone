@@ -22,6 +22,9 @@ const initialState = {
     userName: '',
     id: '',
     uid: '',
+    settings: {
+        darkTheme: false,
+    }
 }
 const userSlice = createSlice({
     name: 'user',
@@ -36,6 +39,11 @@ const userSlice = createSlice({
         logoutUser: (state, action) => {
             Object.keys(state).forEach( key => {
                 state[key] = initialState[key]
+            })
+        },
+        changeValue: (state, action) => {
+            Object.keys(action.payload).forEach( key => {
+                state[key] = action.payload[key]
             })
         }
     },
@@ -54,5 +62,5 @@ const userSlice = createSlice({
         }
     }
 })
-export const {setUser, logoutUser} = userSlice.actions
+export const {setUser, logoutUser, changeValue} = userSlice.actions
 export default userSlice.reducer

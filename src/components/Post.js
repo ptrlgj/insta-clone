@@ -133,9 +133,9 @@ function Post({data}) {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '10px 10px',
-            'button' : {
-                color: 'black'
-            }
+            // 'button' : {
+            //     color: 'black'
+            // }
         }}>
             <Box sx={{
                 display: 'flex',
@@ -159,9 +159,9 @@ function Post({data}) {
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            'button' : {
-                color: 'black'
-            }
+            // 'button' : {
+            //     color: 'black'
+            // }
         }}>
             <Box sx={{
                 display: 'flex',
@@ -224,9 +224,13 @@ function Post({data}) {
                     {readMore ? post.desc : 
                         post.desc.length >= 100 ? `${post.desc.slice(0,100)}...more` : post.desc }
             </Typography>
-            {post.comments.length > 0 && <Typography variant='body2' sx={{
-                color: 'rgba(0,0,0,0.7)'
-            }}>
+            {post.comments.length > 0 && 
+                <Typography 
+                    variant='body2' 
+                    // sx={{
+                    //     color: 'rgba(0,0,0,0.7)'
+                    // }}
+                >
                 <Link to={`/comments/${post.id}`}>
                     See {post.comments.length} comments
                 </Link>
@@ -260,9 +264,11 @@ function Post({data}) {
                     </Button>
                 }
             </Box>
-            <Typography variant='caption' sx={{
-                color: 'rgba(0,0,0,0.7)'
-            }}>
+            <Typography variant='caption' 
+                // sx={{
+                //     color: 'rgba(0,0,0,0.7)'
+                // }}
+            >
                 {passedTime}
             </Typography>
         </Box>

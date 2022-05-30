@@ -66,9 +66,9 @@ function Comments() {
         sx={{ 
             display: 'flex',
             flexDirection: 'column',
-            background: 'white',
+            // background: 'white',
             paddingBottom: '20px',
-            
+            minHeight: '100vh'
         }}>
         <Box sx={{
             display: 'flex',
@@ -76,9 +76,9 @@ function Comments() {
             alignItems: 'center',
             padding: '5px 10px',
             gap:'20px',
-            'button' : {
-                color : 'black'
-            }
+            // 'button' : {
+            //     color : 'black'
+            // }
         }}>
             <IconButton onClick={ () => navigate(-1) }>
                 <ArrowBackRoundedIcon />
@@ -113,9 +113,9 @@ function Comments() {
                 <Typography 
                     variant='caption' 
                     component='p'
-                    sx={{
-                        color: 'rgba(0,0,0,0.7)'
-                    }}
+                    // sx={{
+                    //     color: 'rgba(0,0,0,0.7)'
+                    // }}
                 >
                     {passedTime}
                 </Typography>
