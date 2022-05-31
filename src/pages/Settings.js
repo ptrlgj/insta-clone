@@ -7,9 +7,10 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 import { showAlert } from '../store/alertSlice';
-import { getImageUrl, updateDocument } from '../firebase';
+import { getImageUrl, getUserBy, updateDocument, usersColRef } from '../firebase';
 import { changeValue } from '../store/userSlice';
 import { v4 } from 'uuid';
+import { query, where } from 'firebase/firestore';
 
 const Input = styled('input')({
     display: 'none'
@@ -69,6 +70,14 @@ function Settings() {
     }
 
     const handleSaveChanges = async () => {
+        if(userName !== user.userName){
+            const q = query(usersColRef, where("userName", "==", userName))
+            const userCheck = await getUserBy(q)
+            if(userCheck[0]){
+                dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
+                return
+            }
+        }
         try {
             await updateDocument('users', user.id, {
                 image: avatarUrl,
