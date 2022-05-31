@@ -109,6 +109,7 @@ function Post({data}) {
             desc: newDesc,
         })
         dispatch(setEditPost(''));
+        dispatch(showAlert({type: 'success', message: 'Post has been succesfully edited'}))
     }
     useEffect( () => {
         const fetchAuthor = async () => {
