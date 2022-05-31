@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import { deleteUser, signOut } from 'firebase/auth';
 import { showAlert } from '../store/alertSlice';
+import { setEditPost } from '../store/postsSlice';
 
 const modalStyle = {
     position: 'absolute',
@@ -47,7 +48,7 @@ const textStyleRed = {
 }
 function ModalOptions() {
   const dispatch = useDispatch()
-  const { isOpen, postId, userId, commentId } = useSelector( state => state.modal)
+  const { isOpen, postId, userId, commentId } = useSelector( state => state.modal )
   const user = useSelector( state => state.user)
   const { postModal, commentModal, userModal, loginModal, deleteUserModal } = useSelector( state => state.modal.options)
   const { postPage } = useSelector( state => state.posts) 
@@ -73,6 +74,11 @@ function ModalOptions() {
       navigate(`/post/${postId}`);
       dispatch(closeModal())
     }
+
+    const handleEditPost = () => {
+      dispatch(setEditPost(postId));
+      dispatch(closeModal())
+    }
     
     //comments
 
@@ -94,16 +100,7 @@ function ModalOptions() {
       dispatch(showAlert({type: 'info', message: 'User has logged out'}))
       navigate('/')
     }
-
-    //settings 
-
-    const handleSettings = () =>  {
-      navigate('/settings')
-      dispatch(closeModal())
-    } 
-
-    //delete user
-
+    
     const handleDeleteUser = async () => {
       try {
         await deleteUser(auth.currentUser)
@@ -119,6 +116,14 @@ function ModalOptions() {
       navigate('/')
     }
 
+    //settings 
+
+    const handleSettings = () =>  {
+      navigate('/settings')
+      dispatch(closeModal())
+    } 
+
+
     //copy
     
     const handleCopyToClipboard = () => {
@@ -127,7 +132,7 @@ function ModalOptions() {
         link = postPage ? link : `${link}post/${postId}`
       }
       navigator.clipboard.writeText(link)
-      dispatch(showAlert({type: 'info', message: 'Link has been added to clipboard'}))
+      dispatch(showAlert({type: 'info', message: 'Link has been added to the clipboard'}))
       dispatch(closeModal())
     }
   return (
@@ -151,7 +156,7 @@ function ModalOptions() {
           </Typography>
           <hr color='gray' width='100%' />
           {userId === user.id ? <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red">
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red" onClick={ handleEditPost }>
                 Edit
             </Typography>
             <hr color='gray' width='100%' />

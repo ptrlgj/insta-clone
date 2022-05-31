@@ -6,15 +6,16 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
+// import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import { getSingleDoc, updateDocument, db } from '../firebase';
 import { openModal, setOption } from '../store/modalSlice'
+import { getActiveUser } from '../store/userSlice';
+import { showAlert } from '../store/alertSlice';
+import { setEditPost } from '../store/postsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
-import { getActiveUser } from '../store/userSlice';
 import { timePassed } from '../utils'
 import { Link, useNavigate } from 'react-router-dom';
-import { showAlert } from '../store/alertSlice';
 
 const Img = styled('img')({
     position: 'relative',
@@ -31,6 +32,8 @@ function Post({data}) {
     const [passedTime, setPassedTime] = useState('');
     const [inputComment, setInputComment] = useState('');
     const [readMore, setReadMore] = useState(false);
+    const { editPost } = useSelector( state => state.posts );
+    const [newDesc, setNewDesc] = useState(post.desc);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -100,6 +103,13 @@ function Post({data}) {
         }
     }
 
+    const handleChangeDesc = async (e) => {
+        e.preventDefault()
+        await updateDocument('posts', post.id, {
+            desc: newDesc,
+        })
+        dispatch(setEditPost(''));
+    }
     useEffect( () => {
         const fetchAuthor = async () => {
             const userFetch = await getSingleDoc('users', post.userId);
@@ -110,7 +120,7 @@ function Post({data}) {
 
         const postSnapshot = onSnapshot( doc(db, 'posts', post.id), snapshot => {
             if(!snapshot.data()) return
-            setPost(currState => ({...currState, likedBy: snapshot.data().likedBy, comments: snapshot.data().comments}) )
+            setPost(currState => ({...currState, likedBy: snapshot.data().likedBy, comments: snapshot.data().comments, desc: snapshot.data().desc}) )
         }) 
 
         return () => postSnapshot()
@@ -166,7 +176,6 @@ function Post({data}) {
             <Box sx={{
                 display: 'flex',
             }}>
-                {/* (user && user.likedPosts.includes(id) ) */}
                 <IconButton onClick={ () => handleLike() }>
                     { liked ? 
                         <FavoriteIcon 
@@ -203,27 +212,50 @@ function Post({data}) {
             >
                 {`${post.likedBy.length} ${post.likedBy.length === 1 ? 'like' : 'likes'}`}
             </Typography>
-            <Typography 
-                variant='subtitle2' 
-                sx={{ fontWeight: '400'}}
-                component="p"
-                onClick={ (e) => {
-                    if(!(e.target === e.currentTarget)) return 
-                    if(readMore || post.desc.length < 100 ) navigate(`/comments/${post.id}`)
-                    else setReadMore(true)
+            {editPost === post.id ? 
+                <Box 
+                    sx={{
+                        display: 'flex',
                     }}
                 >
+                    <Typography 
+                        variant="subtitle2" 
+                        sx={{ fontWeight: 'bold', marginRight: '3px'}} 
+                        component="span"
+                        onClick={ () => navigate(`/${author.userName}`) }
+                    >
+                            {author.userName}
+                    </Typography>
+                    <TextField label="caption" value={newDesc}  onChange={ (e) => setNewDesc(e.target.value) }multiline />
+                    {newDesc !== post.desc ? 
+                        <Button onClick={ handleChangeDesc }>Save</Button>
+                        :
+                        <Button disabled>Save</Button>
+                    }
+                </Box>
+                :
                 <Typography 
-                    variant="subtitle2" 
-                    sx={{ fontWeight: 'bold', marginRight: '3px'}} 
-                    component="span"
-                    onClick={ () => navigate(`/${author.userName}`) }
-                >
-                        {author.userName}
+                    variant='subtitle2' 
+                    sx={{ fontWeight: '400'}}
+                    component="p"
+                    onClick={ (e) => {
+                        if(!(e.target === e.currentTarget)) return 
+                        if(readMore || post.desc.length < 100 ) navigate(`/comments/${post.id}`)
+                        else setReadMore(true)
+                        }}
+                    >
+                    <Typography 
+                        variant="subtitle2" 
+                        sx={{ fontWeight: 'bold', marginRight: '3px'}} 
+                        component="span"
+                        onClick={ () => navigate(`/${author.userName}`) }
+                    >
+                            {author.userName}
+                    </Typography>
+                        {readMore ? post.desc : 
+                            post.desc.length >= 100 ? `${post.desc.slice(0,100)}...more` : post.desc }
                 </Typography>
-                    {readMore ? post.desc : 
-                        post.desc.length >= 100 ? `${post.desc.slice(0,100)}...more` : post.desc }
-            </Typography>
+            }
             {post.comments.length > 0 && 
                 <Typography 
                     variant='body2' 
