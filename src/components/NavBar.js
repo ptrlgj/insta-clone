@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, BottomNavigationAction, Box, Paper } from '@mui/material';
+import { Avatar, BottomNavigationAction, Box, IconButton, Paper } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
@@ -22,22 +22,35 @@ function NavBar() {
         }} 
         elevation={1}
     >
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Link to="/"><BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} /></Link>
-          <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />
-          <BottomNavigationAction label="TikReels" icon={<MusicVideoRoundedIcon />} />
-          <BottomNavigationAction label="Store" icon={<ShoppingBagRoundedIcon />} />
-          {/* <Link to={`/${userName}`}> */}
-            <BottomNavigationAction label="Profile" icon={<Avatar src={image} />} 
-             onClick={ () => {
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
+          <IconButton
+            onClick={ () => navigate(`/`)}
+          ><HomeRoundedIcon /></IconButton>
+          <IconButton><SearchRoundedIcon /></IconButton>
+          <IconButton><MusicVideoRoundedIcon /></IconButton>
+          <IconButton><ShoppingBagRoundedIcon /></IconButton>
+          <IconButton 
+            onClick={ () => {
               if(userName) navigate(`/${userName}`)
               else {
                 dispatch(openModal())
                 dispatch(setOption('loginModal'))
               }
             }}
-            />
-          {/* </Link> */}
+          ><Avatar src={image} /></IconButton>
+          {/* <Link to="/"><BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} /></Link>
+          <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />
+          <BottomNavigationAction label="TikReels" icon={<MusicVideoRoundedIcon />} />
+          <BottomNavigationAction label="Store" icon={<ShoppingBagRoundedIcon />} />
+          <BottomNavigationAction label="Profile" icon={<Avatar src={image} />} 
+            onClick={ () => {
+              if(userName) navigate(`/${userName}`)
+              else {
+                dispatch(openModal())
+                dispatch(setOption('loginModal'))
+              }
+            }}
+          /> */}
         </Box>
       </Paper>
   )

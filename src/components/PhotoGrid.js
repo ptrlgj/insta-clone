@@ -1,5 +1,6 @@
 import { ImageList, ImageListItem, styled } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { getSingleDoc } from '../firebase';
 
 const Img = styled('img')({
@@ -11,7 +12,7 @@ const Img = styled('img')({
 function PhotoGrid({user}) {
   
   const [posts, setPosts] = useState([])
-
+  const navigate = useNavigate()
   const fetchPosts = () => {
     return user.posts.map( async (post) => {
       const response = await getSingleDoc('posts', post );
@@ -20,6 +21,9 @@ function PhotoGrid({user}) {
     })
   }
   
+  const handleOpenPost = (post) => {
+    navigate(`/post/${post.id}`)
+  }
   useEffect( () => {
     const fetching = async () => {
       // const resolvedPosts = await Promise.all(fetchPosts())
@@ -45,6 +49,8 @@ function PhotoGrid({user}) {
           srcSet={item.url}
           alt=''
           loading="lazy"
+          sx={{cursor: 'pointer'}}
+          onClick={ () => handleOpenPost(item) }
           />
       </ImageListItem>)
     }

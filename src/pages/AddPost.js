@@ -48,7 +48,7 @@ function AddPost() {
     },[imageFile]);
 
   return (
-    <Paper sx={{paddingBottom: '20px', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between'}}>
+    <Paper sx={{paddingBottom: '20px', height: '100vh', display: 'flex', flexDirection: 'column', gap: '30px'}}>
         <Box sx={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -80,7 +80,6 @@ function AddPost() {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
-                flex: '1',
                 objectFit: 'cover'
             }}
         >
@@ -114,7 +113,6 @@ function AddPost() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flex: '1'
             }}
         >
             <TextField

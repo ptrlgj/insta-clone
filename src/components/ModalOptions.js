@@ -226,13 +226,7 @@ function ModalOptions() {
         <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
           <Typography 
             variant='subtitle1' 
-
-            sx={{width:'100%', 
-                textAlign: 'center', 
-                fontWeight: '450', 
-                flex: '1', 
-                padding: '10px 0'
-              }}
+            sx={textStyle}
           >
             Are you sure you want to delete this account with all its activity?
           </Typography>
