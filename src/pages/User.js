@@ -219,7 +219,7 @@ function User() {
         </TabContext>
         </>}
         {noUser && 
-        <Box sx={{height: '100vh', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems:'center', gap: '40px'}}>
+        <Box sx={{height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems:'center', gap: '40px'}}>
             <Typography variant='h3'>(x . x)</Typography>
             <Typography variant='h3'>404</Typography>
             <Typography variant='h4'>No user with this name</Typography>
