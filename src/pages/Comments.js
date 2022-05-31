@@ -121,7 +121,7 @@ function Comments() {
                 </Typography>
             </Typography>
         </Box>
-        <hr width='100%' color='lightgrey'/>
+        <hr width='100%' color='gray'/>
         <Box 
             sx={{
                 display: 'flex',

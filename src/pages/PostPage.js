@@ -41,8 +41,8 @@ function PostPage() {
         sx={{ 
             display: 'flex',
             flexDirection: 'column',
-            background: 'white',
             paddingBottom: '20px',
+            minHeight: '95vh',
             'button' : {
                 color : 'text.primary'
             }

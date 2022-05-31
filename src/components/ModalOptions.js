@@ -36,6 +36,15 @@ const textStyle = {
   padding: '10px 0',
   color: 'text.primary'
 }
+const textStyleRed = { 
+  width:'100%', 
+  textAlign: 'center', 
+  cursor:'pointer', 
+  fontWeight: '450', 
+  flex: '1', 
+  padding: '10px 0',
+  color: 'red'
+}
 function ModalOptions() {
   const dispatch = useDispatch()
   const { isOpen, postId, userId, commentId } = useSelector( state => state.modal)
@@ -131,41 +140,41 @@ function ModalOptions() {
       <Box sx={ modalStyle }>
 
         {postModal && <>
-        {userId === user.id ? <>
-          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red" onClick={ handleDeletePost }>
-              Delete
+          {!postPage && <>
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleGoToPost }>
+            Go to post
           </Typography>
-          <hr color='lightgray' width='100%' />
-          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red">
-              Edit
+          </>}
+          <hr color='gray' width='100%' />
+          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick= { handleCopyToClipboard }>
+              Copy link
           </Typography>
-        </> : 
-        <>
-          <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red">
-              Report
-          </Typography>
-        </>
-        }
-        {!postPage && <>
-        <hr color='lightgray' width='100%' />
-        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleGoToPost }>
-          Go to post
-        </Typography>
-        </>}
-        <hr color='lightgray' width='100%' />
-        <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick= { handleCopyToClipboard }>
-            Copy link
-        </Typography>
-        </>}
-
-        {commentModal && <>
+          <hr color='gray' width='100%' />
           {userId === user.id ? <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }  color="red" onClick={ handleDeleteComment}>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red">
+                Edit
+            </Typography>
+            <hr color='gray' width='100%' />
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red" onClick={ handleDeletePost }>
                 Delete
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle }  color="red">
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red">
+                Report
+            </Typography>
+          </>
+          }
+        </>}
+
+        {commentModal && <>
+          {userId === user.id ? <>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed }  color="red" onClick={ handleDeleteComment}>
+                Delete
+            </Typography>
+          </> : 
+          <>
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed }  color="red">
                 Report
             </Typography>
           </>
@@ -176,20 +185,20 @@ function ModalOptions() {
           <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } onClick={ handleCopyToClipboard }>
             Copy link
           </Typography>
-          <hr color='lightgray' width='100%' />
+          <hr color='gray' width='100%' />
           {userId === user.id ? <>
             <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red" onClick={ handleSettings }>
                 Settings
             </Typography>
-            <hr color='lightgray' width='100%' />
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red"
+            <hr color='gray' width='100%' />
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red"
               onClick={ handleLogOut }
             >
                 Logout
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyle } color="red">
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red">
                 Report
             </Typography>
           </>

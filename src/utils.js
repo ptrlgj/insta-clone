@@ -17,28 +17,3 @@ export const timePassed = (data) => {
     else if(minutes) return ( `${ minutes === 1 ? `${minutes} minute ago` : `${minutes} minutes ago`}` )
     else return 'a few seconds ago'
 }
-
-export const toggleFollowUser = async ( follower, followTo ) => {
-    if( followTo.followersList.includes(follower.id) ){
-        //jesli juz followuje
-        await updateDocument( 'users', follower.id, {
-            followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
-        })
-        await updateDocument( 'users', followTo.id, {
-            followersList: [...followTo.followersList.filter( followerUser => followerUser !== follower.id )],
-            // followers: followTo.followers - 1
-        })
-        return false
-    } else{
-        //jesli jeszcze nie followuje
-        debugger
-        await updateDocument( 'users', follower.id, {
-            followed: [...follower.followed, followTo.id]
-        })
-        await updateDocument( 'users', followTo.id, {
-            followersList: [...followTo.followersList, follower.id],
-            // followers: followTo.followers + 1
-        })
-        return true
-    }
-}

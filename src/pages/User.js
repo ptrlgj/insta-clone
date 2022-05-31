@@ -9,12 +9,12 @@ import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
 import { Avatar, Box, Typography, Button, Tab, Paper, IconButton} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
-import { getUserBy, usersColRef } from '../firebase';
+import { getUserBy, updateDocument, usersColRef } from '../firebase';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
-import { setUser } from '../store/userSlice';
-import { onSnapshot, query, where } from 'firebase/firestore';
-import { toggleFollowUser } from '../utils';
+import { query, where } from 'firebase/firestore';
+import { changeValue } from '../store/userSlice'
+// import { toggleFollowUser } from '../utils';
 
 // export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
@@ -30,6 +30,35 @@ function User() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     
+    const toggleFollowUser = async ( follower, followTo ) => {
+        if( followTo.followersList.includes(follower.id) ){
+            //jesli juz followuje
+            await updateDocument( 'users', follower.id, {
+                followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
+            })
+            dispatch( changeValue({
+                followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
+            }) )
+            await updateDocument( 'users', followTo.id, {
+                followersList: [...followTo.followersList.filter( followerUser => followerUser !== follower.id )],
+            })
+            return false
+        } else{
+            //jesli jeszcze nie followuje
+            // debugger
+            await updateDocument( 'users', follower.id, {
+                followed: [...follower.followed, followTo.id]
+            })
+            dispatch( changeValue({
+                followed: [...follower.followed, followTo.id]
+            }) )
+            await updateDocument( 'users', followTo.id, {
+                followersList: [...followTo.followersList, follower.id],
+            })
+            return true
+        }
+    }
+
     const fetchUserData = async () =>{
         setLoading(true)
         setUserData(null)
