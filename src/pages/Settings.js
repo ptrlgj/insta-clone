@@ -53,29 +53,38 @@ function Settings() {
             const id = v4()
             getImageUrl( imageFile, id)
                 .then(res => setAvatarUrl(res))
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message})))
         }
     },[imageFile])
 
     const handleChangeTheme = async () => {
-        await updateDocument('users', user.id, {
-            settings: {
-                darkTheme: !user.settings.darkTheme,
-            }
-        })
-        dispatch(changeValue({
-            settings: {
-                darkTheme: !user.settings.darkTheme,
-            }
-        }))
+        try {
+            await updateDocument('users', user.id, {
+                settings: {
+                    darkTheme: !user.settings.darkTheme,
+                }
+            })
+            dispatch(changeValue({
+                settings: {
+                    darkTheme: !user.settings.darkTheme,
+                }
+            }))
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
+        }
     }
 
     const handleSaveChanges = async () => {
         if(userName !== user.userName){
             const q = query(usersColRef, where("userName", "==", userName))
-            const userCheck = await getUserBy(q)
-            if(userCheck[0]){
-                dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
-                return
+            try {
+                const userCheck = await getUserBy(q)
+                if(userCheck[0]){
+                    dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
+                    return
+                }
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
         }
         try {

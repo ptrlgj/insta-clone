@@ -8,29 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 
-// const StyledBox = styled(Box)(({theme}) => ({
-    
-//     '.MuiTabScrollButton-root': {
-//         'alignSelf': 'center',
-//         'width': '20px',
-//         'height': '20px',
-//         'backgroundColor': 'white',
-//         'borderRadius': '50%',
-//       },
-//     '.MuiTabs-root': {
-//       'backgroundColor': 'none',
-//     },
-//     '.MuiTab-root': {
-//         'minWidth': '55px',
-//         'minHeight': '50px',
-//     },
-// }))
 function Header() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const user = useSelector( state => state.user )
     const handleAddPost = () => {
         if(user.loggedIn) navigate('/add')
+        else if(user.uid) navigate('/signup')
         else {
             dispatch(openModal())
             dispatch(setOption('loginModal'))
@@ -69,30 +53,6 @@ function Header() {
                 </IconButton>
             </Box>
         </Box>
-        {/* <StyledBox>
-            <Tabs
-                // value={value}
-                // onChange={handleChange}
-                variant="scrollable"
-                scrollButtons="auto"
-                aria-label="scrollable auto tabs example"
-            >
-                <Tab label={<Avatar src='/images/profile.png' />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-                <Tab label={<Avatar />} />
-            </Tabs>
-        </StyledBox> */}
     </Paper>
   )
 }

@@ -1,13 +1,13 @@
 import {Box, Container, createTheme, ThemeProvider} from '@mui/material'
 import { useEffect, useState } from 'react';
 import NavBar from './components/NavBar';
-import {Routes, Route} from 'react-router-dom';
+import {Routes, Route, useNavigate} from 'react-router-dom';
 import User from './pages/User';
 import AddPost from './pages/AddPost';
 import { auth, usersColRef, getUserBy } from './firebase';
 import Posts from './pages/Posts';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from './store/userSlice';
+import { changeValue, setUser } from './store/userSlice';
 import { query, where } from 'firebase/firestore';
 import Comments from './pages/Comments';
 import PostPage from './pages/PostPage';
@@ -16,7 +16,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import CreateUser from './pages/CreateUser';
 import Settings from './pages/Settings';
 import AlertComponent from './components/AlertComponent';
-
 
 function App() {
   const dispatch = useDispatch();
@@ -28,7 +27,8 @@ function App() {
       // console.log(uid)
       const q = query(usersColRef, where("uid", "==", uid));
       const response = await getUserBy(q)
-      if(response[0]) dispatch(setUser(response[0]))
+      if(uid && response[0]) dispatch(setUser(response[0]))
+      else if(uid) dispatch(changeValue({uid}))
     }
     if(uid){
       fetchLoggedUser()

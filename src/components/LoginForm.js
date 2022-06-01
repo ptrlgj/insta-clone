@@ -33,6 +33,7 @@ function LoginForm() {
     }
     
     const handleLogin = async () => {
+      try {
         const userToken = await logInUser(email, password);
         if(userToken){
             const q = query(usersColRef, where('uid','==',userToken.user.uid))
@@ -40,6 +41,9 @@ function LoginForm() {
             dispatch(setUser(response[0]))
             dispatch(closeModal())
         }
+      } catch (error) {
+        dispatch(showAlert({type: 'error', message: error.message}))
+      }
     }
 
     const handleSignup = () => {

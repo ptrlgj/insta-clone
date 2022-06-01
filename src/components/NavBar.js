@@ -8,9 +8,18 @@ import {Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import { openModal, setOption } from '../store/modalSlice';
 function NavBar() {
-  const {userName, image} = useSelector(state => state.user);
+  const { uid, userName, image } = useSelector(state => state.user);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  
+  const handleProfileButton = () => {
+    if(userName) navigate(`/${userName}`)
+    else if (uid) navigate('/signup')
+    else {
+      dispatch(openModal())
+      dispatch(setOption('loginModal'))
+    }
+  }
   return (
     <Paper 
         sx={{ 
@@ -30,13 +39,7 @@ function NavBar() {
           <IconButton><MusicVideoRoundedIcon /></IconButton>
           <IconButton><ShoppingBagRoundedIcon /></IconButton>
           <IconButton 
-            onClick={ () => {
-              if(userName) navigate(`/${userName}`)
-              else {
-                dispatch(openModal())
-                dispatch(setOption('loginModal'))
-              }
-            }}
+            onClick={ handleProfileButton }
           ><Avatar src={image} /></IconButton>
           {/* <Link to="/"><BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} /></Link>
           <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />

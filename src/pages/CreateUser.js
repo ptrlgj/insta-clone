@@ -7,8 +7,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { auth, createUserProfile, fetchLoggedUser, getImageUrl, getUserBy, signUpUser, usersColRef } from '../firebase';
 import { v4 } from 'uuid';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../store/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeValue, setUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
 import { query, where } from 'firebase/firestore';
 
@@ -19,7 +19,8 @@ const Input = styled('input')({
 function CreateUser() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [uid, setUid] = useState('');
+    // const [uid, setUid] = useState('');
+    const { uid } = useSelector( state => state.user )
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confPass, setConfPass] = useState('');
@@ -33,8 +34,16 @@ function CreateUser() {
 
     const handleCreateUser = async () => {
         if(email && password === confPass){
-            const data = await signUpUser(email, password);
-            setUid(data.user.uid)
+            try {
+                const data = await signUpUser(email, password);
+                dispatch(changeValue({uid: data.user.uid}))
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
+            }
+        } else if(email) {
+            dispatch(showAlert({type: 'warning', message: 'Passwords dont match'}))
+        } else if(password === confPass) {
+            dispatch(showAlert({type: 'warning', message: 'Invalid email'}))
         }
     }
 
@@ -42,22 +51,30 @@ function CreateUser() {
         if(imageUrl && userName){
             //check if username is taken
             const q = query(usersColRef, where("userName", "==", userName))
-            const userCheck = await getUserBy(q)
-            if(userCheck[0]){
-                dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
-                return
+            try {
+                const userCheck = await getUserBy(q)
+                if(userCheck[0]){
+                    dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
+                    return
+                }
+                await createUserProfile( userName, fullName, bio, imageUrl, uid)
+                !uid && await signInWithEmailAndPassword(auth, email, password)
+                dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))
+                fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
-            await createUserProfile( userName, fullName, bio, imageUrl, uid)
-            await signInWithEmailAndPassword(auth, email, password)
             navigate(`/`)
-            dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))
-            fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
-        }
+        } 
+        else if(imageUrl) dispatch(showAlert({type: 'warning', message: 'Username is required'}))
+        else if(userName) dispatch(showAlert({type: 'warning', message: 'Avatar is required'}))
+        else dispatch(showAlert({type: 'warning', message: 'Profile has to have an avatar and a username'}))
     }
     useEffect( () => {
         if(imageFile) {
             getImageUrl( imageFile, imageId )
                 .then(res => setImageUrl(res))
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message})) )
         }
     }, [imageFile] )
 

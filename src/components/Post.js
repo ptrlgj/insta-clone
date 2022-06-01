@@ -37,46 +37,58 @@ function Post({data}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const handleDoubleClick = (e) => {
+    const handleDoubleClick = async (e) => {
         if(e.detail === 2) {
-            if(!user.loggedIn){
+            try {
+                if(!user.loggedIn && user.uid){
+                    navigate('/signup')
+                } else if(!user.loggedIn){
+                    dispatch(openModal());
+                    dispatch(setOption('loginModal'))
+                } else if( !post.likedBy.includes(user.id) ){
+                    await updateDocument('posts', post.id, {
+                        likedBy: [...post.likedBy, user.id]
+                    })
+                    await updateDocument('users', user.id, {
+                        likedPosts: [...user.likedPosts, post.id]
+                    })
+                    dispatch(getActiveUser(user.id))
+                    setLiked(true)
+                }
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
+            }
+        }
+    }
+
+    const handleLike = async () => {
+        try {
+            if(!user.loggedIn && user.uid){
+                navigate('/signup')
+            } else if(!user.loggedIn){
                 dispatch(openModal());
                 dispatch(setOption('loginModal'))
-            } else if( !post.likedBy.includes(user.id) ){
-                updateDocument('posts', post.id, {
+            } else if( post.likedBy.includes(user.id) ) {
+                await updateDocument('posts', post.id, {
+                    likedBy: [...post.likedBy.filter(userLike => userLike !== user.id)]
+                })
+                await updateDocument('users', user.id, {
+                    likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== post.id)]
+                })
+                dispatch(getActiveUser(user.id))
+                setLiked(false)
+            } else {
+                await updateDocument('posts', post.id, {
                     likedBy: [...post.likedBy, user.id]
                 })
-                updateDocument('users', user.id, {
+                await updateDocument('users', user.id, {
                     likedPosts: [...user.likedPosts, post.id]
                 })
                 dispatch(getActiveUser(user.id))
                 setLiked(true)
             }
-        }
-    }
-
-    const handleLike = () => {
-        if(!user.loggedIn){
-            dispatch(openModal());
-            dispatch(setOption('loginModal'))
-        } else if( post.likedBy.includes(user.id) ) {
-            updateDocument('posts', post.id, {
-                likedBy: [...post.likedBy.filter(userLike => userLike !== user.id)]
-            })
-            updateDocument('users', user.id, {
-                likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== post.id)]
-            })
-            dispatch(getActiveUser(user.id))
-            setLiked(false)
-        } else {
-            updateDocument('posts', post.id, {
-                likedBy: [...post.likedBy, user.id]
-            })
-            updateDocument('users', user.id, {
-                likedPosts: [...user.likedPosts, post.id]
-            })
-            dispatch(getActiveUser(user.id))
-            setLiked(true)
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
 
@@ -88,15 +100,21 @@ function Post({data}) {
     const handleSubmitComment = async (e) => {
         e.preventDefault()
         if(user.loggedIn){
-            await updateDocument('posts', post.id, {
-                comments: [...post.comments, {
-                    comment: inputComment,
-                    createdAt: Date.now(),
-                    author: user.id
-                }]
-            })
-            setInputComment('')
-            dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
+            try {
+                await updateDocument('posts', post.id, {
+                    comments: [...post.comments, {
+                        comment: inputComment,
+                        createdAt: Date.now(),
+                        author: user.id
+                    }]
+                })
+                setInputComment('')
+                dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
+            }
+        } else if( user.uid ){
+            navigate('/signup')
         } else {
             dispatch(openModal())
             dispatch(setOption('loginModal'))
@@ -105,11 +123,15 @@ function Post({data}) {
 
     const handleChangeDesc = async (e) => {
         e.preventDefault()
-        await updateDocument('posts', post.id, {
-            desc: newDesc,
-        })
-        dispatch(setEditPost(''));
-        dispatch(showAlert({type: 'success', message: 'Post has been succesfully edited'}))
+        try {
+            await updateDocument('posts', post.id, {
+                desc: newDesc,
+            })
+            dispatch(setEditPost(''));
+            dispatch(showAlert({type: 'success', message: 'Post has been succesfully edited'}))
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
+        }
     }
     useEffect( () => {
         const fetchAuthor = async () => {

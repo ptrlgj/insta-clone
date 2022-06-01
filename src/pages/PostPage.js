@@ -7,6 +7,7 @@ import Post from '../components/Post'
 import { getSingleDoc } from '../firebase'
 import { useDispatch, useSelector } from 'react-redux';
 import { setPostPage } from '../store/postsSlice';
+import { showAlert } from '../store/alertSlice';
 
 function PostPage() {
     const postId = useParams().id
@@ -17,8 +18,12 @@ function PostPage() {
     useEffect( () => {
         dispatch(setPostPage(true))
         const fetchData = async () => {
-            const fetchPost = await getSingleDoc('posts', postId);
-            setPost(fetchPost)
+            try {
+                const fetchPost = await getSingleDoc('posts', postId);
+                setPost(fetchPost)
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
+            }
         } 
         fetchData()
         return () => dispatch(setPostPage(false))
@@ -27,8 +32,12 @@ function PostPage() {
     useEffect( () => {
         if(!post) return
         const fetchData = async () => {
-            const fetchUser = await getSingleDoc('users', post.userId)
-            setUser(fetchUser)
+            try {
+                const fetchUser = await getSingleDoc('users', post.userId)
+                setUser(fetchUser)
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
+            }
         } 
         fetchData()
     }, [post])

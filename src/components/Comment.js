@@ -6,6 +6,7 @@ import { timePassed } from '../utils';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { useDispatch } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
+import { showAlert } from '../store/alertSlice';
 
 function Comment({data, postId, commentId}) {
     const [author, setAuthor] = useState(null);
@@ -15,8 +16,12 @@ function Comment({data, postId, commentId}) {
 
     useEffect( () => {
         const fetchUser = async () => {
-            const userData = await getSingleDoc('users', data.author)
-            setAuthor(userData)
+            try {
+                const userData = await getSingleDoc('users', data.author)
+                setAuthor(userData)
+            } catch (error) {
+                dispatch(showAlert({type: 'error', message: error.message}))
+            }
         }
         fetchUser()
         setPassedTime(timePassed(data))

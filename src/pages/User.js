@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 import { query, where } from 'firebase/firestore';
 import { changeValue } from '../store/userSlice'
+import { showAlert } from '../store/alertSlice';
 // import { toggleFollowUser } from '../utils';
 
 // export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
@@ -31,31 +32,35 @@ function User() {
     const dispatch = useDispatch();
     
     const toggleFollowUser = async ( follower, followTo ) => {
-        if( followTo.followersList.includes(follower.id) ){
-            //jesli juz followuje
-            await updateDocument( 'users', follower.id, {
-                followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
-            })
-            dispatch( changeValue({
-                followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
-            }) )
-            await updateDocument( 'users', followTo.id, {
-                followersList: [...followTo.followersList.filter( followerUser => followerUser !== follower.id )],
-            })
-            return false
-        } else{
-            //jesli jeszcze nie followuje
-            // debugger
-            await updateDocument( 'users', follower.id, {
-                followed: [...follower.followed, followTo.id]
-            })
-            dispatch( changeValue({
-                followed: [...follower.followed, followTo.id]
-            }) )
-            await updateDocument( 'users', followTo.id, {
-                followersList: [...followTo.followersList, follower.id],
-            })
-            return true
+        try {
+            if( followTo.followersList.includes(follower.id) ){
+                //jesli juz followuje
+                await updateDocument( 'users', follower.id, {
+                    followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
+                })
+                dispatch( changeValue({
+                    followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
+                }) )
+                await updateDocument( 'users', followTo.id, {
+                    followersList: [...followTo.followersList.filter( followerUser => followerUser !== follower.id )],
+                })
+                return false
+            } else{
+                //jesli jeszcze nie followuje
+                // debugger
+                await updateDocument( 'users', follower.id, {
+                    followed: [...follower.followed, followTo.id]
+                })
+                dispatch( changeValue({
+                    followed: [...follower.followed, followTo.id]
+                }) )
+                await updateDocument( 'users', followTo.id, {
+                    followersList: [...followTo.followersList, follower.id],
+                })
+                return true
+            }
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
 
@@ -63,14 +68,18 @@ function User() {
         setLoading(true)
         setUserData(null)
         const q = query(usersColRef, where("userName", "==", userName))
-        const response = await getUserBy(q)
-        if(response.length > 0){
-            setUserData(response[0]);
-            setLoading(false)
-        }else{
-            setLoading(false)
-            setNoUser(true)
-            return
+        try {
+            const response = await getUserBy(q)
+            if(response.length > 0){
+                setUserData(response[0]);
+                setLoading(false)
+            }else{
+                setLoading(false)
+                setNoUser(true)
+                return
+            }
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
     useEffect(()=>{

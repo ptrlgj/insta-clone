@@ -173,7 +173,7 @@ export const signUpUser = async ( email, pass ) => {
 }
 
 export const fetchLoggedUser = async (uid) => {
-    console.log(uid)
+    // console.log(uid)
     const q = query(usersColRef, where("uid", "==", uid));
     const response = await getUserBy(q)
     if(response && response[0]) return (response[0])

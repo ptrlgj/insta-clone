@@ -33,10 +33,14 @@ function AddPost() {
     const dispatch = useDispatch()
 
     const handleClick = async () => {
-        const newPost = await addPost(imageId, user.id, imageUrl, desc);
-        await updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
-        dispatch(getActiveUser(user.id))
-        dispatch(showAlert({type: 'success', message: 'New post has been succesfully added'}))
+        try {
+            const newPost = await addPost(imageId, user.id, imageUrl, desc);
+            await updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
+            dispatch(getActiveUser(user.id))
+            dispatch(showAlert({type: 'success', message: 'New post has been succesfully added'}))
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
+        }
         navigate('/')
     }
 
@@ -44,6 +48,7 @@ function AddPost() {
         if(imageFile) {
             getImageUrl( imageFile, imageId )
                 .then(res => setImageUrl(res))
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message})))
         }
     },[imageFile]);
 

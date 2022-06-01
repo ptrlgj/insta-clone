@@ -61,13 +61,17 @@ function ModalOptions() {
     // posts
 
     const handleDeletePost = async () => {
-      await deleteSingleDoc('posts', postId);
-      await updateDocument('users', user.id, {
-         posts: [ ...user.posts.filter( post => post !== postId)], 
-        })
-      dispatch(getActiveUser(user.id))
-      dispatch(closeModal())
-      dispatch(showAlert({type: 'success', message: 'Post has been succesfully deleted'}))
+      try {
+        await deleteSingleDoc('posts', postId);
+        await updateDocument('users', user.id, {
+           posts: [ ...user.posts.filter( post => post !== postId)], 
+          })
+        dispatch(getActiveUser(user.id))
+        dispatch(closeModal())
+        dispatch(showAlert({type: 'success', message: 'Post has been succesfully deleted'}))
+      } catch (error) {
+        dispatch(showAlert({type: 'error', message: error.message}))
+      }
     }
     
     const handleGoToPost = () => {
@@ -83,21 +87,29 @@ function ModalOptions() {
     //comments
 
     const handleDeleteComment = async () => {
-      const post = await getSingleDoc('posts', postId);
-      await updateDocument('posts', postId, {
-        comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` !== commentId))]
-      })
-      dispatch(closeModal())
-      dispatch(showAlert({type: 'success', message: 'Comment has been succesfully deleted'}))
+      try {
+        const post = await getSingleDoc('posts', postId);
+        await updateDocument('posts', postId, {
+          comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` !== commentId))]
+        })
+        dispatch(closeModal())
+        dispatch(showAlert({type: 'success', message: 'Comment has been succesfully deleted'}))
+      } catch (error) {
+        dispatch(showAlert({type: 'error', message: error.message}))
+      }
     }
 
     // user
 
     const handleLogOut = async () => {
-      await signOut(auth)
-      dispatch(closeModal())
-      dispatch(logoutUser())
-      dispatch(showAlert({type: 'info', message: 'User has logged out'}))
+      try {
+        await signOut(auth)
+        dispatch(showAlert({type: 'info', message: 'User has logged out'}))
+        dispatch(closeModal())
+        dispatch(logoutUser())
+      } catch (error) {
+        dispatch(showAlert({type: 'error', message: error.message}))
+      }
       navigate('/')
     }
     

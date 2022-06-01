@@ -7,6 +7,7 @@ import Post from '../components/Post';
 import { db } from '../firebase'
 import { setPosts, setNewPosts } from '../store/postsSlice';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { showAlert } from '../store/alertSlice';
 function Posts() {
     const { posts, newPosts } = useSelector( state => state.posts )
     const dispatch = useDispatch();
@@ -15,8 +16,7 @@ function Posts() {
         const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
           if(!snapshot.docs) return
           dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
-        }) 
-      
+        })
       return () => postsSnapshot()
     }, [] )
 
