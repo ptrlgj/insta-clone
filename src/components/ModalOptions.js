@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
 import { deleteUser, signOut } from 'firebase/auth';
 import { showAlert } from '../store/alertSlice';
-import { setEditPost } from '../store/postsSlice';
+import { setEditPost, setPosts } from '../store/postsSlice';
 
 const modalStyle = {
     position: 'absolute',
@@ -51,7 +51,7 @@ function ModalOptions() {
   const { isOpen, postId, userId, commentId } = useSelector( state => state.modal )
   const user = useSelector( state => state.user)
   const { postModal, commentModal, userModal, loginModal, deleteUserModal } = useSelector( state => state.modal.options)
-  const { postPage } = useSelector( state => state.posts) 
+  const { posts, postPage } = useSelector( state => state.posts) 
   const navigate = useNavigate();
 
     const handleClose = () => {
@@ -69,6 +69,7 @@ function ModalOptions() {
         dispatch(getActiveUser(user.id))
         dispatch(closeModal())
         dispatch(showAlert({type: 'success', message: 'Post has been succesfully deleted'}))
+        dispatch(setPosts([ ...posts.filter( post => post.id !== postId)]))
       } catch (error) {
         dispatch(showAlert({type: 'error', message: error.message}))
       }

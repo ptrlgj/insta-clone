@@ -1,23 +1,53 @@
-import { Box, Fab, Paper, Typography } from '@mui/material';
+import { Box, Button, Fab, Paper, Typography } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import Post from '../components/Post';
-import { db } from '../firebase'
+import { db, postsColRef } from '../firebase'
 import { setPosts, setNewPosts } from '../store/postsSlice';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, limit, onSnapshot, orderBy, query, startAfter, startAt } from 'firebase/firestore';
 import { showAlert } from '../store/alertSlice';
-function Posts() {
+function Posts( {lastVisible, setLastVisible} ) {
     const { posts, newPosts } = useSelector( state => state.posts )
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); 
+    // const [lastVisible, setLastVisible] = useState(null)
+    const [noMorePosts, setNoMorePosts] = useState(false)
 
+    const fetchFirstPosts = async () => {
+      const q = query( postsColRef, 
+        orderBy("createdAt", "desc"),  
+        limit(3) 
+      )
+      const data = await getDocs(q)
+      dispatch( setPosts( data.docs.map( doc => ({ ...doc.data(), id: doc.id }) ) ) )
+      setLastVisible(data.docs[data.docs.length - 1 ])
+    }
+
+    const fetchMorePosts = async () => {
+      const q = query( postsColRef, 
+        orderBy("createdAt", "desc"),  
+        startAfter(lastVisible),
+        limit(3) 
+      )
+      const data = await getDocs(q)
+      if(data.empty){
+        setNoMorePosts(true)
+        return 
+      }
+      dispatch( setPosts( [...posts, ...data.docs.map( doc => ({ ...doc.data(), id: doc.id }) ) ] ) )
+      setLastVisible(data.docs[data.docs.length - 1 ])
+    }
     useEffect( ()=> {
-        const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
-          if(!snapshot.docs) return
-          dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
-        })
-      return () => postsSnapshot()
+        if(posts.length === 0 && !lastVisible){
+          fetchFirstPosts()
+        } 
+        // const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
+        //   if(!snapshot.docs) return
+        //   dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
+        // })
+
+      // return () => postsSnapshot()
     }, [] )
 
     const handleShowNew = () => {
@@ -25,7 +55,6 @@ function Posts() {
     }
   return (
     <Box sx={{paddingBottom: '20px'}}> 
-        {/* <ModalOptions /> */}
         <Header />
         {newPosts && 
         <Fab 
@@ -54,6 +83,11 @@ function Posts() {
             <Typography variant='h5'>No posts to show</Typography>
           </Paper>
           }
+        {noMorePosts ? 
+          <Button disabled>no more</Button>
+          :
+          <Button onClick={ fetchMorePosts }>load more</Button>
+        }
     </Box>
   )
 }

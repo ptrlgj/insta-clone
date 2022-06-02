@@ -5,11 +5,12 @@ import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Box, Button, TextField, Typography, Paper, IconButton } from '@mui/material';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { addPost, updateDocument, getImageUrl } from '../firebase';
+import { addPost, updateDocument, getImageUrl, getSingleDoc } from '../firebase';
 import { v4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActiveUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
+import { setPosts } from '../store/postsSlice';
 
 const Input = styled('input')({
     display: 'none',
@@ -29,15 +30,18 @@ function AddPost() {
     const [imageId, setImageId] = useState(v4());
     const [desc, setDesc] = useState('')
     const user = useSelector(state => state.user)
+    const { posts } = useSelector( state => state.posts )
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const handleClick = async () => {
         try {
-            const newPost = await addPost(imageId, user.id, imageUrl, desc);
-            await updateDocument('users', user.id, { posts: [...user.posts, newPost.id] })
+            const createdPost = await addPost(imageId, user.id, imageUrl, desc);
+            await updateDocument('users', user.id, { posts: [...user.posts, createdPost.id] })
             dispatch(getActiveUser(user.id))
             dispatch(showAlert({type: 'success', message: 'New post has been succesfully added'}))
+            const createdPostData = await getSingleDoc('posts', createdPost.id)
+            dispatch(setPosts([createdPostData, ...posts]))
         } catch (error) {
             dispatch(showAlert({type: 'error', message: error.message}))
         }

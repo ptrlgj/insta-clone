@@ -20,11 +20,10 @@ import AlertComponent from './components/AlertComponent';
 function App() {
   const dispatch = useDispatch();
   const [uid, setUid] = useState(null);
+  const [lastVisiblePost, setLastVisiblePost] = useState(null)
   const { settings } = useSelector( state => state.user )
   useEffect( () => {
-    //zaimportowac i uzyc tej funkcji, nie pobiera uzytkownika po zarejestrowaniu
     const fetchLoggedUser = async () => {
-      // console.log(uid)
       const q = query(usersColRef, where("uid", "==", uid));
       const response = await getUserBy(q)
       if(uid && response[0]) dispatch(setUser(response[0]))
@@ -62,7 +61,7 @@ function App() {
           <ModalOptions />
           <AlertComponent />
           <Routes>
-            <Route path="/" element={<Posts /> } />
+            <Route path="/" element={<Posts lastVisible={lastVisiblePost} setLastVisible={setLastVisiblePost}/> } />
             <Route path='/:user' element={ <User /> } />
             <Route path='/add' element={ <AddPost /> } />
             <Route path='/comments/:id' element={ <Comments /> } />

@@ -104,9 +104,6 @@ function User() {
     const handleFollow = async () => {
         await toggleFollowUser( user, userData )
         await fetchUserData()
-        // const q = query(usersColRef, where("uid", "==", user.uid))
-        // const loggedInUser = await getUserBy(q)
-        // dispatch(setUser(loggedInUser))
     }
   return (
     <Paper 

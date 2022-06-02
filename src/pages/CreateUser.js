@@ -15,7 +15,6 @@ import { query, where } from 'firebase/firestore';
 const Input = styled('input')({
     display: 'none'
 })
-
 function CreateUser() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
