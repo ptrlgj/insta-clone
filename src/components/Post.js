@@ -11,7 +11,7 @@ import { getSingleDoc, updateDocument, db } from '../firebase';
 import { openModal, setOption } from '../store/modalSlice'
 import { getActiveUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
-import { setEditPost } from '../store/postsSlice';
+import { setEditPost, setLoading } from '../store/postsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { timePassed } from '../utils'
@@ -23,7 +23,7 @@ const Img = styled('img')({
     objectFit: 'contain'
 })
 
-function Post({data}) {
+const Post = React.forwardRef(({data}, ref) => {
 
     const [liked, setLiked] = useState(null);
     const [author, setAuthor] = useState(null);
@@ -32,7 +32,7 @@ function Post({data}) {
     const [passedTime, setPassedTime] = useState('');
     const [inputComment, setInputComment] = useState('');
     const [readMore, setReadMore] = useState(false);
-    const { editPost } = useSelector( state => state.posts );
+    const { editPost, loading } = useSelector( state => state.posts );
     const [newDesc, setNewDesc] = useState(post.desc);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -145,7 +145,10 @@ function Post({data}) {
             if(!snapshot.data()) return
             setPost(currState => ({...currState, likedBy: snapshot.data().likedBy, comments: snapshot.data().comments, desc: snapshot.data().desc}) )
         }) 
-
+        
+        if(ref){
+            dispatch(setLoading(false))
+        }
         return () => postSnapshot()
     }, [])
 
@@ -156,10 +159,15 @@ function Post({data}) {
   return (
     <>
     {author?.userName &&
-    <Paper elevation={2} square sx={{
-        display: 'flex',
-        flexDirection: 'column',
-    }}>
+    <Paper 
+        elevation={2} 
+        square 
+        sx={{
+            display: 'flex',
+            flexDirection: 'column',
+        }}
+        ref={ref}
+    >
         {author && <>
         <Box sx={{
             display: 'flex',
@@ -332,6 +340,6 @@ function Post({data}) {
     }
     </>
   )
-}
+})
 
 export default Post
