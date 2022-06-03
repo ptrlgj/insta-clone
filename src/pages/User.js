@@ -54,7 +54,7 @@ function User() {
                     followed: [...follower.followed, followTo.id]
                 }) )
                 await updateDocument( 'users', followTo.id, {
-                    followersList: [...followTo.followersList, follower.id],
+                    followersList: [...followTo.followersList.filter( id => id !== follower.id), follower.id],
                 })
                 setFollowed(true)
             }
