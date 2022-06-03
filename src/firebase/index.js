@@ -100,6 +100,10 @@ export const createUserProfile = async ( userName, fullName, bio, imageUrl, uid)
         followersList: [],
         likedPosts: [],
         posts: [],
+        settings: {
+            darkTheme: false,
+            showFollowed: false
+        }
     })
     return result
 }
