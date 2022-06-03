@@ -24,6 +24,7 @@ const initialState = {
     uid: '',
     settings: {
         darkTheme: false,
+        showFollowed: false,
     }
 }
 const userSlice = createSlice({

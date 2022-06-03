@@ -6,6 +6,7 @@ const initialState = {
     loading: false,
     editPost: '',
     posts: [],
+    followedPosts: [],
 };
 
 const postsSlice = createSlice({
@@ -17,6 +18,9 @@ const postsSlice = createSlice({
             state.posts = [ ...action.payload ];
             state.newPosts = false;
             state.editPost = ''
+        },
+        setFollowedPosts: (state, action) => {
+            state.followedPosts = [ ...action.payload ];
         },
         setNewPosts : (state, action) => {
             state.newPosts = action.payload
@@ -33,5 +37,5 @@ const postsSlice = createSlice({
     }
 })
 
-export const { setPosts, setNewPosts, setPostPage, setEditPost, setLoading } = postsSlice.actions 
+export const { setPosts, setFollowedPosts, setNewPosts, setPostPage, setEditPost, setLoading } = postsSlice.actions 
 export default postsSlice.reducer

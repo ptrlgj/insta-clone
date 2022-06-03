@@ -1,20 +1,20 @@
-import { Box, Button, Fab, Paper, Typography } from '@mui/material';
+import { Box, Button, Fab, FormControlLabel, Paper, Switch, Typography } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import Post from '../components/Post';
-import { db, postsColRef } from '../firebase'
-import { setPosts, setNewPosts, setLoading } from '../store/postsSlice';
-import { collection, getDocs, limit, onSnapshot, orderBy, query, startAfter, startAt } from 'firebase/firestore';
+import { postsColRef, updateDocument } from '../firebase'
+import { setPosts, setNewPosts, setLoading, setFollowedPosts } from '../store/postsSlice';
+import { getDocs, limit, onSnapshot, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { changeValue } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
 function Posts( {lastVisible, setLastVisible} ) {
-    const { posts, newPosts } = useSelector( state => state.posts )
+    const { posts, newPosts, followedPosts } = useSelector( state => state.posts )
+    const user = useSelector( state => state.user )
     const dispatch = useDispatch(); 
     const [noMorePosts, setNoMorePosts] = useState(false)
-    const { loading } = useSelector( state => state.posts )
     const observer = useRef()
-
     const lastPostRef = useCallback( node => {
       if(observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver( entries => {
@@ -26,6 +26,7 @@ function Posts( {lastVisible, setLastVisible} ) {
       })
       if(node) observer.current.observe(node)
     })
+
     const fetchFirstPosts = async () => {
       const q = query( postsColRef, 
         orderBy("createdAt", "desc"),  
@@ -50,23 +51,45 @@ function Posts( {lastVisible, setLastVisible} ) {
       dispatch( setPosts( [...posts, ...data.docs.map( doc => ({ ...doc.data(), id: doc.id }) ) ] ) )
       setLastVisible(data.docs[data.docs.length - 1 ])
     }
+
+    const handleShowFollowed = async () => {
+      try {
+        await updateDocument('users', user.id, {
+            settings: {
+                darkTheme: user.settings.darkTheme,
+                showFollowed: !user.settings.showFollowed
+            }
+        })
+        dispatch(changeValue({
+            settings: {
+                darkTheme: user.settings.darkTheme,
+                showFollowed: !user.settings.showFollowed
+            }
+        }))
+    } catch (error) {
+        dispatch(showAlert({type: 'error', message: error.message}))
+    }
+    }
+
+    const handleShowNew = () => {
+      dispatch(setNewPosts(false))
+    }
+
     useEffect( ()=> {
         dispatch(setLoading(true))
         if(posts.length === 0 && !lastVisible){
           fetchFirstPosts()
         } 
-
-        // const postsSnapshot = onSnapshot( collection(db, 'posts'), snapshot => {
-        //   if(!snapshot.docs) return
-        //   dispatch( setPosts( snapshot.docs.map( doc => ({ ...doc.data(), id: doc.id }) ).sort( (a, b) => b.createdAt - a.createdAt ) ) )
-        // })
-
-      // return () => postsSnapshot()
     }, [] )
 
-    const handleShowNew = () => {
-      dispatch(setNewPosts(false))
-    }
+    useEffect( () => {
+      if(user.loggedIn){
+        dispatch( setFollowedPosts( posts.filter( doc => {
+          if( user.followed.includes(doc.userId) || doc.userId === user.id ) return { ...doc }
+        })))
+      }
+    }, [user.loggedIn, posts])
+    
   return (
     <Box sx={{paddingBottom: '10px'}}> 
         <Header />
@@ -82,11 +105,34 @@ function Posts( {lastVisible, setLastVisible} ) {
           <NavigationIcon sx={{ mr: 1 }} />
           show new
         </Fab>}
+        {user.loggedIn && 
+        <Paper square sx={{padding: '0 10px'}}>
+          <FormControlLabel 
+            control={ <Switch checked={ user.settings.showFollowed } value={ user.settings.showFollowed } onChange={ handleShowFollowed }/> } 
+            label="Show only followed" 
+          />
+        </Paper>
+        }
         {posts.length > 0 ? 
-          posts.map( (post, index) => {
-            if(posts.length === index+1) return  <Post key={post.id} data={post} ref={lastPostRef} />
-            else return <Post key={post.id} data={post} />
-          } ) 
+          user.settings.showFollowed ?
+            followedPosts.length > 0 ?
+              followedPosts.map( (post, index) => {
+                if(followedPosts.length === index+1) return  <Post key={post.id} data={post} ref={lastPostRef} />
+                else return <Post key={post.id} data={post} />
+              }) 
+              :
+              <Paper 
+                sx={{
+                  height: '95vh'
+                }}
+                ref={lastPostRef}
+              >
+              </Paper>
+            :
+            posts.map( (post, index) => {
+              if(posts.length === index+1) return  <Post key={post.id} data={post} ref={lastPostRef} />
+              else return <Post key={post.id} data={post} />
+            } ) 
           :
           <Paper
             sx={{

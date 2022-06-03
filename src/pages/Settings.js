@@ -62,11 +62,13 @@ function Settings() {
             await updateDocument('users', user.id, {
                 settings: {
                     darkTheme: !user.settings.darkTheme,
+                    showFollowed: user.settings.showFollowed
                 }
             })
             dispatch(changeValue({
                 settings: {
                     darkTheme: !user.settings.darkTheme,
+                    showFollowed: user.settings.showFollowed
                 }
             }))
         } catch (error) {
