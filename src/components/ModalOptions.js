@@ -148,6 +148,13 @@ function ModalOptions() {
       dispatch(showAlert({type: 'info', message: 'Link has been added to the clipboard'}))
       dispatch(closeModal())
     }
+
+    //report 
+
+    const handleReport = () => {
+      dispatch(closeModal())
+      dispatch(showAlert({type: 'info', message: 'Report has been submitted'}))
+    }
   return (
     <Modal
         open={ isOpen }
@@ -178,7 +185,7 @@ function ModalOptions() {
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red">
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red" onClick={ handleReport }>
                 Report
             </Typography>
           </>
@@ -192,7 +199,7 @@ function ModalOptions() {
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed }  color="red">
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed }  color="red" onClick={ handleReport }>
                 Report
             </Typography>
           </>
@@ -216,7 +223,7 @@ function ModalOptions() {
             </Typography>
           </> : 
           <>
-            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red">
+            <Typography variant='subtitle1' id="modal-modal-description" sx={ textStyleRed } color="red" onClick={ handleReport }>
                 Report
             </Typography>
           </>
