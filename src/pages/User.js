@@ -33,7 +33,7 @@ function User() {
     
     const toggleFollowUser = async ( follower, followTo ) => {
         try {
-            if( followTo.followersList.includes(follower.id) ){
+            if( follower.followed.includes(followTo.id) ){
                 //jesli juz followuje
                 await updateDocument( 'users', follower.id, {
                     followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
@@ -44,10 +44,9 @@ function User() {
                 await updateDocument( 'users', followTo.id, {
                     followersList: [...followTo.followersList.filter( followerUser => followerUser !== follower.id )],
                 })
-                return false
+                setFollowed(false)
             } else{
                 //jesli jeszcze nie followuje
-                // debugger
                 await updateDocument( 'users', follower.id, {
                     followed: [...follower.followed, followTo.id]
                 })
@@ -57,7 +56,7 @@ function User() {
                 await updateDocument( 'users', followTo.id, {
                     followersList: [...followTo.followersList, follower.id],
                 })
-                return true
+                setFollowed(true)
             }
         } catch (error) {
             dispatch(showAlert({type: 'error', message: error.message}))
@@ -72,6 +71,7 @@ function User() {
             const response = await getUserBy(q)
             if(response.length > 0){
                 setUserData(response[0]);
+                setFollowed(user.followed.includes(response[0].id))
                 setLoading(false)
             }else{
                 setLoading(false)
@@ -83,14 +83,8 @@ function User() {
         }
     }
     useEffect(()=>{
-        fetchUserData()
-    }, [userName])
-
-    useEffect( () => {
-        if(userData?.id){
-            setFollowed(userData.followersList.includes(user.id))
-        }
-    }, [userData])
+        if(user.loggedIn) fetchUserData()
+    }, [userName, user.loggedIn])
 
     const handleOpenModal = () => {
         dispatch(setOption('userModal'));
@@ -103,7 +97,7 @@ function User() {
 
     const handleFollow = async () => {
         await toggleFollowUser( user, userData )
-        await fetchUserData()
+        // await fetchUserData()
     }
   return (
     <Paper 
