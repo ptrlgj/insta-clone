@@ -201,7 +201,7 @@ function User() {
                     :
                     <Button variant="contained" sx={{flex: '1'}} onClick={ handleFollow }>Follow</Button>
                     }
-                    <Button variant="outlined" sx={{flex: '1'}}>Message</Button>
+                    <Button variant="outlined" sx={{flex: '1'}} disabled>Message</Button>
                 </> 
             }
             <Button variant="outlined" sx={{minWidth: '36.5px', padding: '0'}} disabled><ExpandMoreRoundedIcon /></Button>
