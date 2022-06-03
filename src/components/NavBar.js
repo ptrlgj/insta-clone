@@ -35,9 +35,9 @@ function NavBar() {
           <IconButton
             onClick={ () => navigate(`/`)}
           ><HomeRoundedIcon /></IconButton>
-          <IconButton><SearchRoundedIcon /></IconButton>
-          <IconButton><MusicVideoRoundedIcon /></IconButton>
-          <IconButton><ShoppingBagRoundedIcon /></IconButton>
+          <IconButton disabled><SearchRoundedIcon /></IconButton>
+          <IconButton disabled><MusicVideoRoundedIcon /></IconButton>
+          <IconButton disabled><ShoppingBagRoundedIcon /></IconButton>
           <IconButton 
             onClick={ handleProfileButton }
           ><Avatar src={image} /></IconButton>

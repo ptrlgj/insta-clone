@@ -220,11 +220,11 @@ const Post = React.forwardRef(({data}, ref) => {
                 <IconButton onClick={ () => navigate(`/comments/${post.id}`)}>
                     <ChatBubbleOutlineOutlinedIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton disabled>
                     <SendRoundedIcon />
                 </IconButton>
             </Box>
-            <IconButton>
+            <IconButton disabled>
                 <BookmarkBorderOutlinedIcon />
             </IconButton>
         </Box>

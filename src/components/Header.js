@@ -45,10 +45,10 @@ function Header() {
                 <IconButton onClick={ handleAddPost }>
                     <AddBoxOutlinedIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton disabled>
                     <FavoriteBorderRoundedIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton disabled>
                     <SendRoundedIcon />
                 </IconButton>
             </Box>
