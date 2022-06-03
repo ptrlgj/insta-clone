@@ -43,7 +43,7 @@ function AddPost() {
             const createdPostData = await getSingleDoc('posts', createdPost.id)
             dispatch(setPosts([createdPostData, ...posts]))
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
+            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
         }
         navigate('/')
     }
@@ -52,7 +52,7 @@ function AddPost() {
         if(imageFile) {
             getImageUrl( imageFile, imageId )
                 .then(res => setImageUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message})))
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message.slice(10)})))
         }
     },[imageFile]);
 

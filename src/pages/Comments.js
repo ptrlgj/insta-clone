@@ -36,7 +36,7 @@ function Comments() {
                 dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
                 setInputComment('')
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
+                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
             }
         } else if( user.uid ){
             navigate('/signup')

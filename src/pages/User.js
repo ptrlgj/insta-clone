@@ -59,7 +59,7 @@ function User() {
                 setFollowed(true)
             }
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
+            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
         }
     }
 
@@ -79,7 +79,7 @@ function User() {
                 return
             }
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
+            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
         }
     }
     useEffect(()=>{

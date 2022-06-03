@@ -71,7 +71,7 @@ function ModalOptions() {
         dispatch(showAlert({type: 'success', message: 'Post has been succesfully deleted'}))
         dispatch(setPosts([ ...posts.filter( post => post.id !== postId)]))
       } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
+        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
       }
     }
     
@@ -96,7 +96,7 @@ function ModalOptions() {
         dispatch(closeModal())
         dispatch(showAlert({type: 'success', message: 'Comment has been succesfully deleted'}))
       } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
+        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
       }
     }
 
@@ -109,7 +109,7 @@ function ModalOptions() {
         dispatch(closeModal())
         dispatch(logoutUser())
       } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
+        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
       }
       navigate('/')
     }
@@ -122,7 +122,7 @@ function ModalOptions() {
         dispatch(showAlert({type: 'success', message: 'User has been succesfully deleted'}))
       } catch (error) {
         console.log(error.message)
-        dispatch(showAlert({type: 'error', message: error.message}))
+        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
       }
       dispatch(closeModal())
       dispatch(logoutUser())

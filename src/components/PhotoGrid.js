@@ -23,7 +23,7 @@ function PhotoGrid({user}) {
         const response = await getSingleDoc('posts', post );
         return response
       } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
+        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
       }
     })
   }

@@ -67,7 +67,7 @@ function Posts( {lastVisible, setLastVisible} ) {
             }
         }))
     } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
+        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
     }
     }
 

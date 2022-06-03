@@ -22,7 +22,7 @@ function PostPage() {
                 const fetchPost = await getSingleDoc('posts', postId);
                 setPost(fetchPost)
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
+                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
             }
         } 
         fetchData()
@@ -36,7 +36,7 @@ function PostPage() {
                 const fetchUser = await getSingleDoc('users', post.userId)
                 setUser(fetchUser)
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
+                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
             }
         } 
         fetchData()

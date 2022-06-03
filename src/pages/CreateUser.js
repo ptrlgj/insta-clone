@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { auth, createUserProfile, fetchLoggedUser, getImageUrl, getUserBy, signUpUser, usersColRef } from '../firebase';
+import { auth, createUserProfile, fetchLoggedUser, getImageUrl, getUserBy, usersColRef } from '../firebase';
 import { v4 } from 'uuid';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeValue, setUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
@@ -34,15 +34,20 @@ function CreateUser() {
     const handleCreateUser = async () => {
         if(email && password === confPass){
             try {
-                const data = await signUpUser(email, password);
+                // const data = await signUpUser(email, password);
+                const data = await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                )
                 dispatch(changeValue({uid: data.user.uid}))
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
+                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
             }
         } else if(email) {
-            dispatch(showAlert({type: 'warning', message: 'Passwords dont match'}))
+            dispatch(showAlert({type: 'error', message: 'Passwords dont match'}))
         } else if(password === confPass) {
-            dispatch(showAlert({type: 'warning', message: 'Invalid email'}))
+            dispatch(showAlert({type: 'error', message: 'Invalid email'}))
         }
     }
 
@@ -61,7 +66,7 @@ function CreateUser() {
                 dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))
                 fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
+                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
             }
             navigate(`/`)
         } 
@@ -73,7 +78,7 @@ function CreateUser() {
         if(imageFile) {
             getImageUrl( imageFile, imageId )
                 .then(res => setImageUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message})) )
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message.slice(10)})) )
         }
     }, [imageFile] )
 
