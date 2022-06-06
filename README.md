@@ -2,7 +2,7 @@
 My attempt to partially recreate instagram using React and MUI 
 
 ## Technologies:
-- JavaScript
+- Javascript
 - React
 - Redux Toolkit
 - MUI
