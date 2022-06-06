@@ -1,4 +1,4 @@
-# Instagram-like application
+# Instagram clone application
 My attempt to partially recreate instagram using React and MUI 
 
 ## Technologies:
