@@ -15,9 +15,6 @@ import { openModal, setOption } from '../store/modalSlice';
 import { query, where } from 'firebase/firestore';
 import { changeValue } from '../store/userSlice'
 import { showAlert } from '../store/alertSlice';
-// import { toggleFollowUser } from '../utils';
-
-// export const url = 'https://firestore.googleapis.com/v1/projects/insta-clone-7dc70/databases/(default)/documents/users';
 
 function User() {
 
@@ -34,7 +31,6 @@ function User() {
     const toggleFollowUser = async ( follower, followTo ) => {
         try {
             if( follower.followed.includes(followTo.id) ){
-                //jesli juz followuje
                 await updateDocument( 'users', follower.id, {
                     followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
                 })
@@ -46,7 +42,6 @@ function User() {
                 })
                 setFollowed(false)
             } else{
-                //jesli jeszcze nie followuje
                 await updateDocument( 'users', follower.id, {
                     followed: [...follower.followed, followTo.id]
                 })
@@ -211,7 +206,7 @@ function User() {
                 <Tab sx={{flex: '1'}}label={<MusicVideoRoundedIcon />} value='2'/>
                 <Tab sx={{flex: '1'}}label={<AccountBoxRoundedIcon />} value='3'/>
             </TabList>
-            <TabPanel value="1" sx={{padding: '0', display: 'flex', justifyContent:'center'}}>
+            <TabPanel value="1" sx={{ maxWidth: { xs: '100vw', sm: '466px'}, padding: '0', display: 'flex', justifyContent:'center'}}>
                 {userData && <PhotoGrid user={userData}/>}
             </TabPanel>
             <TabPanel value="2"></TabPanel>

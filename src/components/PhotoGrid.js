@@ -1,4 +1,4 @@
-import { ImageList, ImageListItem, styled } from '@mui/material'
+import { styled } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -6,11 +6,19 @@ import { getSingleDoc } from '../firebase';
 import { showAlert } from '../store/alertSlice';
 
 const Img = styled('img')({
-  height:'151px',
-  width: '151px',
+  maxHeight:'153px',
+  maxWidth:'153px',
+  height:'100%',
+  width: '100%',
   objectFit: 'cover',
 });
 
+const Grid = styled('div')({
+  maxWidth:'100vw',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gridGap: '3px'
+}) 
 function PhotoGrid({user}) {
   
   const [posts, setPosts] = useState([])
@@ -39,17 +47,18 @@ function PhotoGrid({user}) {
         const resolved = await item;
         resolvedPosts.push({...resolved, id: resolved.id})
       }
-      // this way i keep them in order
       setPosts(resolvedPosts.reverse())
     }
     fetching()
   }, [])
 
   return (
-    <ImageList sx={{ width: '99%' }} cols={3} rowHeight={151}>
+    <Grid>
+
     {posts.length >= user.posts.length && posts.map( (item) => {
-      return (<ImageListItem key={item.imageId}>
+      return (
         <Img
+          key={item.imageId}
           src= {item.url}
           srcSet={item.url}
           alt=''
@@ -57,14 +66,11 @@ function PhotoGrid({user}) {
           sx={{cursor: 'pointer'}}
           onClick={ () => handleOpenPost(item) }
           />
-      </ImageListItem>)
+      )
     }
     )}
     
-  </ImageList>
-  // <>
-  //   <p>{posts}</p>
-  // </>
+  </Grid>
   )
 }
 
