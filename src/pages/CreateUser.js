@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeValue, setUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
 import { query, where } from 'firebase/firestore';
+import { useUser } from '../hooks/useUser';
 
 const Input = styled('input')({
     display: 'none'
@@ -18,7 +19,7 @@ const Input = styled('input')({
 function CreateUser() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { uid } = useSelector( state => state.user )
+    const { uid } = useUser()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confPass, setConfPass] = useState('');

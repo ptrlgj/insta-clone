@@ -10,6 +10,7 @@ import { timePassed } from '../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 import { showAlert } from '../store/alertSlice';
+import { useUser } from '../hooks/useUser';
 
 function Comments() {
     const postId = useParams().id
@@ -17,7 +18,7 @@ function Comments() {
     const [author, setAuthor] = useState(null)
     const [passedTime, setPassedTime] = useState('');
     const [inputComment, setInputComment] = useState('');
-    const user = useSelector( state => state.user )
+    const user = useUser()
     const navigate = useNavigate()
     const dispatch = useDispatch()
 

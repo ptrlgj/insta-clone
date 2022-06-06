@@ -15,6 +15,7 @@ import { openModal, setOption } from '../store/modalSlice';
 import { query, where } from 'firebase/firestore';
 import { changeValue } from '../store/userSlice'
 import { showAlert } from '../store/alertSlice';
+import { useUser } from '../hooks/useUser';
 
 function User() {
 
@@ -23,7 +24,7 @@ function User() {
     const [loading, setLoading] = useState(true);
     const [noUser, setNoUser] = useState(false);
     const [userData, setUserData] = useState(null);
-    const user = useSelector( state => state.user );
+    const user = useUser()
     const [followed, setFollowed] = useState(null)
     const navigate = useNavigate();
     const dispatch = useDispatch();

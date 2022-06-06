@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActiveUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
 import { setPosts } from '../store/postsSlice';
+import { useUser } from '../hooks/useUser';
+import { usePosts } from '../hooks/usePosts';
 
 const Input = styled('input')({
     display: 'none',
@@ -28,8 +30,8 @@ function AddPost() {
     const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
     const [desc, setDesc] = useState('')
-    const user = useSelector(state => state.user)
-    const { posts } = useSelector( state => state.posts )
+    const user = useUser()
+    const { posts } = usePosts
     const navigate = useNavigate()
     const dispatch = useDispatch()
 

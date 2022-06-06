@@ -1,6 +1,7 @@
 import { Alert} from '@mui/material'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useAlert } from '../hooks/useAlert'
 import { hideAlert } from '../store/alertSlice'
 
 const alertStyle = {
@@ -12,7 +13,7 @@ const alertStyle = {
     opacity: '0.9'
 }
 function AlertComponent() {
-    const { alertActive, type, message } = useSelector( state => state.alert )
+    const { alertActive, type, message } = useAlert()
     const dispatch = useDispatch()
 
     useEffect( () => {

@@ -7,8 +7,9 @@ import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import { openModal, setOption } from '../store/modalSlice';
+import { useUser } from '../hooks/useUser';
 function NavBar() {
-  const { uid, userName, image } = useSelector(state => state.user);
+  const { uid, userName, image } = useUser()
   const navigate = useNavigate();
   const dispatch = useDispatch();
   

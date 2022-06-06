@@ -6,11 +6,13 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
+import { useUser } from '../hooks/useUser';
+
 
 function Header() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const user = useSelector( state => state.user )
+    const user = useUser()
     const handleAddPost = () => {
         if(user.loggedIn) navigate('/add')
         else if(user.uid) navigate('/signup')

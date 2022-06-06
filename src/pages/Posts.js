@@ -9,9 +9,11 @@ import { setPosts, setNewPosts, setLoading, setFollowedPosts } from '../store/po
 import { getDocs, limit, onSnapshot, orderBy, query, startAfter, where } from 'firebase/firestore';
 import { changeValue } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
+import { useUser } from '../hooks/useUser';
+import { usePosts } from '../hooks/usePosts';
 function Posts( {lastVisible, setLastVisible} ) {
-    const { posts, newPosts, followedPosts } = useSelector( state => state.posts )
-    const user = useSelector( state => state.user )
+    const { posts, newPosts, followedPosts } = usePosts()
+    const user = useUser()
     const dispatch = useDispatch(); 
     const [noMorePosts, setNoMorePosts] = useState(false)
     const observer = useRef()

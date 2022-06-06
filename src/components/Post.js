@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { timePassed } from '../utils'
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../hooks/useUser';
+import { usePosts } from '../hooks/usePosts';
 
 const Img = styled('img')({
     position: 'relative',
@@ -26,12 +28,12 @@ const Post = React.forwardRef(({data}, ref) => {
 
     const [liked, setLiked] = useState(null);
     const [author, setAuthor] = useState(null);
-    const user = useSelector( state => state.user);
+    const user = useUser()
     const [post, setPost] = useState(data);
     const [passedTime, setPassedTime] = useState('');
     const [inputComment, setInputComment] = useState('');
     const [readMore, setReadMore] = useState(false);
-    const { editPost, loading } = useSelector( state => state.posts );
+    const { editPost, loading } = usePosts()
     const [newDesc, setNewDesc] = useState(post.desc);
     const dispatch = useDispatch();
     const navigate = useNavigate();

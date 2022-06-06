@@ -11,6 +11,7 @@ import { getImageUrl, getUserBy, updateDocument, usersColRef } from '../firebase
 import { changeValue } from '../store/userSlice';
 import { v4 } from 'uuid';
 import { query, where } from 'firebase/firestore';
+import { useUser } from '../hooks/useUser';
 
 const Input = styled('input')({
     display: 'none'
@@ -19,7 +20,7 @@ const Input = styled('input')({
 function Settings() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const user = useSelector( state => state.user )
+    const user = useUser()
     const [avatarUrl, setAvatarUrl] = useState(user.image)
     const [imageFile, setImageFile] = useState(null)
     const [userName, setUserName] = useState(user.userName)

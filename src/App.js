@@ -16,12 +16,13 @@ import { onAuthStateChanged } from 'firebase/auth';
 import CreateUser from './pages/CreateUser';
 import Settings from './pages/Settings';
 import AlertComponent from './components/AlertComponent';
+import { useUser } from './hooks/useUser';
 
 function App() {
   const dispatch = useDispatch();
   const [uid, setUid] = useState(null);
   const [lastVisiblePost, setLastVisiblePost] = useState(null)
-  const { settings } = useSelector( state => state.user )
+  const { settings } = useUser()
   useEffect( () => {
     const fetchLoggedUser = async () => {
       const q = query(usersColRef, where("uid", "==", uid));

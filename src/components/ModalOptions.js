@@ -9,6 +9,9 @@ import LoginForm from './LoginForm';
 import { deleteUser, signOut } from 'firebase/auth';
 import { showAlert } from '../store/alertSlice';
 import { setEditPost, setPosts } from '../store/postsSlice';
+import { useUser } from '../hooks/useUser';
+import { usePosts } from '../hooks/usePosts';
+import { useModal } from '../hooks/useModal';
 
 const modalStyle = {
     position: 'absolute',
@@ -47,10 +50,10 @@ const textStyleRed = {
 }
 function ModalOptions() {
   const dispatch = useDispatch()
-  const { isOpen, postId, userId, commentId } = useSelector( state => state.modal )
-  const user = useSelector( state => state.user)
-  const { postModal, commentModal, userModal, loginModal, deleteUserModal } = useSelector( state => state.modal.options)
-  const { posts, postPage } = useSelector( state => state.posts) 
+  const { isOpen, postId, userId, commentId } = useModal()
+  const user = useUser()
+  const { options:{postModal, commentModal, userModal, loginModal, deleteUserModal} } = useModal()
+  const { posts, postPage } = usePosts()
   const navigate = useNavigate();
 
     const handleClose = () => {
