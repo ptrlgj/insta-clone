@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Avatar, Box, TextField, Typography, Paper, Button, IconButton, styled} from '@mui/material';
+import { Avatar, Box, TextField, Typography, Paper, Button, IconButton, styled } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';

@@ -4,7 +4,7 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
 import ShoppingBagRoundedIcon from '@mui/icons-material/ShoppingBagRounded';
-import {Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import { openModal, setOption } from '../store/modalSlice';
 function NavBar() {

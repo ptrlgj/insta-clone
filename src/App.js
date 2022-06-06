@@ -1,7 +1,7 @@
-import {Box, Container, createTheme, ThemeProvider} from '@mui/material'
+import { Box, Container, createTheme, ThemeProvider } from '@mui/material'
 import { useEffect, useState } from 'react';
 import NavBar from './components/NavBar';
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import User from './pages/User';
 import AddPost from './pages/AddPost';
 import { auth, usersColRef, getUserBy } from './firebase';

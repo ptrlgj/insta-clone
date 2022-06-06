@@ -1,11 +1,10 @@
 import { Box, IconButton, Paper, Typography } from '@mui/material'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Post from '../components/Post'
 import { getSingleDoc } from '../firebase'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setPostPage } from '../store/postsSlice';
 import { showAlert } from '../store/alertSlice';
 
