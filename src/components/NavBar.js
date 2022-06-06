@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, BottomNavigationAction, Box, IconButton, Paper } from '@mui/material';
+import { Avatar, Box, IconButton, Paper } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import MusicVideoRoundedIcon from '@mui/icons-material/MusicVideoRounded';
@@ -40,20 +40,9 @@ function NavBar() {
           <IconButton disabled><ShoppingBagRoundedIcon /></IconButton>
           <IconButton 
             onClick={ handleProfileButton }
-          ><Avatar src={image} /></IconButton>
-          {/* <Link to="/"><BottomNavigationAction label="Home" icon={<HomeRoundedIcon />} /></Link>
-          <BottomNavigationAction label="Explore" icon={<SearchRoundedIcon />} />
-          <BottomNavigationAction label="TikReels" icon={<MusicVideoRoundedIcon />} />
-          <BottomNavigationAction label="Store" icon={<ShoppingBagRoundedIcon />} />
-          <BottomNavigationAction label="Profile" icon={<Avatar src={image} />} 
-            onClick={ () => {
-              if(userName) navigate(`/${userName}`)
-              else {
-                dispatch(openModal())
-                dispatch(setOption('loginModal'))
-              }
-            }}
-          /> */}
+          >
+            <Avatar src={image} />
+          </IconButton>
         </Box>
       </Paper>
   )

@@ -5,7 +5,6 @@ export const getActiveUser = createAsyncThunk(
     'user/getActiveUser',
     async (userId) => {
         const user = await getSingleDoc('users', userId);
-        // console.log(userId, getState)
         return user;
     }
 )
@@ -50,10 +49,8 @@ const userSlice = createSlice({
     },
     extraReducers: {
         [getActiveUser.pending]: (state, action) => {
-            // console.log('pending')
         },
         [getActiveUser.fulfilled]: (state, action) => {
-            // console.log(action.payload)
             for (const key of Object.keys(action.payload)) {
                 state[key] = action.payload[key]
             }

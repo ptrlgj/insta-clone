@@ -29,7 +29,6 @@ function Comment({data, postId, commentId}) {
     }, [])
 
     const handleOpenModal = () => {
-        // console.log(data)
         dispatch(openModal({id: postId, userId: data.author, commentId: commentId}))
         dispatch(setOption('commentModal'))
     }

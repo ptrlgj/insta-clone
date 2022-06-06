@@ -6,7 +6,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-// import BookmarkOutlinedIcon from '@mui/icons-material/BookmarkOutlined';
 import { getSingleDoc, updateDocument, db } from '../firebase';
 import { openModal, setOption } from '../store/modalSlice'
 import { getActiveUser } from '../store/userSlice';

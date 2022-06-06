@@ -18,7 +18,6 @@ const Input = styled('input')({
 function CreateUser() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // const [uid, setUid] = useState('');
     const { uid } = useSelector( state => state.user )
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -34,7 +33,6 @@ function CreateUser() {
     const handleCreateUser = async () => {
         if(email && password === confPass){
             try {
-                // const data = await signUpUser(email, password);
                 const data = await createUserWithEmailAndPassword(
                     auth,
                     email,
@@ -99,7 +97,6 @@ function CreateUser() {
         <Box 
             sx={{
                 display: 'flex',
-                // justifyContent: 'space-between',
                 padding: '5px 10px',
                 alignItems: 'center',
                 gap:'20px',

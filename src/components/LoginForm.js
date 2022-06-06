@@ -85,7 +85,6 @@ function LoginForm() {
                 <IconButton
                   aria-label="toggle password visibility"
                   onClick={ () => setShowPassword(!showPassword) }
-                //   onMouseDown={handleMouseDownPassword}
                   edge="end"
                 >
                   {showPassword ? <Visibility /> : <VisibilityOff />}

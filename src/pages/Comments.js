@@ -20,7 +20,6 @@ function Comments() {
     const user = useSelector( state => state.user )
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    // console.log(postId)
 
     const handleSubmitComment = async (e) => {
         e.preventDefault()
@@ -49,7 +48,6 @@ function Comments() {
     useEffect( () => {
         const commentSnapshot = onSnapshot( doc( db, 'posts', postId ), snapshot => {
             if(!snapshot.data()) return
-            // console.log(snapshot.data())
             setPost({...snapshot.data(), id: postId})
         }) 
 
@@ -72,7 +70,6 @@ function Comments() {
         sx={{ 
             display: 'flex',
             flexDirection: 'column',
-            // background: 'white',
             paddingBottom: '20px',
             minHeight: '95vh'
         }}>

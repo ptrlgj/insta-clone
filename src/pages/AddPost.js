@@ -85,7 +85,6 @@ function AddPost() {
         </Box>
         <Box 
             sx={{
-                // backgroundColor: 'white', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
@@ -99,7 +98,6 @@ function AddPost() {
             }
         </Box>
         <Box sx={{
-            // backgroundColor: 'white',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',}}>
@@ -118,7 +116,6 @@ function AddPost() {
             </label>
         </Box>
         <Box sx={{
-            // backgroundColor: 'white',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',

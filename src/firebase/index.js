@@ -16,6 +16,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 export const storage = getStorage(app)
+
 // init services
 
 export const db = getFirestore()
@@ -36,12 +37,6 @@ export const getData = async (colRef) => {
     return(response.docs.map(doc=>( { ...doc.data(), id: doc.id } )))
 }
 
-// export const getSortedData = async (colRef, field, operator, value, orderField, orderValue) => {
-//     const q = query(colRef, where(field, operator, value), orderBy(orderField, orderValue));
-//     const response = await getDocs(q);
-//     return response.docs.map(doc=> ({...doc.data(), id: doc.id}))
-// }
-
 export const getSortedData = async (colRef, orderField, orderValue) => {
     const q = query(colRef, orderBy(orderField, orderValue));
     const response = await getDocs(q);
@@ -51,15 +46,12 @@ export const getSortedData = async (colRef, orderField, orderValue) => {
 export const getSingleDoc = async (collection, id) => {
     const docRef = doc(db, collection, id);
     const response = await getDoc(docRef);
-    // console.log(response.id)
     return { ...response.data(), id: response.id }
 }
 
 //query get document by 
 
 export const getUserBy = async (q) => {
-
-    // const q = query(usersColRef, where("userName", "==", userName))
     const response = await getDocs(q)
     return response.docs.map(doc=>( { ...doc.data(), id: doc.id } ))
 }
@@ -141,7 +133,6 @@ export const deleteUserPosts = async (userId) => {
 export const subscribeTo = async ( colName ) => {
     const colRef = collection(db, colName)
     onSnapshot( colRef, ( snapshot ) => {
-        // console.log(snapshot)
         const data = snapshot.docs.map(doc => doc.data())
         console.log(data)
     })
@@ -149,35 +140,7 @@ export const subscribeTo = async ( colName ) => {
 
  //loggin in 
 
-// export const logInUser = async (email, pass) => {
-//     try {
-//         const user = await signInWithEmailAndPassword(
-//             auth,
-//             email,
-//             pass
-//         )
-
-//         return user
-//     } catch (error) {
-//         console.log('error',error.message)
-//     }
-// }
-
-// export const signUpUser = async ( email, pass ) => {
-//     try {
-//         const user = await createUserWithEmailAndPassword(
-//             auth,
-//             email,
-//             pass
-//         )
-//         return user
-//     } catch (error) {
-//         console.log('error', error.message)
-//     }
-// }
-
 export const fetchLoggedUser = async (uid) => {
-    // console.log(uid)
     const q = query(usersColRef, where("uid", "==", uid));
     const response = await getUserBy(q)
     if(response && response[0]) return (response[0])

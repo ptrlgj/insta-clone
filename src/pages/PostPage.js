@@ -58,7 +58,6 @@ function PostPage() {
         }}>
             <Box sx={{
                 display: 'flex',
-                // justifyContent: 'space-between',
                 padding: '5px 10px',
                 alignItems: 'center',
                 gap:'20px',

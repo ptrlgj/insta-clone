@@ -92,7 +92,6 @@ function User() {
 
     const handleFollow = async () => {
         await toggleFollowUser( user, userData )
-        // await fetchUserData()
     }
   return (
     <Paper 
