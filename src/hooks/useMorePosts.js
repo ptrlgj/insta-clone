@@ -13,8 +13,8 @@ export const useMorePosts = (lastVisible, setLastVisible, posts, setNoMorePosts)
         )
         const data = await getDocs(q)
         if(data.empty){
-        setNoMorePosts(true)
-        return 
+            setNoMorePosts(true)
+            return 
         }
         dispatch( setPosts( [...posts, ...data.docs.map( doc => ({ ...doc.data(), id: doc.id }) ) ] ) )
         setLastVisible(data.docs[data.docs.length - 1 ])

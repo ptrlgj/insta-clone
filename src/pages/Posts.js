@@ -1,15 +1,17 @@
 import { Box, Fab, FormControlLabel, Paper, Switch, Typography } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation';
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import Header from '../components/Header';
 import Post from '../components/Post';
-import { setNewPosts, setLoading, setFollowedPosts } from '../store/postsSlice';
+import { setNewPosts, setLoading } from '../store/postsSlice';
 import { useUser } from '../hooks/useUser';
 import { usePosts } from '../hooks/usePosts';
 import { useToggleShowFollowed } from '../hooks/useToggleShowFollowed';
 import { useFirstPosts } from '../hooks/useFirstPosts';
 import { useMorePosts } from '../hooks/useMorePosts';
+import { useFilterPosts } from '../hooks/useFilterPosts';
+import useLastPostRef from '../hooks/useLastPostRef';
 
 function Posts( {lastVisible, setLastVisible} ) {
     const { posts, newPosts, followedPosts } = usePosts()
@@ -18,21 +20,11 @@ function Posts( {lastVisible, setLastVisible} ) {
     const [noMorePosts, setNoMorePosts] = useState(false)
     const observer = useRef()
     const showFollowed = useToggleShowFollowed(user)
-    const fetchFirstPosts = useFirstPosts(setLastVisible)
+    const fetchFirstPosts = useFirstPosts(setLastVisible, setNoMorePosts)
     const fetchMorePosts = useMorePosts(lastVisible, setLastVisible, posts, setNoMorePosts) 
-
-    const lastPostRef = useCallback( node => {
-      if(observer.current) observer.current.disconnect()
-      observer.current = new IntersectionObserver( entries => {
-        if(entries[0].isIntersecting){
-          if(!noMorePosts) {
-            fetchMorePosts()
-          }
-        }
-      })
-      if(node) observer.current.observe(node)
-    })
-
+    const lastPostRef = useLastPostRef(noMorePosts, observer, fetchMorePosts)
+    useFilterPosts(user, posts)
+    
     const handleShowFollowed = () => showFollowed()
 
     const handleShowNew = () => dispatch(setNewPosts(false))
@@ -43,14 +35,6 @@ function Posts( {lastVisible, setLastVisible} ) {
           fetchFirstPosts()
         } 
     }, [] )
-
-    useEffect( () => {
-      if(user.loggedIn){
-        dispatch( setFollowedPosts( posts.filter( doc => {
-          if( user.followed.includes(doc.userId) || doc.userId === user.id ) return { ...doc }
-        })))
-      }
-    }, [user.loggedIn, posts])
     
   return (
     <Box sx={{paddingBottom: '10px'}}> 
