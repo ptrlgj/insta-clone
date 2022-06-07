@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setPostPage } from '../store/postsSlice';
 import { showAlert } from '../store/alertSlice';
 import { useSinglePost } from '../hooks/useSinglePost';
+import { useAuthor } from '../hooks/useAuthor';
 
 function PostPage() {
     const postId = useParams().id
@@ -16,7 +17,8 @@ function PostPage() {
     const getPost = useSinglePost(postId, setPost)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
+    const getAuthor = useAuthor(post, setUser)
+    
     useEffect( () => {
         dispatch(setPostPage(true))
         getPost()
@@ -24,16 +26,7 @@ function PostPage() {
     }, [])
 
     useEffect( () => {
-        if(!post) return
-        const fetchData = async () => {
-            try {
-                const fetchUser = await getSingleDoc('users', post.userId)
-                setUser(fetchUser)
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        } 
-        fetchData()
+        getAuthor()
     }, [post])
     
   return (

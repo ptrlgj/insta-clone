@@ -16,6 +16,7 @@ import { query, where } from 'firebase/firestore';
 import { changeValue } from '../store/userSlice'
 import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
+import { useToggleFollowUser } from '../hooks/useToggleFollowUser';
 
 function User() {
 
@@ -26,38 +27,11 @@ function User() {
     const [userData, setUserData] = useState(null);
     const user = useUser()
     const [followed, setFollowed] = useState(null)
+    const toggleFollow = useToggleFollowUser(user, userData, setFollowed)
     const navigate = useNavigate();
     const dispatch = useDispatch();
     
-    const toggleFollowUser = async ( follower, followTo ) => {
-        try {
-            if( follower.followed.includes(followTo.id) ){
-                await updateDocument( 'users', follower.id, {
-                    followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
-                })
-                dispatch( changeValue({
-                    followed: [...follower.followed.filter( followedUser => followedUser !== followTo.id )]
-                }) )
-                await updateDocument( 'users', followTo.id, {
-                    followersList: [...followTo.followersList.filter( followerUser => followerUser !== follower.id )],
-                })
-                setFollowed(false)
-            } else{
-                await updateDocument( 'users', follower.id, {
-                    followed: [...follower.followed, followTo.id]
-                })
-                dispatch( changeValue({
-                    followed: [...follower.followed, followTo.id]
-                }) )
-                await updateDocument( 'users', followTo.id, {
-                    followersList: [...followTo.followersList.filter( id => id !== follower.id), follower.id],
-                })
-                setFollowed(true)
-            }
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-    }
+    
 
     const fetchUserData = async () =>{
         setLoading(true)
@@ -92,7 +66,7 @@ function User() {
     }
 
     const handleFollow = async () => {
-        await toggleFollowUser( user, userData )
+        toggleFollow()
     }
   return (
     <Paper 

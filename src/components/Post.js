@@ -20,6 +20,7 @@ import { useUpdateDesc } from '../hooks/useUpdateDesc';
 import { useLikePost } from '../hooks/useLikePost';
 import { useDoubleClickLike } from '../hooks/useDoubleClickLike';
 import { useIsPostLiked } from '../hooks/useIsPostLiked';
+import { useAuthor } from '../hooks/useAuthor';
 
 const Img = styled('img')({
     position: 'relative',
@@ -44,6 +45,8 @@ const Post = React.forwardRef(({data}, ref) => {
     const updateDesc = useUpdateDesc(post, newDesc)
     const likePost = useLikePost(user, post)
     const doubleClickLike = useDoubleClickLike(user, post)
+    const getAuthor = useAuthor(post, setAuthor)
+
     const handleDoubleClick = async (e) => doubleClickLike(e)
 
     const handleLike = async () => likePost()
@@ -58,11 +61,7 @@ const Post = React.forwardRef(({data}, ref) => {
     const handleChangeDesc = async () => updateDesc()
 
     useEffect( () => {
-        const fetchAuthor = async () => {
-            const userFetch = await getSingleDoc('users', post.userId);
-            setAuthor(userFetch)
-        }
-        fetchAuthor() 
+        getAuthor() 
 
         const postSnapshot = onSnapshot( doc(db, 'posts', post.id), snapshot => {
             if(!snapshot.data()) return

@@ -11,6 +11,7 @@ import { useDispatch} from 'react-redux';
 import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
 import { useSubmitComment } from '../hooks/useSubmitComment';
+import { useAuthor } from '../hooks/useAuthor';
 
 function Comments() {
     const postId = useParams().id
@@ -22,6 +23,7 @@ function Comments() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const submitComment = useSubmitComment(user, post, inputComment, setInputComment);
+    const getAuthor = useAuthor(post, setAuthor)
     
     const handleSubmitComment = async (e) => {
         e.preventDefault()
@@ -38,11 +40,7 @@ function Comments() {
     
     useEffect( () => {
         if(!post) return
-        const fetchUser = async () => {
-            const data = await getSingleDoc('users', post.userId)
-            setAuthor(data)
-        }
-        fetchUser()
+        getAuthor()
         setPassedTime(timePassed(post))
     }, [post])
 
