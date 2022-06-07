@@ -1,31 +1,21 @@
 import { Avatar, Box, IconButton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
-import { getSingleDoc } from '../firebase'
 import { timePassed } from '../utils';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
 import { useDispatch } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
-import { showAlert } from '../store/alertSlice';
+import { useAuthor } from '../hooks/useAuthor';
 
 function Comment({data, postId, commentId}) {
     const [author, setAuthor] = useState(null);
-    const [passedTime, setPassedTime] = useState('');
+    const passedTime = timePassed(data);
     const [optionsButton, setOptionsButton] = useState(false);
     const dispatch = useDispatch()
-
+    const getAuthor = useAuthor({userId: data.author}, setAuthor)
+    
     useEffect( () => {
-        const fetchUser = async () => {
-            try {
-                const userData = await getSingleDoc('users', data.author)
-                setAuthor(userData)
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        }
-        fetchUser()
-        setPassedTime(timePassed(data))
-
+        getAuthor()
     }, [])
 
     const handleOpenModal = () => {

@@ -10,8 +10,13 @@ import { deleteUser, signOut } from 'firebase/auth';
 import { showAlert } from '../store/alertSlice';
 import { setEditPost, setPosts } from '../store/postsSlice';
 import { useUser } from '../hooks/useUser';
+import { useDeletePost } from '../hooks/useDeletePost';
 import { usePosts } from '../hooks/usePosts';
 import { useModal } from '../hooks/useModal';
+import { useDeleteComment } from '../hooks/useDeleteComment';
+import { useLogOut } from '../hooks/useLogOut';
+import { useDeleteUser } from '../hooks/useDeleteUser';
+import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 
 const modalStyle = {
     position: 'absolute',
@@ -54,6 +59,11 @@ function ModalOptions() {
   const user = useUser()
   const { options:{postModal, commentModal, userModal, loginModal, deleteUserModal} } = useModal()
   const { posts, postPage } = usePosts()
+  const deletePost = useDeletePost(user, posts, postId)
+  const deleteComment = useDeleteComment(postId, commentId)
+  const logOut = useLogOut()
+  const deleteUser = useDeleteUser(user)
+  const copyToClipboard = useCopyToClipboard(postModal, postPage, postId)
   const navigate = useNavigate();
 
     const handleClose = () => {
@@ -62,20 +72,7 @@ function ModalOptions() {
 
     // posts
 
-    const handleDeletePost = async () => {
-      try {
-        await deleteSingleDoc('posts', postId);
-        await updateDocument('users', user.id, {
-           posts: [ ...user.posts.filter( post => post !== postId)], 
-          })
-        dispatch(getActiveUser(user.id))
-        dispatch(closeModal())
-        dispatch(showAlert({type: 'success', message: 'Post has been succesfully deleted'}))
-        dispatch(setPosts([ ...posts.filter( post => post.id !== postId)]))
-      } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-    }
+    const handleDeletePost = () => deletePost()
     
     const handleGoToPost = () => {
       navigate(`/post/${postId}`);
@@ -89,47 +86,13 @@ function ModalOptions() {
     
     //comments
 
-    const handleDeleteComment = async () => {
-      try {
-        const post = await getSingleDoc('posts', postId);
-        await updateDocument('posts', postId, {
-          comments: [ ...post.comments.filter(comment => (`${comment.author}${comment.createdAt}` !== commentId))]
-        })
-        dispatch(closeModal())
-        dispatch(showAlert({type: 'success', message: 'Comment has been succesfully deleted'}))
-      } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-    }
+    const handleDeleteComment = () => deleteComment()
 
     // user
 
-    const handleLogOut = async () => {
-      try {
-        await signOut(auth)
-        dispatch(showAlert({type: 'info', message: 'User has logged out'}))
-        dispatch(closeModal())
-        dispatch(logoutUser())
-      } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-      navigate('/')
-    }
+    const handleLogOut = () => logOut()
     
-    const handleDeleteUser = async () => {
-      try {
-        await deleteUser(auth.currentUser)
-        await deleteSingleDoc('users', user.id)
-        await deleteUserPosts(user.id)
-        dispatch(showAlert({type: 'success', message: 'User has been succesfully deleted'}))
-      } catch (error) {
-        console.log(error.message)
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-      dispatch(closeModal())
-      dispatch(logoutUser())
-      navigate('/')
-    }
+    const handleDeleteUser = () => deleteUser()
 
     //settings 
 
@@ -141,15 +104,7 @@ function ModalOptions() {
 
     //copy
     
-    const handleCopyToClipboard = () => {
-      let link = window.location.href
-      if(postModal){
-        link = postPage ? link : `${link}post/${postId}`
-      }
-      navigator.clipboard.writeText(link)
-      dispatch(showAlert({type: 'info', message: 'Link has been added to the clipboard'}))
-      dispatch(closeModal())
-    }
+    const handleCopyToClipboard = () => copyToClipboard() 
 
     //report 
 
