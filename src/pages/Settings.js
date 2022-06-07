@@ -26,7 +26,7 @@ function Settings() {
     const [userName, setUserName] = useState(user.userName)
     const [fullName, setFullName] = useState(user.fullName)
     const [bio, setBio] = useState(user.bio)
-    const [isChanged, setIsChanged] = useState(false)
+    const isChanged = (userName !== user.userName || fullName !== user.fullName || bio !== user.bio || avatarUrl !== user.image) && (userName !== '' && fullName !== '' && bio !== '' && avatarUrl !== '');
 
     const handleOpenModal = () => {
         dispatch(openModal());
@@ -40,14 +40,6 @@ function Settings() {
             dispatch(setOption('loginModal'));
         }
     }, [])
-
-    useEffect( () => {
-        if( (userName !== user.userName || fullName !== user.fullName || bio !== user.bio || avatarUrl !== user.image) && (userName !== '' && fullName !== '' && bio !== '' && avatarUrl !== '') ){
-            setIsChanged(true)
-        } else{
-            setIsChanged(false)
-        }
-    },[userName, fullName, bio, avatarUrl])
 
     useEffect( () => {
         if(imageFile){
