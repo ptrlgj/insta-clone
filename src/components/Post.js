@@ -44,7 +44,6 @@ const Post = React.forwardRef(({data}, ref) => {
     const updateDesc = useUpdateDesc(post, newDesc)
     const likePost = useLikePost(user, post)
     const doubleClickLike = useDoubleClickLike(user, post)
-
     const handleDoubleClick = async (e) => doubleClickLike(e)
 
     const handleLike = async () => likePost()

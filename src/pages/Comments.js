@@ -7,7 +7,7 @@ import { db, getSingleDoc, updateDocument } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
 import { useSubmitComment } from '../hooks/useSubmitComment';
@@ -24,6 +24,7 @@ function Comments() {
     const submitComment = useSubmitComment(user, post, inputComment, setInputComment);
     
     const handleSubmitComment = async (e) => {
+        e.preventDefault()
         submitComment()
     }
     

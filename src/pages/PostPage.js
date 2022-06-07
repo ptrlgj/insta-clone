@@ -7,24 +7,19 @@ import { getSingleDoc } from '../firebase'
 import { useDispatch } from 'react-redux';
 import { setPostPage } from '../store/postsSlice';
 import { showAlert } from '../store/alertSlice';
+import { useSinglePost } from '../hooks/useSinglePost';
 
 function PostPage() {
     const postId = useParams().id
     const [post, setPost] = useState(null)
     const [user, setUser] = useState(null)
+    const getPost = useSinglePost(postId, setPost)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
     useEffect( () => {
         dispatch(setPostPage(true))
-        const fetchData = async () => {
-            try {
-                const fetchPost = await getSingleDoc('posts', postId);
-                setPost(fetchPost)
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        } 
-        fetchData()
+        getPost()
         return () => dispatch(setPostPage(false))
     }, [])
 
