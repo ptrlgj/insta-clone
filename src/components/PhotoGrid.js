@@ -1,9 +1,8 @@
 import { styled } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getSingleDoc } from '../firebase';
-import { showAlert } from '../store/alertSlice';
+import { useGetUserPosts } from '../hooks/useGetUserPosts'; 
+import { useResolveUserPosts } from '../hooks/useResolveUserPosts'; 
 
 const Img = styled('img')({
   maxHeight:'153px',
@@ -23,33 +22,14 @@ function PhotoGrid({user}) {
   
   const [posts, setPosts] = useState([])
   const navigate = useNavigate()
-  const dispatch = useDispatch()
-
-  const fetchPosts = () => {
-    return user.posts.map( async (post) => {
-      try {
-        const response = await getSingleDoc('posts', post );
-        return response
-      } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-    })
-  }
+  const getUserPosts = useGetUserPosts(user)
+  const resolvePosts = useResolveUserPosts(getUserPosts, setPosts)
   
   const handleOpenPost = (post) => {
     navigate(`/post/${post.id}`)
   }
   useEffect( () => {
-    const fetching = async () => {
-      let resolvedPosts = []
-      const promises = await fetchPosts();
-      for (const item of promises) {
-        const resolved = await item;
-        resolvedPosts.push({...resolved, id: resolved.id})
-      }
-      setPosts(resolvedPosts.reverse())
-    }
-    fetching()
+    resolvePosts()
   }, [])
 
   return (
