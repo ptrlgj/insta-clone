@@ -13,6 +13,7 @@ import { setPosts } from '../store/postsSlice';
 import { useUser } from '../hooks/useUser';
 import { usePosts } from '../hooks/usePosts';
 import { useImageUrl } from '../hooks/useImageUrl';
+import { useAddPost } from '../hooks/useAddPost';
 
 const Input = styled('input')({
     display: 'none',
@@ -31,23 +32,11 @@ function AddPost() {
     const [imageId, setImageId] = useState(v4());
     const imageUrl = useImageUrl(imageFile, imageId)
     const [desc, setDesc] = useState('')
-    const user = useUser()
-    const { posts } = usePosts()
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const addPost = useAddPost(imageId, imageUrl, desc)
 
     const handleClick = async () => {
-        try {
-            const createdPost = await addPost(imageId, user.id, imageUrl, desc);
-            await updateDocument('users', user.id, { posts: [...user.posts, createdPost.id] })
-            dispatch(getActiveUser(user.id))
-            dispatch(showAlert({type: 'success', message: 'New post has been succesfully added'}))
-            const createdPostData = await getSingleDoc('posts', createdPost.id)
-            dispatch(setPosts([createdPostData, ...posts]))
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-        navigate('/')
+        addPost()
     }
 
     const handleChooseImage = (e)=>{

@@ -8,11 +8,9 @@ export function useImageUrl(imageFile, imageId) {
     const dispatch = useDispatch()
     useEffect( () => {
         if(imageFile) {
-            console.log(imageFile)
             getImageUrl( imageFile, imageId )
                 .then(res => {
                     setImageUrl(res)
-                    console.log(res)
                 })
                 .catch(res => dispatch(showAlert({type: 'error', message: res.message})))
             }
