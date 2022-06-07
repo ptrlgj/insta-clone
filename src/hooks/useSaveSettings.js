@@ -1,5 +1,4 @@
 import { query, where } from 'firebase/firestore'
-import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { getUserBy, updateDocument, usersColRef } from '../firebase'

@@ -3,10 +3,8 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Post from '../components/Post'
-import { getSingleDoc } from '../firebase'
 import { useDispatch } from 'react-redux';
 import { setPostPage } from '../store/postsSlice';
-import { showAlert } from '../store/alertSlice';
 import { useSinglePost } from '../hooks/useSinglePost';
 import { useAuthor } from '../hooks/useAuthor';
 

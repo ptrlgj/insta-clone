@@ -1,22 +1,26 @@
-import { Box, Button, Fab, FormControlLabel, Paper, Switch, Typography } from '@mui/material';
+import { Box, Fab, FormControlLabel, Paper, Switch, Typography } from '@mui/material';
 import NavigationIcon from '@mui/icons-material/Navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Header from '../components/Header';
 import Post from '../components/Post';
-import { postsColRef, updateDocument } from '../firebase'
-import { setPosts, setNewPosts, setLoading, setFollowedPosts } from '../store/postsSlice';
-import { getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
-import { changeValue } from '../store/userSlice';
-import { showAlert } from '../store/alertSlice';
+import { setNewPosts, setLoading, setFollowedPosts } from '../store/postsSlice';
 import { useUser } from '../hooks/useUser';
 import { usePosts } from '../hooks/usePosts';
+import { useToggleShowFollowed } from '../hooks/useToggleShowFollowed';
+import { useFirstPosts } from '../hooks/useFirstPosts';
+import { useMorePosts } from '../hooks/useMorePosts';
+
 function Posts( {lastVisible, setLastVisible} ) {
     const { posts, newPosts, followedPosts } = usePosts()
     const user = useUser()
     const dispatch = useDispatch(); 
     const [noMorePosts, setNoMorePosts] = useState(false)
     const observer = useRef()
+    const showFollowed = useToggleShowFollowed(user)
+    const fetchFirstPosts = useFirstPosts(setLastVisible)
+    const fetchMorePosts = useMorePosts(lastVisible, setLastVisible, posts, setNoMorePosts) 
+
     const lastPostRef = useCallback( node => {
       if(observer.current) observer.current.disconnect()
       observer.current = new IntersectionObserver( entries => {
@@ -29,53 +33,9 @@ function Posts( {lastVisible, setLastVisible} ) {
       if(node) observer.current.observe(node)
     })
 
-    const fetchFirstPosts = async () => {
-      const q = query( postsColRef, 
-        orderBy("createdAt", "desc"),  
-        limit(4) 
-      )
-      const data = await getDocs(q)
-      dispatch( setPosts( data.docs.map( doc => ({ ...doc.data(), id: doc.id }) ) ) )
-      setLastVisible(data.docs[data.docs.length - 1 ])
-    }
+    const handleShowFollowed = () => showFollowed()
 
-    const fetchMorePosts = async () => {
-      const q = query( postsColRef, 
-        orderBy("createdAt", "desc"),  
-        startAfter(lastVisible),
-        limit(4) 
-      )
-      const data = await getDocs(q)
-      if(data.empty){
-        setNoMorePosts(true)
-        return 
-      }
-      dispatch( setPosts( [...posts, ...data.docs.map( doc => ({ ...doc.data(), id: doc.id }) ) ] ) )
-      setLastVisible(data.docs[data.docs.length - 1 ])
-    }
-
-    const handleShowFollowed = async () => {
-      try {
-        await updateDocument('users', user.id, {
-            settings: {
-                darkTheme: user.settings.darkTheme,
-                showFollowed: !user.settings.showFollowed
-            }
-        })
-        dispatch(changeValue({
-            settings: {
-                darkTheme: user.settings.darkTheme,
-                showFollowed: !user.settings.showFollowed
-            }
-        }))
-    } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-    }
-    }
-
-    const handleShowNew = () => {
-      dispatch(setNewPosts(false))
-    }
+    const handleShowNew = () => dispatch(setNewPosts(false))
 
     useEffect( ()=> {
         dispatch(setLoading(true))

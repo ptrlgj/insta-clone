@@ -4,13 +4,10 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
 import { showAlert } from '../store/alertSlice';
-import { getImageUrl, getUserBy, updateDocument, usersColRef } from '../firebase';
-import { changeValue } from '../store/userSlice';
 import { v4 } from 'uuid';
-import { query, where } from 'firebase/firestore';
 import { useUser } from '../hooks/useUser';
 import { useImageUrl } from '../hooks/useImageUrl';
 import { useChangeTheme } from '../hooks/useChangeTheme';
@@ -33,7 +30,7 @@ function Settings() {
     const isChanged = (userName !== user.userName || fullName !== user.fullName || bio !== user.bio || avatarUrl !== user.image) && (userName !== '' && fullName !== '' && bio !== '' && avatarUrl !== '');
     const changeTheme = useChangeTheme(user)
     const saveChanges = useSaveSettings(userName, user, avatarUrl, fullName, bio)
-    
+
     const handleOpenModal = () => {
         dispatch(openModal());
         dispatch(setOption('deleteUserModal'));

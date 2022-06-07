@@ -3,12 +3,11 @@ import React, { useEffect, useState } from 'react'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { db, getSingleDoc, updateDocument } from '../firebase';
+import { db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
 import { useDispatch} from 'react-redux';
-import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
 import { useSubmitComment } from '../hooks/useSubmitComment';
 import { useAuthor } from '../hooks/useAuthor';
@@ -24,9 +23,8 @@ function Comments() {
     const dispatch = useDispatch()
     const submitComment = useSubmitComment(user, post, inputComment, setInputComment);
     const getAuthor = useAuthor(post, setAuthor)
-    
-    const handleSubmitComment = async (e) => {
-        e.preventDefault()
+
+    const handleSubmitComment = async () => {
         submitComment()
     }
     
