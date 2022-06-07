@@ -9,14 +9,11 @@ import AccountBoxRoundedIcon from '@mui/icons-material/AccountBoxRounded';
 import { Avatar, Box, Typography, Button, Tab, Paper, IconButton} from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 import PhotoGrid from '../components/PhotoGrid';
-import { getUserBy, updateDocument, usersColRef } from '../firebase';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { openModal, setOption } from '../store/modalSlice';
-import { query, where } from 'firebase/firestore';
-import { changeValue } from '../store/userSlice'
-import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
 import { useToggleFollowUser } from '../hooks/useToggleFollowUser';
+import { useGetUser } from '../hooks/useGetUser';
 
 function User() {
 
@@ -28,32 +25,12 @@ function User() {
     const user = useUser()
     const [followed, setFollowed] = useState(null)
     const toggleFollow = useToggleFollowUser(user, userData, setFollowed)
+    const getUser = useGetUser(user, userName, setLoading, setUserData, setFollowed, setNoUser)
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
-    
 
-    const fetchUserData = async () =>{
-        setLoading(true)
-        setUserData(null)
-        const q = query(usersColRef, where("userName", "==", userName))
-        try {
-            const response = await getUserBy(q)
-            if(response.length > 0){
-                setUserData(response[0]);
-                setFollowed(user.followed.includes(response[0].id))
-                setLoading(false)
-            }else{
-                setLoading(false)
-                setNoUser(true)
-                return
-            }
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-    }
     useEffect(()=>{
-        if(user.loggedIn) fetchUserData()
+        if(user.loggedIn) getUser()
     }, [userName, user.loggedIn])
 
     const handleOpenModal = () => {
