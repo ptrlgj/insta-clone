@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import Post from '../components/Post';
 import { postsColRef, updateDocument } from '../firebase'
 import { setPosts, setNewPosts, setLoading, setFollowedPosts } from '../store/postsSlice';
-import { getDocs, limit, onSnapshot, orderBy, query, startAfter, where } from 'firebase/firestore';
+import { getDocs, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
 import { changeValue } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
@@ -69,7 +69,7 @@ function Posts( {lastVisible, setLastVisible} ) {
             }
         }))
     } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+        dispatch(showAlert({type: 'error', message: error.message}))
     }
     }
 

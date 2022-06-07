@@ -41,7 +41,7 @@ function CreateUser() {
                 )
                 dispatch(changeValue({uid: data.user.uid}))
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
         } else if(email) {
             dispatch(showAlert({type: 'error', message: 'Passwords dont match'}))
@@ -65,7 +65,7 @@ function CreateUser() {
                 dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))
                 fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
             navigate(`/`)
         } 

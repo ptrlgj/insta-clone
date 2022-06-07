@@ -54,7 +54,7 @@ function Settings() {
             const id = v4()
             getImageUrl( imageFile, id)
                 .then(res => setAvatarUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message.slice(10)})))
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message})))
         }
     },[imageFile])
 
@@ -73,7 +73,7 @@ function Settings() {
                 }
             }))
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
 
@@ -87,7 +87,7 @@ function Settings() {
                     return
                 }
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
         }
         try {
@@ -106,7 +106,7 @@ function Settings() {
             dispatch(showAlert({type: 'info', message: `Changes have been saved for ${userName}`}))
             navigate(`/${userName}`)
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
   return (

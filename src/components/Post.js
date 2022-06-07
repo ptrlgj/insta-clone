@@ -57,7 +57,7 @@ const Post = React.forwardRef(({data}, ref) => {
                     setLiked(true)
                 }
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
         }
     }
@@ -89,7 +89,7 @@ const Post = React.forwardRef(({data}, ref) => {
                 setLiked(true)
             }
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
 
@@ -112,7 +112,7 @@ const Post = React.forwardRef(({data}, ref) => {
                 setInputComment('')
                 dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
         } else if( user.uid ){
             navigate('/signup')
@@ -131,7 +131,7 @@ const Post = React.forwardRef(({data}, ref) => {
             dispatch(setEditPost(''));
             dispatch(showAlert({type: 'success', message: 'Post has been succesfully edited'}))
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
     }
     useEffect( () => {

@@ -6,12 +6,13 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { addPost, updateDocument, getImageUrl, getSingleDoc } from '../firebase';
 import { v4 } from 'uuid';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getActiveUser } from '../store/userSlice';
 import { showAlert } from '../store/alertSlice';
 import { setPosts } from '../store/postsSlice';
 import { useUser } from '../hooks/useUser';
 import { usePosts } from '../hooks/usePosts';
+import { useImageUrl } from '../hooks/useImageUrl';
 
 const Input = styled('input')({
     display: 'none',
@@ -27,11 +28,11 @@ const Img = styled('img')({
 function AddPost() {
 
     const [imageFile, setImageFile] = useState(null);
-    const [imageUrl, setImageUrl] = useState('');
     const [imageId, setImageId] = useState(v4());
+    const imageUrl = useImageUrl(imageFile, imageId)
     const [desc, setDesc] = useState('')
     const user = useUser()
-    const { posts } = usePosts
+    const { posts } = usePosts()
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -44,18 +45,14 @@ function AddPost() {
             const createdPostData = await getSingleDoc('posts', createdPost.id)
             dispatch(setPosts([createdPostData, ...posts]))
         } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
         navigate('/')
     }
 
-    useEffect(()=>{
-        if(imageFile) {
-            getImageUrl( imageFile, imageId )
-                .then(res => setImageUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message.slice(10)})))
-        }
-    },[imageFile]);
+    const handleChooseImage = (e)=>{
+        setImageFile(e.target.files[0])
+    }
 
   return (
     <Paper sx={{paddingBottom: '20px', height: '100vh', display: 'flex', flexDirection: 'column', gap: '30px'}}>
@@ -107,9 +104,7 @@ function AddPost() {
                     accept="image/*" 
                     id="contained-button-file" 
                     multiple type="file" 
-                    onChange={(e)=>{
-                        setImageFile(e.target.files[0])
-                    }}
+                    onChange={ handleChooseImage }
                 />}
                 <Button variant={imageFile ? "disabled" : "contained"} component="span">
                 {imageFile ? "Selected" : "Select file"}

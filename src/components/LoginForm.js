@@ -28,7 +28,7 @@ function LoginForm() {
         dispatch(showAlert({type: 'success', message: 'User logged in successfully'}))
         return user
       } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+        dispatch(showAlert({type: 'error', message: error.message}))
       }
     }
     
@@ -42,7 +42,7 @@ function LoginForm() {
             dispatch(closeModal())
         }
       } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+        dispatch(showAlert({type: 'error', message: error.message}))
       }
     }
 

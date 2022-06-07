@@ -20,7 +20,7 @@ function Comment({data, postId, commentId}) {
                 const userData = await getSingleDoc('users', data.author)
                 setAuthor(userData)
             } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message.slice(10)}))
+                dispatch(showAlert({type: 'error', message: error.message}))
             }
         }
         fetchUser()
