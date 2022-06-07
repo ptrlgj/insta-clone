@@ -12,6 +12,9 @@ import { changeValue } from '../store/userSlice';
 import { v4 } from 'uuid';
 import { query, where } from 'firebase/firestore';
 import { useUser } from '../hooks/useUser';
+import { useImageUrl } from '../hooks/useImageUrl';
+import { useChangeTheme } from '../hooks/useChangeTheme';
+import { useSaveSettings } from '../hooks/useSaveSettings';
 
 const Input = styled('input')({
     display: 'none'
@@ -21,13 +24,16 @@ function Settings() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useUser()
-    const [avatarUrl, setAvatarUrl] = useState(user.image)
+    const id = v4()
     const [imageFile, setImageFile] = useState(null)
+    const avatarUrl = useImageUrl(imageFile, id) || user.image
     const [userName, setUserName] = useState(user.userName)
     const [fullName, setFullName] = useState(user.fullName)
     const [bio, setBio] = useState(user.bio)
     const isChanged = (userName !== user.userName || fullName !== user.fullName || bio !== user.bio || avatarUrl !== user.image) && (userName !== '' && fullName !== '' && bio !== '' && avatarUrl !== '');
-
+    const changeTheme = useChangeTheme(user)
+    const saveChanges = useSaveSettings(userName, user, avatarUrl, fullName, bio)
+    
     const handleOpenModal = () => {
         dispatch(openModal());
         dispatch(setOption('deleteUserModal'));
@@ -41,66 +47,9 @@ function Settings() {
         }
     }, [])
 
-    useEffect( () => {
-        if(imageFile){
-            const id = v4()
-            getImageUrl( imageFile, id)
-                .then(res => setAvatarUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message})))
-        }
-    },[imageFile])
+    const handleChangeTheme = () => changeTheme()
 
-    const handleChangeTheme = async () => {
-        try {
-            await updateDocument('users', user.id, {
-                settings: {
-                    darkTheme: !user.settings.darkTheme,
-                    showFollowed: user.settings.showFollowed
-                }
-            })
-            dispatch(changeValue({
-                settings: {
-                    darkTheme: !user.settings.darkTheme,
-                    showFollowed: user.settings.showFollowed
-                }
-            }))
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-    }
-
-    const handleSaveChanges = async () => {
-        if(userName !== user.userName){
-            const q = query(usersColRef, where("userName", "==", userName))
-            try {
-                const userCheck = await getUserBy(q)
-                if(userCheck[0]){
-                    dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
-                    return
-                }
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        }
-        try {
-            await updateDocument('users', user.id, {
-                image: avatarUrl,
-                userName,
-                fullName,
-                bio
-            })
-            dispatch(changeValue({
-                image: avatarUrl,
-                userName,
-                fullName,
-                bio
-            }))
-            dispatch(showAlert({type: 'info', message: `Changes have been saved for ${userName}`}))
-            navigate(`/${userName}`)
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-    }
+    const handleSaveChanges = () => saveChanges()
   return (
     <Paper 
         elevation={2}
