@@ -1,17 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
 import { Box, Button, TextField, Typography, Paper, IconButton } from '@mui/material';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { addPost, updateDocument, getImageUrl, getSingleDoc } from '../firebase';
 import { v4 } from 'uuid';
-import { useDispatch } from 'react-redux';
-import { getActiveUser } from '../store/userSlice';
-import { showAlert } from '../store/alertSlice';
-import { setPosts } from '../store/postsSlice';
-import { useUser } from '../hooks/useUser';
-import { usePosts } from '../hooks/usePosts';
 import { useImageUrl } from '../hooks/useImageUrl';
 import { useAddPost } from '../hooks/useAddPost';
 

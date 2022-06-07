@@ -6,17 +6,20 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import { getSingleDoc, updateDocument, db } from '../firebase';
+import { getSingleDoc, db } from '../firebase';
 import { openModal, setOption } from '../store/modalSlice'
-import { getActiveUser } from '../store/userSlice';
-import { showAlert } from '../store/alertSlice';
-import { setEditPost, setLoading } from '../store/postsSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { setLoading } from '../store/postsSlice';
+import { useDispatch } from 'react-redux';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { timePassed } from '../utils'
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
 import { usePosts } from '../hooks/usePosts';
+import { useSubmitComment } from '../hooks/useSubmitComment';
+import { useUpdateDesc } from '../hooks/useUpdateDesc';
+import { useLikePost } from '../hooks/useLikePost';
+import { useDoubleClickLike } from '../hooks/useDoubleClickLike';
+import { useIsPostLiked } from '../hooks/useIsPostLiked';
 
 const Img = styled('img')({
     position: 'relative',
@@ -26,121 +29,41 @@ const Img = styled('img')({
 
 const Post = React.forwardRef(({data}, ref) => {
 
-    const [liked, setLiked] = useState(null);
-    const [author, setAuthor] = useState(null);
     const user = useUser()
     const [post, setPost] = useState(data);
-    const [passedTime, setPassedTime] = useState('');
+    const liked = useIsPostLiked(user, post)
+    const [author, setAuthor] = useState(null);
+    const passedTime = timePassed(data);
     const [inputComment, setInputComment] = useState('');
     const [readMore, setReadMore] = useState(false);
-    const { editPost, loading } = usePosts()
+    const { editPost } = usePosts()
     const [newDesc, setNewDesc] = useState(post.desc);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const submitComment = useSubmitComment(user, post, inputComment, setInputComment)
+    const updateDesc = useUpdateDesc(post, newDesc)
+    const likePost = useLikePost(user, post)
+    const doubleClickLike = useDoubleClickLike(user, post)
 
-    const handleDoubleClick = async (e) => {
-        if(e.detail === 2) {
-            try {
-                if(!user.loggedIn && user.uid){
-                    navigate('/signup')
-                } else if(!user.loggedIn){
-                    dispatch(openModal());
-                    dispatch(setOption('loginModal'))
-                } else if( !post.likedBy.includes(user.id) ){
-                    await updateDocument('posts', post.id, {
-                        likedBy: [...post.likedBy, user.id]
-                    })
-                    await updateDocument('users', user.id, {
-                        likedPosts: [...user.likedPosts, post.id]
-                    })
-                    dispatch(getActiveUser(user.id))
-                    setLiked(true)
-                }
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        }
-    }
+    const handleDoubleClick = async (e) => doubleClickLike(e)
 
-    const handleLike = async () => {
-        try {
-            if(!user.loggedIn && user.uid){
-                navigate('/signup')
-            } else if(!user.loggedIn){
-                dispatch(openModal());
-                dispatch(setOption('loginModal'))
-            } else if( post.likedBy.includes(user.id) ) {
-                await updateDocument('posts', post.id, {
-                    likedBy: [...post.likedBy.filter(userLike => userLike !== user.id)]
-                })
-                await updateDocument('users', user.id, {
-                    likedPosts: [...user.likedPosts.filter(likedPost => likedPost !== post.id)]
-                })
-                dispatch(getActiveUser(user.id))
-                setLiked(false)
-            } else {
-                await updateDocument('posts', post.id, {
-                    likedBy: [...post.likedBy, user.id]
-                })
-                await updateDocument('users', user.id, {
-                    likedPosts: [...user.likedPosts, post.id]
-                })
-                dispatch(getActiveUser(user.id))
-                setLiked(true)
-            }
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-    }
+    const handleLike = async () => likePost()
 
     const handleOpenModal = () => {
         dispatch(openModal(post))
         dispatch(setOption('postModal'))
     }
 
-    const handleSubmitComment = async (e) => {
-        e.preventDefault()
-        if(user.loggedIn){
-            try {
-                await updateDocument('posts', post.id, {
-                    comments: [...post.comments, {
-                        comment: inputComment,
-                        createdAt: Date.now(),
-                        author: user.id
-                    }]
-                })
-                setInputComment('')
-                dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        } else if( user.uid ){
-            navigate('/signup')
-        } else {
-            dispatch(openModal())
-            dispatch(setOption('loginModal'))
-        }
-    }
+    const handleSubmitComment = async () => submitComment()
 
-    const handleChangeDesc = async (e) => {
-        e.preventDefault()
-        try {
-            await updateDocument('posts', post.id, {
-                desc: newDesc,
-            })
-            dispatch(setEditPost(''));
-            dispatch(showAlert({type: 'success', message: 'Post has been succesfully edited'}))
-        } catch (error) {
-            dispatch(showAlert({type: 'error', message: error.message}))
-        }
-    }
+    const handleChangeDesc = async () => updateDesc()
+
     useEffect( () => {
         const fetchAuthor = async () => {
             const userFetch = await getSingleDoc('users', post.userId);
             setAuthor(userFetch)
         }
         fetchAuthor() 
-        setPassedTime(timePassed(data))
 
         const postSnapshot = onSnapshot( doc(db, 'posts', post.id), snapshot => {
             if(!snapshot.data()) return
@@ -152,10 +75,6 @@ const Post = React.forwardRef(({data}, ref) => {
         }
         return () => postSnapshot()
     }, [])
-
-    useEffect( () => {
-        setLiked( user.likedPosts.includes(post.id) )
-    } ,[ user ])
 
   return (
     <>

@@ -7,10 +7,10 @@ import { db, getSingleDoc, updateDocument } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
-import { useDispatch, useSelector } from 'react-redux';
-import { openModal, setOption } from '../store/modalSlice';
+import { useDispatch } from 'react-redux';
 import { showAlert } from '../store/alertSlice';
 import { useUser } from '../hooks/useUser';
+import { useSubmitComment } from '../hooks/useSubmitComment';
 
 function Comments() {
     const postId = useParams().id
@@ -21,29 +21,10 @@ function Comments() {
     const user = useUser()
     const navigate = useNavigate()
     const dispatch = useDispatch()
-
+    const submitComment = useSubmitComment(user, post, inputComment, setInputComment);
+    
     const handleSubmitComment = async (e) => {
-        e.preventDefault()
-        if(user.loggedIn){
-            try {
-                await updateDocument('posts', post.id, {
-                    comments: [...post.comments, {
-                        comment: inputComment,
-                        createdAt: Date.now(),
-                        author: user.id
-                    }]
-                })
-                dispatch(showAlert({type: 'info', message: 'Comment has been added'}))
-                setInputComment('')
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        } else if( user.uid ){
-            navigate('/signup')
-        } else {
-            dispatch(openModal())
-            dispatch(setOption('loginModal'))
-        }
+        submitComment()
     }
     
     useEffect( () => {
@@ -51,7 +32,6 @@ function Comments() {
             if(!snapshot.data()) return
             setPost({...snapshot.data(), id: postId})
         }) 
-
         return () => commentSnapshot()
     }, [])
     

@@ -77,7 +77,7 @@ function CreateUser() {
         if(imageFile) {
             getImageUrl( imageFile, imageId )
                 .then(res => setImageUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message.slice(10)})) )
+                .catch(res => dispatch(showAlert({type: 'error', message: res.message})) )
         }
     }, [imageFile] )
 
