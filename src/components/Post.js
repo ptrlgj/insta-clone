@@ -21,6 +21,7 @@ import { useLikePost } from '../hooks/useLikePost';
 import { useDoubleClickLike } from '../hooks/useDoubleClickLike';
 import { useIsPostLiked } from '../hooks/useIsPostLiked';
 import { useAuthor } from '../hooks/useAuthor';
+import { useSubscribeTo } from '../hooks/useSubscribeTo';
 
 const Img = styled('img')({
     position: 'relative',
@@ -47,6 +48,8 @@ const Post = React.forwardRef(({data}, ref) => {
     const doubleClickLike = useDoubleClickLike(user, post)
     const getAuthor = useAuthor(post, setAuthor)
 
+    useSubscribeTo(post.id, setPost)
+
     const handleDoubleClick = async (e) => doubleClickLike(e)
 
     const handleLike = async () => likePost()
@@ -63,15 +66,9 @@ const Post = React.forwardRef(({data}, ref) => {
     useEffect( () => {
         getAuthor() 
 
-        const postSnapshot = onSnapshot( doc(db, 'posts', post.id), snapshot => {
-            if(!snapshot.data()) return
-            setPost(currState => ({...currState, likedBy: snapshot.data().likedBy, comments: snapshot.data().comments, desc: snapshot.data().desc}) )
-        }) 
-        
         if(ref){
             dispatch(setLoading(false))
         }
-        return () => postSnapshot()
     }, [])
 
   return (

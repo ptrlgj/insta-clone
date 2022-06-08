@@ -3,14 +3,13 @@ import React, { useEffect, useState } from 'react'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { db } from '../firebase';
-import { doc, onSnapshot } from 'firebase/firestore';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
 import { useDispatch} from 'react-redux';
 import { useUser } from '../hooks/useUser';
 import { useSubmitComment } from '../hooks/useSubmitComment';
 import { useAuthor } from '../hooks/useAuthor';
+import { useSubscribeTo } from '../hooks/useSubscribeTo';
 
 function Comments() {
     const postId = useParams().id
@@ -20,21 +19,14 @@ function Comments() {
     const [inputComment, setInputComment] = useState('');
     const user = useUser()
     const navigate = useNavigate()
-    const dispatch = useDispatch()
     const submitComment = useSubmitComment(user, post, inputComment, setInputComment);
     const getAuthor = useAuthor(post, setAuthor)
-
+    
+    useSubscribeTo(postId, setPost)
+    
     const handleSubmitComment = async () => {
         submitComment()
     }
-    
-    useEffect( () => {
-        const commentSnapshot = onSnapshot( doc( db, 'posts', postId ), snapshot => {
-            if(!snapshot.data()) return
-            setPost({...snapshot.data(), id: postId})
-        }) 
-        return () => commentSnapshot()
-    }, [])
     
     useEffect( () => {
         if(!post) return
