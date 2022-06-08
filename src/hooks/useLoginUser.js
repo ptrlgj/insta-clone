@@ -1,27 +1,21 @@
-import { onAuthStateChanged } from 'firebase/auth';
-import { query, where } from 'firebase/firestore';
-import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { auth, getUserBy, usersColRef } from '../firebase';
-import { changeValue, setUser } from '../store/userSlice';
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { useDispatch } from 'react-redux'
+import { auth } from '../firebase'
+import { showAlert } from '../store/alertSlice'
 
-export function useLoginUser() {
-    const dispatch = useDispatch();
-    const [uid, setUid] = useState(null);
-    useEffect( () => {
-        const fetchLoggedUser = async () => {
-        const q = query(usersColRef, where("uid", "==", uid));
-        const response = await getUserBy(q)
-        if(uid && response[0]) dispatch(setUser(response[0]))
-        else if(uid) dispatch(changeValue({uid}))
+export const useLogInUser = (email, pass) => {
+    const dispatch = useDispatch()
+    return async () => {
+        try {
+            const user = await signInWithEmailAndPassword(
+                auth,
+                email,
+                pass
+            )
+            dispatch(showAlert({type: 'success', message: 'User logged in successfully'}))
+            return user
+        } catch (error) {
+            dispatch(showAlert({type: 'error', message: error.message}))
         }
-        if(uid){
-        fetchLoggedUser()
-        }
-    }, [uid] )
-    onAuthStateChanged(auth, async (currentUser) => {
-        if(currentUser){
-        setUid(currentUser.uid)
-        }
-    })
+    }
 }

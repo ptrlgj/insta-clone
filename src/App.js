@@ -12,7 +12,7 @@ import CreateUser from './pages/CreateUser';
 import Settings from './pages/Settings';
 import AlertComponent from './components/AlertComponent';
 import { useUser } from './hooks/useUser';
-import { useLoginUser } from './hooks/useLoginUser';
+import { useGetLoggedUserOnLoad } from './hooks/useGetLoggedUserOnLoad';
 
 function App() {
   const [lastVisiblePost, setLastVisiblePost] = useState(null)
@@ -24,7 +24,7 @@ function App() {
     }
   })
 
-  useLoginUser()
+  useGetLoggedUserOnLoad()
   return (
     <ThemeProvider theme={theme}>
       <Container sx={{
