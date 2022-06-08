@@ -9,29 +9,67 @@ import { useUser } from '../hooks/useUser';
 import { useCreateUser } from '../hooks/useCreateUser';
 import { useCreateProfile } from '../hooks/useCreateProfile';
 import { useImageUrl } from '../hooks/useImageUrl';
+import { useFormik } from 'formik';
 
 const Input = styled('input')({
     display: 'none'
 })
+
+const Form = styled('form')({
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '30px 0', 
+    gap: '10px',
+    '& > *': {
+        width: '50%'
+    }
+})
+const Label = styled('label')({
+    display: 'flex',
+    justifyContent: 'center',
+})
+
 function CreateUser() {
     const navigate = useNavigate();
     const { uid } = useUser()
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confPass, setConfPass] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [userName, setUserName] = useState('');
-    const [fullName, setFullName] = useState('');
-    const [bio, setBio] = useState('');
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: 'password',
+            confPass: '',
+            showPassword: false,
+            userName: '',
+            fullName: '',
+            bio: '',
+        },
+        onSubmit: () => {
+            if(uid){
+                createProfile()
+            } else{
+                createUser()
+            }
+        }
+    })
     const [imageFile, setImageFile] = useState('');
-    const imageId = v4();
-    const imageUrl = useImageUrl(imageFile, imageId)
-    const createUser = useCreateUser(email, password, confPass)
-    const createProfile = useCreateProfile(email, password, imageUrl, userName, fullName, bio, uid)
+    const imageUrl = useImageUrl(imageFile, v4())
+    const createUser = useCreateUser(
+        formik.values.email, 
+        formik.values.password, 
+        formik.values.confPass
+    )
+    const createProfile = useCreateProfile(
+        formik.values.email, 
+        formik.values.password, 
+        imageUrl, 
+        formik.values.userName, 
+        formik.values.fullName, 
+        formik.values.bio, 
+        uid
+    )
 
-    const handleCreateUser = () => createUser()
-
-    const handleCreateProfile = () => createProfile()
 
   return (
     <Paper 
@@ -62,99 +100,97 @@ function CreateUser() {
                 Create user
             </Typography>
         </Box>
-        <Box
-            sx={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '30px 0'
-            }}
+        <Form
+            onSubmit={formik.handleSubmit}
         >
             {uid ? 
             <>
-                <label htmlFor="upload-image">
-                    <Input accept='image/*' type="file" id='upload-image' onChange={e => setImageFile(e.target.files[0])}/>
+                <Label htmlFor="upload-image">
+                    <Input 
+                        accept='image/*' 
+                        type="file" 
+                        id='upload-image' 
+                        onChange={ e => setImageFile(e.target.files[0]) }
+                    />
                     <Avatar sx={{ width: 100, height: 100, cursor: 'pointer' }} src={imageUrl} />
-                </label>
-                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                    <InputLabel htmlFor="userName-input">Username</InputLabel>
-                    <OutlinedInput
-                        id="userName-input"
-                        label="userName"
-                        required
-                        value={userName}
-                        onChange={ (e) => setUserName(e.target.value)}
-                    />
-                </FormControl>
-                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                    <InputLabel htmlFor="fullName-input">Fullname</InputLabel>
-                    <OutlinedInput
-                        id="fullName-input"
-                        label="Fullname"
-                        required
-                        value={fullName}
-                        onChange={ (e) => setFullName(e.target.value)}
-                    />
-                </FormControl>
-                <TextField
-                    id="outlined-textarea"
-                    label="Bio"
-                    placeholder="Bio"
-                    multiline
-                    value={bio}
-                    onChange={ (e) => setBio(e.target.value)}
+                </Label>
+                <TextField 
+                    id="userName" 
+                    label="Username" 
+                    variant="outlined" 
+                    type="text"
+                    value={formik.values.userName}
+                    onChange={formik.handleChange}
+                    required
                 />
-                <Button onClick={ handleCreateProfile }>Save profile</Button>
+                <TextField 
+                    id="fullName" 
+                    label="Fullname" 
+                    variant="outlined" 
+                    type="text"
+                    value={formik.values.fullName}
+                    onChange={formik.handleChange}
+                    required
+                />
+                <TextField
+                    id="bio"
+                    label="Bio"
+                    variant="outlined"
+                    type="text"
+                    multiline
+                    value={formik.values.bio}
+                    onChange={formik.handleChange}
+                />
+                <Button type="submit">Save profile</Button>
             </>
             :
             <>
-                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                    <InputLabel htmlFor="email-input">Email</InputLabel>
-                    <OutlinedInput
-                        id="email-input"
-                        label="Email"
-                        required
-                        value={email}
-                        onChange={ (e) => setEmail(e.target.value)}
-                    />
-                </FormControl>
-                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                    <InputLabel htmlFor="password-input">Password</InputLabel>
-                    <OutlinedInput
-                        id="password-input"
-                        required
-                        type={ showPassword ? 'text' : 'password'}
-                        value={ password }
-                        onChange={ (e) => setPassword(e.target.value) }
-                        endAdornment={
-                            <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    edge="end"
-                                    onClick={ () => setShowPassword(!showPassword) }
-                                >
-                                    {showPassword ? <Visibility /> : <VisibilityOff />}
-                                </IconButton>
-                            </InputAdornment>
-                        }
-                        label="Password"
-                    />
-                </FormControl>
-                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-                    <InputLabel htmlFor="confirm-input">Confirm</InputLabel>
-                    <OutlinedInput
-                        id="confirm-input"
-                        required
-                        label="Password"
-                        type='password'
-                        value={confPass}
-                        onChange={ (e) => setConfPass(e.target.value) }
-                    />
-                </FormControl>
-                <Button onClick={ handleCreateUser }>Create</Button>
+                <TextField 
+                    id="email" 
+                    label="Email" 
+                    variant="outlined" 
+                    type='text'
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    required
+                />
+                <TextField 
+                    id="password" 
+                    label="Password" 
+                    variant="outlined" 
+                    type={formik.values.showPassword ? 'text' : 'password'}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    required
+                    InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end"
+                        >
+                        <Label htmlFor="showPassword">
+                            <Input
+                                type="checkbox"
+                                id="showPassword"
+                                value={formik.values.showPassword}
+                                onChange={formik.handleChange}
+                            /> 
+                            {formik.values.showPassword ? <Visibility/> : <VisibilityOff />}
+                        </Label>
+                        </InputAdornment>
+                    ),
+                    }}
+                />
+                <TextField 
+                    id="confPass" 
+                    label="Confirm" 
+                    variant="outlined" 
+                    type="password"
+                    value={formik.values.confPass}
+                    onChange={formik.handleChange}
+                    required
+                />
+                <Button type="submit">Create</Button>
             </>}
-        </Box>
+        </Form>
     </Paper>
   )
 }

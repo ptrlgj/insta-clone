@@ -26,6 +26,11 @@ const Input = styled('input')({
   paddingRight: '0px'
 })
 
+const Label = styled('label')({
+  display: 'flex',
+  justifyContent: 'center',
+})
+
 function LoginForm() {
 
   const formik = useFormik({
@@ -70,15 +75,15 @@ function LoginForm() {
           endAdornment: (
             <InputAdornment position="end"
             >
-              <Input
-                type="checkbox"
-                id="showPassword"
-                value={formik.values.showPassword}
-                onChange={formik.handleChange}
-              /> 
-              <label htmlFor="showPassword">
+              <Label htmlFor="showPassword">
+                <Input
+                  type="checkbox"
+                  id="showPassword"
+                  value={formik.values.showPassword}
+                  onChange={formik.handleChange}
+                /> 
                 {formik.values.showPassword ? <Visibility/> : <VisibilityOff />}
-              </label>
+              </Label>
             </InputAdornment>
           ),
         }}
