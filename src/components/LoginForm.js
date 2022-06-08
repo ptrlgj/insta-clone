@@ -1,105 +1,93 @@
-import { Box, Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
-import React, { useState } from 'react';
+import { Button, IconButton, InputAdornment, styled, TextField } from '@mui/material';
+import React from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { auth, getUserBy, usersColRef } from '../firebase';
 import { useDispatch } from 'react-redux';
-import { query, where } from 'firebase/firestore';
-import { setUser } from '../store/userSlice';
 import { closeModal } from '../store/modalSlice';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { showAlert } from '../store/alertSlice';
+import { useLogInUser } from '../hooks/useLogInUser';
+import { useLogInUserGetData } from '../hooks/useLogInUserGetData';
+import { useFormik } from 'formik'
+
+const Form = styled('form')({
+  width: "60%",
+  display: "flex",
+  gap: "10px",
+  flexDirection: "column",
+  alignItems: "center",
+  paddingBottom: '10px',
+  '& > *': {
+    width:'100%'
+  }
+})
+
+const Input = styled('input')({
+  display: 'none',
+  paddingRight: '0px'
+})
 
 function LoginForm() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const dispatch = useDispatch();
-    const navigate = useNavigate()
 
-    const logInUser = async (email, pass) => {
-      try {
-        const user = await signInWithEmailAndPassword(
-            auth,
-            email,
-            pass
-        )
-        dispatch(showAlert({type: 'success', message: 'User logged in successfully'}))
-        return user
-      } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-    }
-    
-    const handleLogin = async () => {
-      try {
-        const userToken = await logInUser(email, password);
-        if(userToken){
-            const q = query(usersColRef, where('uid','==',userToken.user.uid))
-            const response = await getUserBy(q)
-            dispatch(setUser(response[0]))
-            dispatch(closeModal())
-        }
-      } catch (error) {
-        dispatch(showAlert({type: 'error', message: error.message}))
-      }
-    }
+  const formik = useFormik({
+      initialValues: {
+        email: '',
+        password: '',
+        showPassword: false,
+      },
+      onSubmit: () => logInUserGetData()
+    })
+  const logInUser = useLogInUser(formik.values.email, formik.values.password);
+  const logInUserGetData = useLogInUserGetData(logInUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const handleSignup = () => {
-        dispatch(closeModal())
-        navigate('/signup')
-    }
+  const handleSignup = () => {
+      dispatch(closeModal())
+      navigate('/signup')
+  }
   return (
-    <Box 
-        component="form"
-        sx={{
-            width: "100%",
-            display: "flex",
-            gap: "10px",
-            flexDirection: "column",
-            alignItems: "center",
-            paddingBottom: '10px'
-        }}
+    <Form
+      onSubmit={formik.handleSubmit}
     >
-        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-          <InputLabel htmlFor="email-input">Email</InputLabel>
-          <OutlinedInput
-            id="email-input"
-            label="Email"
-            value={email}
-            onChange={ e => setEmail(e.target.value)}
-            required
-          />
-        </FormControl>
-        <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
-          <InputLabel htmlFor="password-input">Password</InputLabel>
-          <OutlinedInput
-            id="password-input"
-            value={password}
-            onChange={ e => setPassword(e.target.value)}
-            type={ showPassword ? 'text' : 'password'}
-            required
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={ () => setShowPassword(!showPassword) }
-                  edge="end"
-                >
-                  {showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Password"
-          />
-        </FormControl>
-        <Button variant='text' size='small' onClick={ handleSignup }>Create an account</Button>
-        {email && password ? 
-            <Button variant='outlined' onClick={handleLogin}>Login</Button> :
-            <Button variant='outlined' disabled>Login</Button>
-        }
-    </Box>
+      <TextField 
+        id="email" 
+        label="Email" 
+        variant="outlined" 
+        value={formik.values.email}
+        onChange={formik.handleChange}
+        required
+      />
+      <TextField 
+        id="password" 
+        label="Password" 
+        variant="outlined" 
+        type={formik.values.showPassword ? 'text' : 'password'}
+        value={formik.values.password}
+        onChange={formik.handleChange}
+        required
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end"
+            >
+              <Input
+                type="checkbox"
+                id="showPassword"
+                value={formik.values.showPassword}
+                onChange={formik.handleChange}
+              /> 
+              <label htmlFor="showPassword">
+                {formik.values.showPassword ? <Visibility/> : <VisibilityOff />}
+              </label>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <Button variant='text' size='small' onClick={ handleSignup }>Create an account</Button>
+      {formik.values.email && formik.values.password ? 
+        <Button variant='outlined' type='submit'>Login</Button> :
+        <Button variant='outlined' disabled>Login</Button>
+      }
+    </Form>
   )
 }
 
