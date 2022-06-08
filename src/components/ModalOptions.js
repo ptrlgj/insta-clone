@@ -1,14 +1,11 @@
 import React from 'react'
 import { Box, Button, Modal, Typography } from '@mui/material' 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { closeModal } from '../store/modalSlice';
-import { auth, deleteSingleDoc, deleteUserPosts, getSingleDoc, updateDocument } from '../firebase';
-import { getActiveUser, logoutUser } from '../store/userSlice';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from './LoginForm';
-import { deleteUser, signOut } from 'firebase/auth';
 import { showAlert } from '../store/alertSlice';
-import { setEditPost, setPosts } from '../store/postsSlice';
+import { setEditPost } from '../store/postsSlice';
 import { useUser } from '../hooks/useUser';
 import { useDeletePost } from '../hooks/useDeletePost';
 import { usePosts } from '../hooks/usePosts';

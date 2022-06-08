@@ -22,7 +22,7 @@ const Img = styled('img')({
 function AddPost() {
 
     const [imageFile, setImageFile] = useState(null);
-    const [imageId, setImageId] = useState(v4());
+    const imageId = v4();
     const imageUrl = useImageUrl(imageFile, imageId)
     const [desc, setDesc] = useState('')
     const navigate = useNavigate()

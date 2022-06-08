@@ -5,7 +5,6 @@ import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Comment from '../components/Comment';
 import { timePassed } from '../utils';
-import { useDispatch} from 'react-redux';
 import { useUser } from '../hooks/useUser';
 import { useSubmitComment } from '../hooks/useSubmitComment';
 import { useAuthor } from '../hooks/useAuthor';
@@ -23,7 +22,7 @@ function Comments() {
     const getAuthor = useAuthor(post, setAuthor)
     
     useSubscribeTo(postId, setPost)
-    
+
     const handleSubmitComment = async () => {
         submitComment()
     }

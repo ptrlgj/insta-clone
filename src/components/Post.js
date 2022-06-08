@@ -6,11 +6,9 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
-import { getSingleDoc, db } from '../firebase';
 import { openModal, setOption } from '../store/modalSlice'
 import { setLoading } from '../store/postsSlice';
 import { useDispatch } from 'react-redux';
-import { onSnapshot, doc } from 'firebase/firestore';
 import { timePassed } from '../utils'
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useUser';
