@@ -1,24 +1,20 @@
 import { Avatar, Box, Button, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, styled, Typography, TextField } from '@mui/material'
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { auth, createUserProfile, fetchLoggedUser, getImageUrl, getUserBy, usersColRef } from '../firebase';
 import { v4 } from 'uuid';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeValue, setUser } from '../store/userSlice';
-import { showAlert } from '../store/alertSlice';
-import { query, where } from 'firebase/firestore';
 import { useUser } from '../hooks/useUser';
+import { useCreateUser } from '../hooks/useCreateUser';
+import { useCreateProfile } from '../hooks/useCreateProfile';
+import { useImageUrl } from '../hooks/useImageUrl';
 
 const Input = styled('input')({
     display: 'none'
 })
 function CreateUser() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const { uid } = useUser()
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,58 +24,14 @@ function CreateUser() {
     const [fullName, setFullName] = useState('');
     const [bio, setBio] = useState('');
     const [imageFile, setImageFile] = useState('');
-    const [imageId, setImageId] = useState(v4());
-    const [imageUrl, setImageUrl] = useState('');
+    const imageId = v4();
+    const imageUrl = useImageUrl(imageFile, imageId)
+    const createUser = useCreateUser(email, password, confPass)
+    const createProfile = useCreateProfile(email, password, imageUrl, userName, fullName, bio, uid)
 
-    const handleCreateUser = async () => {
-        if(email && password === confPass){
-            try {
-                const data = await createUserWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                )
-                dispatch(changeValue({uid: data.user.uid}))
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-        } else if(email) {
-            dispatch(showAlert({type: 'error', message: 'Passwords dont match'}))
-        } else if(password === confPass) {
-            dispatch(showAlert({type: 'error', message: 'Invalid email'}))
-        }
-    }
+    const handleCreateUser = () => createUser()
 
-    const handleCreateProfile = async () => {
-        if(imageUrl && userName){
-            //check if username is taken
-            const q = query(usersColRef, where("userName", "==", userName))
-            try {
-                const userCheck = await getUserBy(q)
-                if(userCheck[0]){
-                    dispatch(showAlert({type: 'warning', message: `User name "${userName}" is already taken`}))
-                    return
-                }
-                await createUserProfile( userName, fullName, bio, imageUrl, uid)
-                !uid && await signInWithEmailAndPassword(auth, email, password)
-                dispatch(showAlert({type: 'success', message: 'New user has been created and logged in'}))
-                fetchLoggedUser(uid).then( res => dispatch(setUser(res)))
-            } catch (error) {
-                dispatch(showAlert({type: 'error', message: error.message}))
-            }
-            navigate(`/`)
-        } 
-        else if(imageUrl) dispatch(showAlert({type: 'warning', message: 'Username is required'}))
-        else if(userName) dispatch(showAlert({type: 'warning', message: 'Avatar is required'}))
-        else dispatch(showAlert({type: 'warning', message: 'Profile has to have an avatar and a username'}))
-    }
-    useEffect( () => {
-        if(imageFile) {
-            getImageUrl( imageFile, imageId )
-                .then(res => setImageUrl(res))
-                .catch(res => dispatch(showAlert({type: 'error', message: res.message})) )
-        }
-    }, [imageFile] )
+    const handleCreateProfile = () => createProfile()
 
   return (
     <Paper 
